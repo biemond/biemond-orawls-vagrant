@@ -1,0 +1,14 @@
+---
+messageDefault: 'default'
+messageEnv:     'common'
+
+orawls::weblogic::version:              1212
+orawls::weblogic::filename:             "wls_121200.jar"
+orawls::weblogic::jdk_home_dir:         "/usr/java/jdk1.7.0_40"
+orawls::weblogic::oracle_base_home_dir: "/opt/oracle"
+orawls::weblogic::middleware_home_dir:  "/opt/oracle/middleware12c"
+orawls::weblogic::os_user:              "oracle"
+orawls::weblogic::os_group:             "dba"
+orawls::weblogic::download_dir:         "/data/install"
+orawls::weblogic::source:               "/vagrant"
+orawls::weblogic::log_output:           false
