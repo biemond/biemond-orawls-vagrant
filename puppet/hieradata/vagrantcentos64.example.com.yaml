@@ -1,12 +1,10 @@
 ---
 messageEnv: 'vagrant64'
 
-orawls::weblogic::jdk_home_dir: "/usr/java/jdk1.7.0_45"
 orawls::weblogic::log_output:   true
 
 domain_instances:
   'wlsDomain12c':
-     version:              1212
      domain_template:      "standard"
      domain_name:          "Wls12c"
      development_mode:     false
@@ -14,24 +12,13 @@ domain_instances:
      adminserver_address:  "localhost"
      adminserver_port:     7001
      nodemanager_port:     5556
-     weblogic_user:        "weblogic"
      weblogic_password:    "weblogic1"
-     os_user:              "oracle"
-     os_group:             "dba"
-     log_dir:              "/data/logs"
-     download_dir:         "/data/install"
      log_output:           true
-
 
 nodemanager_instances:
   'nodemanager12c':
-     version:              1212
      nodemanager_port:     5556
      domain_name:          "Wls12c"
-     os_user:              "oracle"
-     os_group:             "dba"
-     log_dir:              "/data/logs"
-     download_dir:         "/data/install"
      log_output:           true
 
 
@@ -43,15 +30,9 @@ control_instances:
      target:               'Server'
      server:               'AdminServer'
      action:               'start'
-     weblogic_user:        "weblogic"
      weblogic_password:    "weblogic1"
      adminserver_address:  'localhost'
      adminserver_port:     7001
      nodemanager_port:     5556
-     os_user:              "oracle"
-     os_group:             "dba"
-     log_dir:              "/data/logs"
-     download_dir:         "/data/install"
      log_output:           true
-
 
