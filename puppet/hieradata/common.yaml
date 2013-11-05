@@ -21,7 +21,9 @@ wls_log_dir:              &wls_log_dir              "/data/logs"
 
 #WebLogic installation variables 
 orawls::weblogic::version:              *wls_version
-orawls::weblogic::filename:             "wls_121200.jar"
+orawls::weblogic::filename:            "wls_121200.jar"
+#orawls::weblogic::filename:             "fmw_infra_121200.jar"
+#orawls::weblogic::fmw_infra:            true
 orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
 orawls::weblogic::log_output:           false
 

@@ -10,7 +10,7 @@ here are the used hiera files https://github.com/biemond/biemond-orawls-vagrant/
 
 used the following software
 - jdk-7u45-linux-x64.tar.gz
-- wls_121200.jar
+- wls_121200.jar or fmw_infra_121200.jar
 - p16175470_121200_Generic.zip
 
 Detailed steps can be found here:
