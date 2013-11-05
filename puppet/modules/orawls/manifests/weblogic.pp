@@ -13,8 +13,6 @@ class orawls::weblogic (
   $log_output           = false, # true|false
   ) {
 
-
-
   if ($version == 1036 or $version == 1211) {
     $silent_template = "orawls/weblogic_silent_instal.xml.erb"
   } elsif ( $version == 1212) {

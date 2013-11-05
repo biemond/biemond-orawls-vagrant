@@ -8,14 +8,15 @@
 node 'vagrantcentos64' {
   
   include os,java,orawls::weblogic,orautils
-  include wls,nodemanager,startwls
+  include opatch,domains,nodemanager,startwls
 
   Class['os'] ->
     Class['java'] ->
       Class['orawls::weblogic'] ->
-        Class['wls'] ->
-          Class['nodemanager'] ->
-            Class['startwls']
+        Class['opatch'] ->
+          Class['domains'] ->
+            Class['nodemanager'] ->
+              Class['startwls']
 }
 
 # operating settings for Middleware
@@ -49,6 +50,13 @@ class os {
     comment    => 'Oracle user created by Puppet',
     managehome => true,
     require    => Group['dba'],
+  }
+
+  $install = [ 'binutils.x86_64','unzip.x86_64']
+
+
+  package { $install:
+    ensure  => present,
   }
 
   class { 'limits':
@@ -106,8 +114,15 @@ class java {
 
 }
 
+class opatch{
 
-class wls{
+  notify { 'class opatch':} 
+  $default_params = {}
+  $opatch_instances = hiera('opatch_instances', [])
+  create_resources('orawls::opatch',$opatch_instances, $default_params)
+}
+
+class domains{
 
   notify { 'class wls':} 
   $default_params = {}

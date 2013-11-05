@@ -8,6 +8,11 @@ site.pp is located here:
 https://github.com/biemond/biemond-orawls-vagrant/blob/master/puppet/manifests/site.pp  
 here are the used hiera files https://github.com/biemond/biemond-orawls-vagrant/tree/master/puppet/hieradata
 
+used the following software
+- jdk-7u45-linux-x64.tar.gz
+- wls_121200.jar
+- p16175470_121200_Generic.zip
+
 Detailed steps can be found here:
 
 http://vbatik.wordpress.com/2013/10/11/weblogic-12-1-2-00-with-vagrant/

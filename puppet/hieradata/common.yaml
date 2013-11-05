@@ -51,3 +51,9 @@ orautils::wlsPasswordParam:       "weblogic1"
 orautils::wlsAdminServerParam:    "AdminServer"
 
 
+opatch_instances:
+  '16175470':
+     oracle_product_home_dir:  "/opt/oracle/middleware12c"
+     patchId:                  "16175470"
+     patchFile:                "p16175470_121200_Generic.zip"
+
