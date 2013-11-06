@@ -5,9 +5,16 @@ messageEnv:     'common'
 
 # global WebLogic vars
 wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"
-wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
-wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
-wls_version:              &wls_version              1212
+
+# 12.1.2 settings
+#wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
+#wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
+#wls_version:              &wls_version              1212
+# 10.3.6 settings
+wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
+wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
+wls_version:              &wls_version              1036
+
 wls_weblogic_user:        &wls_weblogic_user        "weblogic"
 
 # global OS vars
@@ -21,7 +28,8 @@ wls_log_dir:              &wls_log_dir              "/data/logs"
 
 #WebLogic installation variables 
 orawls::weblogic::version:              *wls_version
-orawls::weblogic::filename:            "wls_121200.jar"
+orawls::weblogic::filename:             "wls1036_generic.jar"
+#orawls::weblogic::filename:             "wls_121200.jar"
 #orawls::weblogic::filename:             "fmw_infra_121200.jar"
 #orawls::weblogic::fmw_infra:            true
 orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
@@ -44,9 +52,14 @@ orautils::osDownloadFolderParam:  *wls_download_dir
 orautils::osMdwHomeParam:         *wls_middleware_home_dir
 orautils::osWlHomeParam:          *wls_weblogic_home_dir
 orautils::oraUserParam:           *wls_os_user
-orautils::osDomainParam:          "Wls12c"
-orautils::osDomainPathParam:      "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
-orautils::nodeMgrPathParam:       "/opt/oracle/middleware12c/user_projects/domains/Wls12c/bin"
+
+orautils::osDomainParam:          "Wls1036"
+orautils::osDomainPathParam:      "/opt/oracle/middleware11g/user_projects/domains/Wls1036"
+orautils::nodeMgrPathParam:       "/opt/oracle/middleware11g/wlserver_10.3/common/nodemanager"
+
+#orautils::osDomainParam:          "Wls12c"
+#orautils::osDomainPathParam:      "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
+#orautils::nodeMgrPathParam:       "/opt/oracle/middleware12c/user_projects/domains/Wls12c/bin"
 orautils::nodeMgrPortParam:       5556
 orautils::wlsUserParam:           *wls_weblogic_user
 orautils::wlsPasswordParam:       "weblogic1"
@@ -58,4 +71,11 @@ opatch_instances:
      oracle_product_home_dir:  "/opt/oracle/middleware12c"
      patchId:                  "16175470"
      patchFile:                "p16175470_121200_Generic.zip"
+
+bsu_instances:
+  'BYJ1':
+    patchId:                 "BYJ1"
+    patchFile:               "p17071663_1036_Generic.zip"
+    log_output:              true
+
 

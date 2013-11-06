@@ -3,10 +3,23 @@ messageEnv: 'vagrant64'
 
 orawls::weblogic::log_output:   true
 
+#domain_instances:
+#  'wlsDomain':
+#     domain_template:      "standard"
+#     domain_name:          "Wls12c"
+#     development_mode:     false
+#     adminserver_name:     "AdminServer"
+#     adminserver_address:  "localhost"
+#     adminserver_port:     7001
+#     nodemanager_port:     5556
+#     weblogic_password:    "weblogic1"
+#     log_output:           true
+#
+
 domain_instances:
-  'wlsDomain12c':
+  'wlsDomain':
      domain_template:      "standard"
-     domain_name:          "Wls12c"
+     domain_name:          "Wls1036"
      development_mode:     false
      adminserver_name:     "AdminServer"
      adminserver_address:  "localhost"
@@ -15,17 +28,32 @@ domain_instances:
      weblogic_password:    "weblogic1"
      log_output:           true
 
+
+
 nodemanager_instances:
-  'nodemanager12c':
+  'nodemanager':
      nodemanager_port:     5556
-     domain_name:          "Wls12c"
      log_output:           true
 
 
+#control_instances:
+#  'startWLSAdminServer':
+#     domain_name:          "Wls12c"
+#     domain_dir:           "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
+#     server_type:          'admin'
+#     target:               'Server'
+#     server:               'AdminServer'
+#     action:               'start'
+#     weblogic_password:    "weblogic1"
+#     adminserver_address:  'localhost'
+#     adminserver_port:     7001
+#     nodemanager_port:     5556
+#     log_output:           true
+#
 control_instances:
-  'startWLSAdminServer12c':
-     domain_name:          "Wls12c"
-     domain_dir:           "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
+  'startWLSAdminServer':
+     domain_name:          "Wls1036"
+     domain_dir:           "/opt/oracle/middleware11g/user_projects/domains/Wls1036"
      server_type:          'admin'
      target:               'Server'
      server:               'AdminServer'
@@ -35,4 +63,5 @@ control_instances:
      adminserver_port:     7001
      nodemanager_port:     5556
      log_output:           true
+
 

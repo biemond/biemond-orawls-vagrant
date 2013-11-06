@@ -8,21 +8,26 @@
 node 'vagrantcentos64' {
   
   include os,java,orawls::weblogic,orautils
-  include opatch,domains,nodemanager,startwls
+#  include opatch
+  include bsu
+  include domains,nodemanager,startwls
 
   Class['os'] ->
     Class['java'] ->
       Class['orawls::weblogic'] ->
-        Class['opatch'] ->
+#        Class['opatch'] ->
+        Class['bsu'] ->
           Class['domains'] ->
             Class['nodemanager'] ->
               Class['startwls']
 }
 
+
+
 # operating settings for Middleware
 class os {
 
-  notify { 'class os':} 
+  notify { "class os ${operatingsystem} ${ora_mdw_cnt} ${ora_mdw_0} ${ora_mdw_0_bsu}":} 
 
 
   exec { "create swap file":
@@ -43,10 +48,10 @@ class os {
   # http://raftaman.net/?p=1311 for generating password
   user { 'oracle' :
     ensure     => present,
-    groups     => $group,
+    groups     => 'dba',
     shell      => '/bin/bash',
     password   => '$1$DSJ51vh6$4XzzwyIOk6Bi/54kglGk3.',
-    home       => "/home/${user}",
+    home       => "/home/oracle",
     comment    => 'Oracle user created by Puppet',
     managehome => true,
     require    => Group['dba'],
@@ -120,6 +125,14 @@ class opatch{
   $default_params = {}
   $opatch_instances = hiera('opatch_instances', [])
   create_resources('orawls::opatch',$opatch_instances, $default_params)
+}
+
+class bsu{
+
+  notify { 'class bsu':} 
+  $default_params = {}
+  $bsu_instances = hiera('bsu_instances', [])
+  create_resources('orawls::bsu',$bsu_instances, $default_params)
 }
 
 class domains{
