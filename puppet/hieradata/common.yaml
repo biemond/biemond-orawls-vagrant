@@ -29,9 +29,11 @@ wls_log_dir:              &wls_log_dir              "/data/logs"
 #WebLogic installation variables 
 orawls::weblogic::version:              *wls_version
 orawls::weblogic::filename:             "wls1036_generic.jar"
+
 #orawls::weblogic::filename:             "wls_121200.jar"
 #orawls::weblogic::filename:             "fmw_infra_121200.jar"
 #orawls::weblogic::fmw_infra:            true
+
 orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
 orawls::weblogic::log_output:           false
 
@@ -60,6 +62,7 @@ orautils::nodeMgrPathParam:       "/opt/oracle/middleware11g/wlserver_10.3/commo
 #orautils::osDomainParam:          "Wls12c"
 #orautils::osDomainPathParam:      "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
 #orautils::nodeMgrPathParam:       "/opt/oracle/middleware12c/user_projects/domains/Wls12c/bin"
+
 orautils::nodeMgrPortParam:       5556
 orautils::wlsUserParam:           *wls_weblogic_user
 orautils::wlsPasswordParam:       "weblogic1"
@@ -77,5 +80,4 @@ bsu_instances:
     patchId:                 "BYJ1"
     patchFile:               "p17071663_1036_Generic.zip"
     log_output:              true
-
 
