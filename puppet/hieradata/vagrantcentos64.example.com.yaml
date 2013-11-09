@@ -34,6 +34,7 @@ orawls::weblogic::log_output:   true
 
 logoutput:                     &logoutput                     true
 
+# when you have more than one domain on a server
 domain_1_wls_password:        &domain_1_wls_password         "weblogic1"
 domain_1_name:                &domain_1_name                 "Wls1036"
 domain_1_adminserver:         &domain_1_adminserver          "AdminServer"
@@ -41,58 +42,50 @@ domain_1_adminserver_address: &domain_1_adminserver_address  "localhost"
 domain_1_adminserver_port:    &domain_1_adminserver_port     7001
 domain_1_nodemanager_port:    &domain_1_nodemanager_port     5556
 
+
+# when you have just one domain on a server
+domain_name:                "Wls1036"
+domain_adminserver:         "AdminServer"
+domain_adminserver_address: "localhost"
+domain_adminserver_port:    7001
+domain_nodemanager_port:    5556
+domain_wls_password:        "weblogic1"
+domain_user_config_file:    "/home/oracle/oracle-Wls1036-WebLogicConfig.properties"
+domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
+
+
 # create a standard domain
 domain_instances:
   'wlsDomain':
      domain_template:      "standard"
-     domain_name:          *domain_1_name
      development_mode:     false
-     adminserver_name:     *domain_1_adminserver
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     nodemanager_port:     *domain_1_nodemanager_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
 
 
 # create and startup the nodemanager
 nodemanager_instances:
   'nodemanager':
-     nodemanager_port:     5556
      log_output:           *logoutput
 
 # startup adminserver for extra configuration
 control_instances:
   'startWLSAdminServer':
-     domain_name:          *domain_1_name
      domain_dir:           "/opt/oracle/middleware11g/user_projects/domains/Wls1036"
      server_type:          'admin'
      target:               'Server'
-     server:               *domain_1_adminserver
+     server:               'AdminServer'
      action:               'start'
-     weblogic_password:    *domain_1_wls_password
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     nodemanager_port:     *domain_1_nodemanager_port
      log_output:           *logoutput
 
 # create password file for WLST utility
 userconfig_instances:
   'Wls12c':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      user_config_dir:      '/home/oracle'
 
 # create 2 machines
 machines_instances:
   'createMachine_node1':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "machine"
      weblogic_object_name: "Node1"
@@ -101,10 +94,6 @@ machines_instances:
         - "machineName      = 'Node1'"
         - "machineDnsName   = 'node1.alfa.local'"
   'createMachine_node2':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "machine"
      weblogic_object_name: "Node2"
@@ -116,10 +105,6 @@ machines_instances:
 # create 2 managed servers and assign them to the machines
 managed_servers_instances:
   'wlsServer1_node1':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "server"
      weblogic_object_name: "wlsServer1"
@@ -131,10 +116,6 @@ managed_servers_instances:
         - "listenAddress    = 9201"
         - "nodeMgrLogDir    = '/data/logs'"
   'wlsServer2_node2':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "server"
      weblogic_object_name: "wlsServer2"
@@ -149,10 +130,6 @@ managed_servers_instances:
 # create cluster and assign the managed servers
 cluster_instances:
   'cluster_web':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "cluster"
      weblogic_object_name: "WebCluster"
@@ -164,10 +141,6 @@ cluster_instances:
 # create filepersistence location for the jms servers
 file_persistence_instances:
   'filePersistenceNode1':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "filestore"
      weblogic_object_name: "jmsFilePersistenceNode1"
@@ -177,10 +150,6 @@ file_persistence_instances:
         - "target           = 'wlsServer1'"
         - "targetType       = 'Server'"
   'filePersistenceNode2':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "filestore"
      weblogic_object_name: "jmsFilePersistenceNode2"
@@ -193,10 +162,6 @@ file_persistence_instances:
 # create jms servers with a server,file persistence target
 jms_servers_instances:
   'jmsServerNode1':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsserver"
      weblogic_object_name: "jmsServer1"
@@ -208,10 +173,6 @@ jms_servers_instances:
         - "storeType        = 'file'"
         - "jmsServerName    = 'jmsServer1'"
   'jmsServerNode2':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsserver"
      weblogic_object_name: "jmsServer2"
@@ -227,10 +188,6 @@ jms_servers_instances:
 # create jms module for cluster 
 jms_module_instances:
   'jmsClusterModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsmodule"
      weblogic_object_name: "jmsClusterModule"
@@ -243,10 +200,6 @@ jms_module_instances:
 # create jms subdeployment for the jms module 
 jms_module_subdeployments_instances:
   'SubDeploymentWLSforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmssubdeployment"
      weblogic_object_name: "jmsClusterModule/wlsServers"
@@ -257,10 +210,6 @@ jms_module_subdeployments_instances:
         - "subName          = 'wlsServers'"
         - "jmsModuleName    = 'jmsClusterModule'"
   'SubDeploymentJMSforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmssubdeployment"
      weblogic_object_name: "jmsClusterModule/jmsServers"
@@ -274,10 +223,6 @@ jms_module_subdeployments_instances:
 # create jms quotas for the jms module 
 jms_module_quotas_instances:
   'QuotaBigforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsquota"
      weblogic_object_name: "jmsClusterModule/QuotaBig"
@@ -290,10 +235,6 @@ jms_module_quotas_instances:
         - "shared           = false"
         - "policy           = 'FIFO'"
   'QuotaLowforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsquota"
      weblogic_object_name: "jmsClusterModule/QuotaLow"
@@ -309,10 +250,6 @@ jms_module_quotas_instances:
 # create jms connection factory for jms module  
 jms_module_cf_instances:
   'createJmsConnectionFactoryforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsobject"
      weblogic_object_name: "cf"
@@ -327,10 +264,6 @@ jms_module_cf_instances:
 
 jms_module_jms_errors_instances:
   'createJmsErrorQueueforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsobject"
      weblogic_object_name: "ErrorQueue"
@@ -351,10 +284,6 @@ jms_module_jms_errors_instances:
 # create jms objects for jms module  
 jms_module_jms_instances:
   'createJmsQueueforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsobject"
      weblogic_object_name: "Queue1"
@@ -372,10 +301,6 @@ jms_module_jms_instances:
         - "policy            = 'Redirect'"
         - "errorObject       = 'ErrorQueue'"
   'createJmsTopicforJmsModule':
-     domain_name:          *domain_1_name
-     adminserver_address:  *domain_1_adminserver_address
-     adminserver_port:     *domain_1_adminserver_port
-     weblogic_password:    *domain_1_wls_password
      log_output:           *logoutput
      weblogic_type:        "jmsobject"
      weblogic_object_name: "Topic1"
