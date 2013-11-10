@@ -9,7 +9,7 @@ node 'vagrantcentos64' {
   
   include os,java,orawls::weblogic,orautils
 #  include opatch
-  include bsu
+  include bsu,fmw
   include domains,nodemanager,startwls,userconfig
   include machines,managed_servers,clusters
   include jms_servers,file_persistences,jms_modules,jms_module_subdeployments
@@ -18,23 +18,24 @@ node 'vagrantcentos64' {
   Class['os'] ->
     Class['java'] ->
       Class['orawls::weblogic'] ->
-#        Class['opatch'] ->
+#        Class['opatch_wls'] ->
         Class['bsu'] ->
-          Class['domains'] ->
-            Class['nodemanager'] ->
-              Class['startwls'] ->
-                Class['userconfig'] ->
-                  Class['machines'] ->
-                    Class['managed_servers'] ->
-                      Class['clusters'] ->
-                        Class['file_persistences'] ->
-                          Class['jms_servers'] ->
-                            Class['jms_modules'] ->
-                              Class['jms_module_subdeployments'] ->
-                                Class['jms_module_quotas'] ->
-                                  Class['jms_module_cfs'] ->
-                                    Class['jms_module_objects_errors'] ->
-                                      Class['jms_module_objects']
+          Class['fmw'] ->
+            Class['domains'] ->
+              Class['nodemanager'] ->
+                Class['startwls'] ->
+                  Class['userconfig'] ->
+                    Class['machines'] ->
+                      Class['managed_servers'] ->
+                        Class['clusters'] ->
+                          Class['file_persistences'] ->
+                            Class['jms_servers'] ->
+                              Class['jms_modules'] ->
+                                Class['jms_module_subdeployments'] ->
+                                  Class['jms_module_quotas'] ->
+                                    Class['jms_module_cfs'] ->
+                                      Class['jms_module_objects_errors'] ->
+                                        Class['jms_module_objects']
 }
 
 
@@ -133,9 +134,9 @@ class java {
 
 }
 
-class opatch{
+class opatch_wls{
 
-  notify { 'class opatch':} 
+  notify { 'class opatch_wls':} 
   $default_params = {}
   $opatch_instances = hiera('opatch_instances', [])
   create_resources('orawls::opatch',$opatch_instances, $default_params)
@@ -147,6 +148,14 @@ class bsu{
   $default_params = {}
   $bsu_instances = hiera('bsu_instances', [])
   create_resources('orawls::bsu',$bsu_instances, $default_params)
+}
+
+class fmw{
+
+  notify { 'class fmw':} 
+  $default_params = {}
+  $fmw_installations = hiera('fmw_installations', [])
+  create_resources('orawls::fmw',$fmw_installations, $default_params)
 }
 
 class domains{

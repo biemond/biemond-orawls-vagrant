@@ -65,14 +65,14 @@ define orawls::nodemanager (
     if $log_dir != undef {
       # create all folders
       if !defined(Exec["create ${log_dir} directory"]) {
-	      exec { "create ${log_dir} directory":
-	        command => "mkdir -p ${log_dir}",
-	        unless  => "test -d ${log_dir}",
-	        user    => 'root',
-	        path    => $exec_path,
-	        group   => $os_group,
-	        cwd     => $nodeMgrHome,
-	      }
+        exec { "create ${log_dir} directory":
+          command => "mkdir -p ${log_dir}",
+          unless  => "test -d ${log_dir}",
+          user    => 'root',
+          path    => $exec_path,
+          group   => $os_group,
+          cwd     => $nodeMgrHome,
+        }
       }
       if !defined(File["${log_dir}"]) {
         file { "${log_dir}":

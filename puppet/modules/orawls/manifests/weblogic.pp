@@ -24,7 +24,7 @@ class orawls::weblogic (
     } else {
       $install_type="WebLogic Server"
     }
-    $silent_template = "orawls/weblogic_silent_install_1212.xml.erb"
+    $silent_template = "orawls/weblogic_silent_install_1212.rsp.erb"
 
   } else  {
     fail('unknown weblogic version parameter')
@@ -83,10 +83,11 @@ class orawls::weblogic (
     file { "${download_dir}/weblogic_silent_install.xml":
       content => template($silent_template),
       ensure  => present,
-      replace => 'yes',
+      replace => true,
       mode    => 0775,
       owner   => $os_user,
       group   => $os_group,
+      backup  => false,
       require => Orawls::Utils::Structure['weblogic structure ${version}'],
     }
 

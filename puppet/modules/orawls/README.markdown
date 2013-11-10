@@ -19,6 +19,7 @@ Orawls WebLogic Features
 ------------------------
 
 - installs WebLogic 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
+- installs FMW add-on to a middleware home like OSB,SOA Suite, Oracle Identity Management, Web Center + Content
 - apply a BSU patch on a Middleware home ( < 12.1.2 )
 - apply an OPatch on a Middleware home or a Oracle product home
 - creates a standard WebLogic domain
@@ -29,6 +30,17 @@ Orawls WebLogic Features
 - create Persistence Store
 - create JMS Server, Module, SubDeployment, Quota, Connection Factory, JMS (distributed) Queue or Topic
 - basically can run every WLST script with the flexible WLST define manifest
+
+
+Domain creation options (Dev or Prod mode)
+------------------------------------------
+all templates creates a WebLogic domain, logs the domain creation output and do a domain pack in the defined download folder  
+
+- domain 'standard'    -> a default WebLogic    
+- domain 'adf'         -> JRF + EM + Coherence (12.1.2) + OWSM (12.1.2) + JAX-WS Advanced + Soap over JMS (12.1.2)   
+- domain 'osb'         -> OSB + JRF + EM + OWSM 
+- domain 'osb_soa'     -> OSB + SOA Suite + BAM + JRF + EM + OWSM 
+- domain 'osb_soa_bpm' -> OSB + SOA Suite + BAM + BPM + JRF + EM + OWSM 
 
 
 Linux low on entropy or urandom fix 
@@ -148,10 +160,17 @@ common.yaml
     ---
     # global WebLogic vars
     wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"
-    wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
-    wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
-    wls_version:              &wls_version              1212
-    wls_weblogic_user:        "weblogic"
+    wls_weblogic_user:        &wls_weblogic_user        "weblogic"
+    
+    # 12.1.2 settings
+    #wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
+    #wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware12c"
+    #wls_version:              &wls_version              1212
+    
+    # 10.3.6 settings
+    wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
+    wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
+    wls_version:              &wls_version              1036
     
     # global OS vars
     wls_os_user:              &wls_os_user              "oracle"
@@ -159,8 +178,30 @@ common.yaml
     wls_download_dir:         &wls_download_dir         "/data/install"
     wls_source:               &wls_source               "/vagrant"
     wls_jdk_home_dir:         &wls_jdk_home_dir         "/usr/java/jdk1.7.0_45"
-    wls_log_dir:              "/data/logs"
+    wls_log_dir:              &wls_log_dir              "/data/logs"
     
+    
+    #WebLogic installation variables 
+    orawls::weblogic::version:              *wls_version
+    orawls::weblogic::filename:             "wls1036_generic.jar"
+    
+    # weblogic 12.1.2
+    #orawls::weblogic::filename:             "wls_121200.jar"
+    # or with 12.1.2 FMW infra
+    #orawls::weblogic::filename:             "fmw_infra_121200.jar"
+    #orawls::weblogic::fmw_infra:            true
+    
+    orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
+    orawls::weblogic::log_output:           false
+    
+    # hiera default anchors
+    orawls::weblogic::jdk_home_dir:         *wls_jdk_home_dir
+    orawls::weblogic::oracle_base_home_dir: *wls_oracle_base_home_dir
+    orawls::weblogic::os_user:              *wls_os_user
+    orawls::weblogic::os_group:             *wls_os_group
+    orawls::weblogic::download_dir:         *wls_download_dir
+    orawls::weblogic::source:               *wls_source
+        
 
 WebLogic Module Usage
 ---------------------
@@ -203,39 +244,6 @@ vagrantcentos64.example.com.yaml
      orawls::weblogic::log_output:   true
 
 
-common.yaml
-
-    ---
-    # global WebLogic vars
-    wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"
-    wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware12c/wlserver"
-    wls_middleware_home_dir:  $wls_middleware_home_dir  "/opt/oracle/middleware12c"
-    wls_version:              &wls_version              1212
-    wls_weblogic_user:        "weblogic"
-    
-    # global OS vars
-    wls_os_user:              &wls_os_user              "oracle"
-    wls_os_group:             &wls_os_group             "dba"
-    wls_download_dir:         &wls_download_dir         "/data/install"
-    wls_source:               &wls_source               "/vagrant"
-    wls_jdk_home_dir:         &wls_jdk_home_dir         "/usr/java/jdk1.7.0_45"
-    wls_log_dir:              "/data/logs"
-    
-    
-    #WebLogic installation variables 
-    orawls::weblogic::version:              *wls_version
-    orawls::weblogic::filename:             "wls_121200.jar"
-    orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
-    orawls::weblogic::log_output:           false
-    
-    # hiera default anchors
-    orawls::weblogic::jdk_home_dir:         *wls_jdk_home_dir
-    orawls::weblogic::oracle_base_home_dir: *wls_oracle_base_home_dir
-    orawls::weblogic::os_user:              *wls_os_user
-    orawls::weblogic::os_group:             *wls_os_group
-    orawls::weblogic::download_dir:         *wls_download_dir
-    orawls::weblogic::source:               *wls_source
-    
 
 ###orawls::opatch 
 apply an OPatch on a Middleware home or a Oracle product home
@@ -243,8 +251,8 @@ apply an OPatch on a Middleware home or a Oracle product home
     orawls::opatch {'16175470':
       oracle_product_home_dir => "/opt/oracle/middleware12c",
       jdk_home_dir            => "/usr/java/jdk1.7.0_45",
-      patchId                 => "16175470",
-      patchFile               => "p16175470_121200_Generic.zip",
+      patch_id                => "16175470",
+      patch_file              => "p16175470_121200_Generic.zip",
       os_user                 => "oracle",
       os_group                => "dba",
       download_dir            => "/data/install",
@@ -257,8 +265,8 @@ or when you set the defaults hiera variables
 
     orawls::opatch {'16175470':
       oracle_product_home_dir => "/opt/oracle/middleware12c",
-      patchId                 => "16175470",
-      patchFile               => "p16175470_121200_Generic.zip",
+      patch_id                => "16175470",
+      patch_file              => "p16175470_121200_Generic.zip",
     }
     
 
@@ -276,8 +284,8 @@ common.yaml
     opatch_instances:
       '16175470':
          oracle_product_home_dir:  "/opt/oracle/middleware12c"
-         patchId:                  "16175470"
-         patchFile:                "p16175470_121200_Generic.zip"
+         patch_id:                 "16175470"
+         patch_file:               "p16175470_121200_Generic.zip"
          jdk_home_dir              "/usr/java/jdk1.7.0_45"
          os_user:                  "oracle"
          os_group:                 "dba"
@@ -293,8 +301,8 @@ or when you set the defaults hiera variables
     opatch_instances:
       '16175470':
          oracle_product_home_dir:  "/opt/oracle/middleware12c"
-         patchId:                  "16175470"
-         patchFile:                "p16175470_121200_Generic.zip"
+         patch_id:                 "16175470"
+         patch_file:               "p16175470_121200_Generic.zip"
         
 
 
@@ -305,8 +313,8 @@ apply a WebLogic BSU Patch
       middleware_home_dir     => "/opt/oracle/middleware11gR1",
       weblogic_home_dir       => "/opt/oracle/middleware11gR1/wlserver",
       jdk_home_dir            => "/usr/java/jdk1.7.0_45",
-      patchId                 => "BYJ1",
-      patchFile               => "p17071663_1036_Generic.zip",
+      patch_id                => "BYJ1",
+      patch_file              => "p17071663_1036_Generic.zip",
       os_user                 => "oracle",
       os_group                => "dba",
       download_dir            => "/data/install",
@@ -318,8 +326,8 @@ apply a WebLogic BSU Patch
 or when you set the defaults hiera variables
 
     orawls::bsu {'BYJ1':
-      patchId                 => "BYJ1",
-      patchFile               => "p17071663_1036_Generic.zip",
+      patch_id                => "BYJ1",
+      patch_file              => "p17071663_1036_Generic.zip",
       log_output              => false,
     }
 
@@ -340,8 +348,8 @@ common.yaml
          middleware_home_dir:     "/opt/oracle/middleware11gR1"
          weblogic_home_dir:       "/opt/oracle/middleware11gR1/wlserver"
          jdk_home_dir:            "/usr/java/jdk1.7.0_45"
-         patchId:                 "BYJ1"
-         patchFile:               "p17071663_1036_Generic.zip"
+         patch_id:                "BYJ1"
+         patch_file:              "p17071663_1036_Generic.zip"
          os_user:                 "oracle"
          os_group:                "dba"
          download_dir:            "/data/install"
@@ -354,20 +362,74 @@ or when you set the defaults hiera variables
     ---
     bsu_instances:
       'BYJ1':
-         patchId:                 "BYJ1"
-         patchFile:               "p17071663_1036_Generic.zip"
+         patch_id:                "BYJ1"
+         patch_file:              "p17071663_1036_Generic.zip"
          log_output:              false
 
 
+###orawls::fmw 
+install FMW add-on to a middleware home like OSB,SOA Suite, Oracle Identity Management, Web Center + Content
+
+    orawls::fmw{"osbPS6":
+      middleware_home_dir     => "/opt/oracle/middleware11gR1",
+      weblogic_home_dir       => "/opt/oracle/middleware11gR1/wlserver",
+      jdk_home_dir            => "/usr/java/jdk1.7.0_45",
+      oracle_base_home_dir    => "/opt/oracle",
+      fmw_product             => "osb",  # adf|soa|osb|oim|wc|wcc
+      fmw_file1               => "ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip",
+      os_user                 => "oracle",
+      os_group                => "dba",
+      download_dir            => "/data/install",
+      source                  => "/vagrant",
+      log_output              => false,
+    }
+    
+
+or when you set the defaults hiera variables
+
+    orawls::fmw{"osbPS6":
+      fmw_product             => "osb"  # adf|soa|osb|oim|wc|wcc
+      fmw_file1               => "ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip",
+      log_output              => false,
+    }
+    
+
+Same configuration but then with Hiera ( need to have puppet > 3.0 )    
+
+
+    $default_params = {}
+    $fmw_installations = hiera('fmw_installations', [])
+    create_resources('orawls::fmw',$fmw_installations, $default_params)
+
+
+common.yaml
+
+when you set the defaults hiera variables
+
+    ---
+    # FMW installation on top of WebLogic 10.3.6
+    fmw_installations:
+      'osbPS6':
+        fmw_product:             "osb"
+        fmw_file1:               "ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip"
+        log_output:              true
+      'soaPS6':
+        fmw_product:             "soa"
+        fmw_file1:               "ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip"
+        fmw_file2:               "ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip"
+        log_output:              true
+
+
+
 ###orawls::domain 
-creates WebLogic a standard WebLogic Domain
+creates WebLogic a standard | OSB or SOA Suite WebLogic Domain
 
     orawls::domain { 'wlsDomain12c':
       version                    => 1212,  # 1036|1111|1211|1212
       weblogic_home_dir          => "/opt/oracle/middleware12c/wlserver",
       middleware_home_dir        => "/opt/oracle/middleware12c",
       jdk_home_dir               => "/usr/java/jdk1.7.0_45",
-      domain_template            => "standard",
+      domain_template            => "standard",  #standard|adf|osb|osb_soa|osb_soa_bpm
       domain_name                => "Wls12c",
       development_mode           => false,
       adminserver_name           => "AdminServer",
@@ -445,6 +507,25 @@ or when you set the defaults hiera variables
          weblogic_password:    "weblogic1"
          log_output:           true
     
+when you just have one WebLogic domain on a server
+     
+    --- 
+    # when you have just one domain on a server
+    domain_name:                "Wls1036"
+    domain_adminserver:         "AdminServer"
+    domain_adminserver_address: "localhost"
+    domain_adminserver_port:    7001
+    domain_nodemanager_port:    5556
+    domain_wls_password:        "weblogic1"
+    
+    # create a standard domain
+    domain_instances:
+      'wlsDomain':
+         domain_template:      "standard"
+         development_mode:     false
+         log_output:           *logoutput
+    
+
 
 ###orawls::nodemanager 
 start the nodemanager of a WebLogic Domain or Middleware Home
@@ -500,6 +581,19 @@ or when you set the defaults hiera variables
          nodemanager_port:     5556
          domain_name:          "Wls12c"
          log_output:           true
+
+
+when you just have one WebLogic domain on a server
+
+    #when you just have one domain on a server
+    domain_name:                "Wls1036"
+    domain_nodemanager_port:    5556
+    
+    ---
+    nodemanager_instances:
+      'nodemanager12c':
+         log_output:           true
+
 
 
 ###orawls::control 
@@ -590,6 +684,30 @@ or when you set the defaults hiera variables
          log_output:           true
     
 
+when you just have one WebLogic domain on a server
+
+    ---
+    #when you just have one domain on a server
+    domain_name:                "Wls1036"
+    domain_adminserver_address: "localhost"
+    domain_adminserver_port:    7001
+    domain_nodemanager_port:    5556
+    domain_wls_password:        "weblogic1"
+    
+    
+        
+    # startup adminserver for extra configuration
+    control_instances:
+      'startWLSAdminServer':
+         domain_dir:           "/opt/oracle/middleware11g/user_projects/domains/Wls1036"
+         server_type:          'admin'
+         target:               'Server'
+         server:               'AdminServer'
+         action:               'start'
+         log_output:           *logoutput
+
+
+
 ###orawls::control 
 Linux low on entropy or urandom fix can cause certain operations to be very slow. Encryption operations need entropy to ensure randomness. Entropy is generated by the OS when you use the keyboard, the mouse or the disk.
 
@@ -625,6 +743,7 @@ Same configuration but then with Hiera ( need to have puppet > 3.0 )
 vagrantcentos64.example.com.yaml
 or when you set the defaults hiera variables
 
+
     ---
     userconfig_instances:
       'Wls12c':
@@ -635,12 +754,57 @@ or when you set the defaults hiera variables
          log_output:           true
          user_config_dir:      '/home/oracle'
 
+
+when you just have one WebLogic domain on a server
+
+    #when you just have one domain on a server
+    domain_name:                "Wls1036"
+    domain_adminserver_address: "localhost"
+    domain_adminserver_port:    7001
+    domain_wls_password:        "weblogic1"
+    
+    ---
+    userconfig_instances:
+      'Wls12c':
+         log_output:           true
+         user_config_dir:      '/home/oracle'
+
+
+
 ###orawls::wlstexec
 execute any WLST script you want 
 
 here some WLST examples and the matching Hiera configuration
 
-class file 
+
+full example
+
+    orawls::wlstexec{'createMachine_node1':
+      version                    => 1111, 
+      domain_name                => "Wls12c",
+      weblogic_home_dir          => "/opt/oracle/middleware12c/wlserver",
+      jdk_home_dir               => "/usr/java/jdk1.7.0_45",
+      weblogic_user              => "weblogic",
+      weblogic_password          => "weblogic1",
+      adminserver_address        => 'localhost',
+      adminserver_port           => 7001,
+      os_user                    => "oracle",
+      os_group                   => "dba",
+      download_dir               => "/data/install",
+      log_output                 => true,
+      script                     => 'createMachine.py',
+      weblogic_type              => "machine",
+      weblogic_object_name       => "Node1",
+      params                     => ["machineName      = 'Node1'",
+                                     "machineDnsName   = 'node1.alfa.local'",
+                                    ],
+    }
+
+
+or when you want to work with hiera
+
+
+class file with create_resources utility 
 
     node 'vagrantcentos64' {
       
@@ -757,10 +921,31 @@ class file
 
 Hiera configuration
 
+here we have some options, when you just have one domain you don't need to provide all the domain parameters 
+
 default parameters
 
     logoutput:                     &logoutput                     true
+
+
+when you have just one WebLogic domain on a server
+
+    #when you have just one domain on a server
+    domain_name:                "Wls1036"
+    domain_adminserver:         "AdminServer"
+    domain_adminserver_address: "localhost"
+    domain_adminserver_port:    7001
+    domain_nodemanager_port:    5556
     
+    # provide the password or the user config and key file
+    #domain_wls_password:        "weblogic1"
+    domain_user_config_file:    "/home/oracle/oracle-Wls1036-WebLogicConfig.properties"
+    domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
+    
+ 
+when you have more than one domain on a server and you need to provide these parameters to wlstexec define
+
+    # when you have more than one domain on a server
     domain_1_wls_password:        &domain_1_wls_password         "weblogic1"
     domain_1_name:                &domain_1_name                 "Wls1036"
     domain_1_adminserver:         &domain_1_adminserver          "AdminServer"
@@ -768,6 +953,7 @@ default parameters
     domain_1_adminserver_port:    &domain_1_adminserver_port     7001
     domain_1_nodemanager_port:    &domain_1_nodemanager_port     5556
     
+
 
 Create 2 machines
 
@@ -786,10 +972,6 @@ Create 2 machines
             - "machineName      = 'Node1'"
             - "machineDnsName   = 'node1.alfa.local'"
       'createMachine_node2':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "machine"
          weblogic_object_name: "Node2"
@@ -819,10 +1001,6 @@ Create 2 managed servers and assign them to the machines
             - "listenAddress    = 9201"
             - "nodeMgrLogDir    = '/data/logs'"
       'wlsServer2_node2':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "server"
          weblogic_object_name: "wlsServer2"
@@ -840,10 +1018,6 @@ Create cluster and assign the managed servers
 
     cluster_instances:
       'cluster_web':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "cluster"
          weblogic_object_name: "WebCluster"
@@ -858,10 +1032,6 @@ Create File Persistence locations for the JMS  servers
 
     file_persistence_instances:
       'filePersistenceNode1':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "filestore"
          weblogic_object_name: "jmsFilePersistenceNode1"
@@ -871,10 +1041,6 @@ Create File Persistence locations for the JMS  servers
             - "target           = 'wlsServer1'"
             - "targetType       = 'Server'"
       'filePersistenceNode2':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "filestore"
          weblogic_object_name: "jmsFilePersistenceNode2"
@@ -890,10 +1056,6 @@ Create JMS servers with a Server & File persistence reference
 
     jms_servers_instances:
       'jmsServerNode1':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsserver"
          weblogic_object_name: "jmsServer1"
@@ -905,10 +1067,6 @@ Create JMS servers with a Server & File persistence reference
             - "storeType        = 'file'"
             - "jmsServerName    = 'jmsServer1'"
       'jmsServerNode2':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsserver"
          weblogic_object_name: "jmsServer2"
@@ -926,10 +1084,6 @@ Create JMS module for a cluster
 
     jms_module_instances:
       'jmsClusterModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsmodule"
          weblogic_object_name: "jmsClusterModule"
@@ -945,10 +1099,6 @@ Create JMS subdeployment for the jms module ( targets Clusters and all the JMS s
 
     jms_module_subdeployments_instances:
       'SubDeploymentWLSforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmssubdeployment"
          weblogic_object_name: "jmsClusterModule/wlsServers"
@@ -959,10 +1109,6 @@ Create JMS subdeployment for the jms module ( targets Clusters and all the JMS s
             - "subName          = 'wlsServers'"
             - "jmsModuleName    = 'jmsClusterModule'"
       'SubDeploymentJMSforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmssubdeployment"
          weblogic_object_name: "jmsClusterModule/jmsServers"
@@ -979,10 +1125,6 @@ Create JMS quotas for the jms module
 
     jms_module_quotas_instances:
       'QuotaBigforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsquota"
          weblogic_object_name: "jmsClusterModule/QuotaBig"
@@ -995,10 +1137,6 @@ Create JMS quotas for the jms module
             - "shared           = false"
             - "policy           = 'FIFO'"
       'QuotaLowforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsquota"
          weblogic_object_name: "jmsClusterModule/QuotaLow"
@@ -1017,10 +1155,6 @@ Create JMS connection factory in a JMS module
 
     jms_module_cf_instances:
       'createJmsConnectionFactoryforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          weblogic_object_name: "cf"
@@ -1039,10 +1173,6 @@ create Error JMS object for JMS redirect of Queue and Topics
     
     jms_module_jms_errors_instances:
       'createJmsErrorQueueforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          weblogic_object_name: "ErrorQueue"
@@ -1065,10 +1195,6 @@ create JMS objects ( Queue and a Topic ) in a JMS module
 
     jms_module_jms_instances:
       'createJmsQueueforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          weblogic_object_name: "Queue1"
@@ -1086,10 +1212,6 @@ create JMS objects ( Queue and a Topic ) in a JMS module
             - "policy            = 'Redirect'"
             - "errorObject       = 'ErrorQueue'"
       'createJmsTopicforJmsModule':
-         domain_name:          *domain_1_name
-         adminserver_address:  *domain_1_adminserver_address
-         adminserver_port:     *domain_1_adminserver_port
-         weblogic_password:    *domain_1_wls_password
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          weblogic_object_name: "Topic1"
@@ -1108,5 +1230,5 @@ create JMS objects ( Queue and a Topic ) in a JMS module
             - "errorObject       = 'ErrorQueue'"
     
 
- 
+
 

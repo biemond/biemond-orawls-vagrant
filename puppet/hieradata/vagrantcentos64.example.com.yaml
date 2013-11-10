@@ -57,9 +57,13 @@ domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
 # create a standard domain
 domain_instances:
   'wlsDomain':
-     domain_template:      "standard"
-     development_mode:     false
-     log_output:           *logoutput
+     domain_template:         "standard"
+     development_mode:        false
+     log_output:              *logoutput
+#     repository_database_url: "jdbc:oracle:thin:@xxxx.alfa.local:1521/test.oracle.com"
+#     repository_prefix:       "DEV"
+#     repository_password:     "Welcome01"
+
 
 
 # create and startup the nodemanager
