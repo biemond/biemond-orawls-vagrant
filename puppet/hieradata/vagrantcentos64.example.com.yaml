@@ -10,7 +10,7 @@ orawls::weblogic::log_output:   true
 #     domain_name:          "Wls12c"
 #     development_mode:     false
 #     adminserver_name:     "AdminServer"
-#     adminserver_address:  "localhost"
+#     adminserver_address:  "10.10.10.10"
 #     adminserver_port:     7001
 #     nodemanager_port:     5556
 #     weblogic_password:    "weblogic1"
@@ -26,7 +26,7 @@ orawls::weblogic::log_output:   true
 #     server:               'AdminServer'
 #     action:               'start'
 #     weblogic_password:    "weblogic1"
-#     adminserver_address:  'localhost'
+#     adminserver_address:  '10.10.10.10'
 #     adminserver_port:     7001
 #     nodemanager_port:     5556
 #     log_output:           true
@@ -38,7 +38,7 @@ logoutput:                     &logoutput                     true
 domain_1_wls_password:        &domain_1_wls_password         "weblogic1"
 domain_1_name:                &domain_1_name                 "Wls1036"
 domain_1_adminserver:         &domain_1_adminserver          "AdminServer"
-domain_1_adminserver_address: &domain_1_adminserver_address  "localhost"
+domain_1_adminserver_address: &domain_1_adminserver_address  "10.10.10.10"
 domain_1_adminserver_port:    &domain_1_adminserver_port     7001
 domain_1_nodemanager_port:    &domain_1_nodemanager_port     5556
 
@@ -46,7 +46,7 @@ domain_1_nodemanager_port:    &domain_1_nodemanager_port     5556
 # when you have just one domain on a server
 domain_name:                "Wls1036"
 domain_adminserver:         "AdminServer"
-domain_adminserver_address: "localhost"
+domain_adminserver_address: "10.10.10.10"
 domain_adminserver_port:    7001
 domain_nodemanager_port:    5556
 domain_wls_password:        "weblogic1"
@@ -64,6 +64,11 @@ domain_instances:
 #     repository_prefix:       "DEV"
 #     repository_password:     "Welcome01"
 
+
+# copy domains to other nodes
+copy_instances:
+  'wlsDomain':
+     log_output:              *logoutput
 
 
 # create and startup the nodemanager
@@ -96,7 +101,7 @@ machines_instances:
      script:               'createMachine.py'
      params:
         - "machineName      = 'Node1'"
-        - "machineDnsName   = 'node1.alfa.local'"
+        - "machineDnsName   = '10.10.10.100'"
   'createMachine_node2':
      log_output:           *logoutput
      weblogic_type:        "machine"
@@ -104,7 +109,7 @@ machines_instances:
      script:               'createMachine.py'
      params:
         - "machineName      = 'Node2'"
-        - "machineDnsName   = 'node2.alfa.local'"
+        - "machineDnsName   = '10.10.10.200'"
 
 # create 2 managed servers and assign them to the machines
 managed_servers_instances:
@@ -117,7 +122,7 @@ managed_servers_instances:
         - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'"
         - "wlsServerName    = 'wlsServer1'"
         - "machineName      = 'Node1'"
-        - "listenAddress    = 9201"
+        - "listenAddress    = 8001"
         - "nodeMgrLogDir    = '/data/logs'"
   'wlsServer2_node2':
      log_output:           *logoutput
@@ -128,7 +133,7 @@ managed_servers_instances:
         - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
         - "wlsServerName    = 'wlsServer2'"
         - "machineName      = 'Node2'"
-        - "listenAddress    = 9201"
+        - "listenAddress    = 8002"
         - "nodeMgrLogDir    = '/data/logs'"
 
 # create cluster and assign the managed servers

@@ -5,38 +5,17 @@
 # needs jdk7, orawls, orautils, fiddyspence-sysctl, erwbgy-limits puppet modules
 #
 
-node 'vagrantcentos64.example.com' {
+node 'vagrantcentos64' {
   
-  include os,ssh,java,orawls::weblogic,orautils
-#  include opatch
-  include bsu,fmw
-  include domains,nodemanager,startwls,userconfig
-  include machines,managed_servers,clusters
-  include jms_servers,file_persistences,jms_modules,jms_module_subdeployments
-  include jms_module_quotas,jms_module_cfs,jms_module_objects_errors,jms_module_objects
+  include os,ssh,java,orawls::weblogic,orautils,copydomain,nodemanager
 
   Class['os'] ->
     Class['ssh'] ->
       Class['java'] ->
         Class['orawls::weblogic'] ->
-  #        Class['opatch_wls'] ->
-          Class['bsu'] ->
-            Class['fmw'] ->
-              Class['domains'] ->
-                Class['nodemanager'] ->
-                  Class['startwls'] ->
-                    Class['userconfig'] ->
-                      Class['machines'] ->
-                        Class['managed_servers'] ->
-                          Class['clusters'] ->
-                            Class['file_persistences'] ->
-                              Class['jms_servers'] ->
-                                Class['jms_modules'] ->
-                                  Class['jms_module_subdeployments'] ->
-                                    Class['jms_module_quotas'] ->
-                                      Class['jms_module_cfs'] ->
-                                        Class['jms_module_objects_errors'] ->
-                                          Class['jms_module_objects']
+          Class['nodemanager'] ->
+            Class['copydomain']
+
 }
 
 
@@ -113,8 +92,6 @@ class os {
 
 class ssh {
 
-  notify { 'class ssh':} 
-
   file { "/home/oracle/.ssh/":
     owner  => "oracle",
     group  => "dba",
@@ -151,6 +128,7 @@ class ssh {
   }        
 }
 
+
 class java {
 
   notify { 'class java':} 
@@ -175,37 +153,16 @@ class java {
 
 }
 
-class opatch_wls{
 
-  notify { 'class opatch_wls':} 
+class copydomain {
+
+  notify { 'class copydomain':} 
   $default_params = {}
-  $opatch_instances = hiera('opatch_instances', [])
-  create_resources('orawls::opatch',$opatch_instances, $default_params)
+  $copy_instances = hiera('copy_instances', [])
+  create_resources('orawls::copydomain',$copy_instances, $default_params)
+
 }
 
-class bsu{
-
-  notify { 'class bsu':} 
-  $default_params = {}
-  $bsu_instances = hiera('bsu_instances', [])
-  create_resources('orawls::bsu',$bsu_instances, $default_params)
-}
-
-class fmw{
-
-  notify { 'class fmw':} 
-  $default_params = {}
-  $fmw_installations = hiera('fmw_installations', [])
-  create_resources('orawls::fmw',$fmw_installations, $default_params)
-}
-
-class domains{
-
-  notify { 'class wls':} 
-  $default_params = {}
-  $domain_instances = hiera('domain_instances', [])
-  create_resources('orawls::domain',$domain_instances, $default_params)
-}
 
 class nodemanager {
 
@@ -213,116 +170,4 @@ class nodemanager {
   $default_params = {}
   $nodemanager_instances = hiera('nodemanager_instances', [])
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
-}
-
-class startwls {
-
-  notify { 'class startwls':} 
-  $default_params = {}
-  $control_instances = hiera('control_instances', [])
-  create_resources('orawls::control',$control_instances, $default_params)
-}
-
-class userconfig{
-
-  notify { 'class userconfig':} 
-  $default_params = {}
-  $userconfig_instances = hiera('userconfig_instances', [])
-  create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
-}	
-
-class machines{
-
-  notify { 'class machines':} 
-  $default_params = {}
-  $machines_instances = hiera('machines_instances', [])
-  create_resources('orawls::wlstexec',$machines_instances, $default_params)
-}
-
-class managed_servers{
-
-  notify { 'class managed_servers':} 
-  $default_params = {}
-  $managed_servers_instances = hiera('managed_servers_instances', [])
-  create_resources('orawls::wlstexec',$managed_servers_instances, $default_params)
-}
-
-class clusters{
-
-  notify { 'class clusters':} 
-  $default_params = {}
-  $cluster_instances = hiera('cluster_instances', [])
-  create_resources('orawls::wlstexec',$cluster_instances, $default_params)
-}
-
-class file_persistences {
-
-  notify { 'class file_persistences':} 
-  $default_params = {}
-  $file_persistence_instances = hiera('file_persistence_instances', [])
-  create_resources('orawls::wlstexec',$file_persistence_instances, $default_params)
-
-}
-
-class jms_servers{
-
-  notify { 'class jms_servers':} 
-  $default_params = {}
-  $jms_servers_instances = hiera('jms_servers_instances', [])
-  create_resources('orawls::wlstexec',$jms_servers_instances, $default_params)
-
-}
-
-class jms_modules{
-
-  notify { 'class jms_modules':} 
-  $default_params = {}
-  $jms_module_instances = hiera('jms_module_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_instances, $default_params)
-
-}
-
-class jms_module_subdeployments{
-
-  notify { 'class jms_module_subdeployments':} 
-  $default_params = {}
-  $jms_module_subdeployments_instances = hiera('jms_module_subdeployments_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_subdeployments_instances, $default_params)
-
-}
-class jms_module_quotas{
-
-  notify { 'class jms_module_quotas':} 
-  $default_params = {}
-  $jms_module_quotas_instances = hiera('jms_module_quotas_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_quotas_instances, $default_params)
-
-}
-
-class jms_module_cfs{
-
-  notify { 'class jms_module_cfs':} 
-  $default_params = {}
-  $jms_module_cf_instances = hiera('jms_module_cf_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_cf_instances, $default_params)
-
-}
-
-class jms_module_objects_errors{
-
-  notify { 'class jms_module_objects_errors':} 
-  $default_params = {}
-  $jms_module_jms_errors_instances = hiera('jms_module_jms_errors_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_jms_errors_instances, $default_params)
-
-}
-
-
-class jms_module_objects{
-
-  notify { 'class jms_module_objects':} 
-  $default_params = {}
-  $jms_module_jms_instances = hiera('jms_module_jms_instances', [])
-  create_resources('orawls::wlstexec',$jms_module_jms_instances, $default_params)
-
 }

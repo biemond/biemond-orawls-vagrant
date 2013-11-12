@@ -5,133 +5,115 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # All Vagrant configuration is done here. The most common configuration
-  # options are documented and commented below. For a complete reference,
-  # please see the online documentation at vagrantup.com.
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "centos64"
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  config.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.hostname = "vagrantcentos64.example.com"
-  config.vm.network :forwarded_port, guest: 80, host: 8888
-  config.vm.network :forwarded_port, guest: 7001, host: 7001
-
-  config.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network :private_network, ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network :public_network
-
-  # If true, then any SSH connections made will enable agent forwarding.
-  # Default value: false
-  # config.ssh.forward_agent = true
-
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  config.vm.provider :virtualbox do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "4096"]
-
-  end
-  #
-  # View the documentation for the provider you're using for more
-  # information on available options.
-
-  # Enable provisioning with Puppet stand alone.  Puppet manifests
-  # are contained in a directory path relative to this Vagrantfile.
-  # You will need to create the manifests directory and a manifest in
-  # the file base.pp in the manifests_path directory.
-  #
-  # An example Puppet manifest to provision the message of the day:
-  #
-  # # group { "puppet":
-  # #   ensure => "present",
-  # # }
-  # #
-  # # File { owner => 0, group => 0, mode => 0644 }
-  # #
-  # # file { '/etc/motd':
-  # #   content => "Welcome to your Vagrant-built virtual machine!
-  # #               Managed by Puppet.\n"
-  # # }
-  #
-  config.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+  config.vm.define "admin" , primary: true do |admin|
+    admin.vm.box = "centos64"
+    admin.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
   
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path    = "puppet/manifests"
-    puppet.module_path       = "puppet/modules"
-    puppet.manifest_file     = "site.pp"
-#    puppet.options           = "--verbose --debug --hiera_config /vagrant/puppet/hiera.yaml"
-    puppet.options           = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
-
-    # custom facts provided to Puppet
-    # turn on/off vm_type variable to see different behaviour
-    puppet.facter = {
-      "environment" => "development",
-      "vm_type"     => "vagrant",
-    }
-
+    admin.vm.hostname = "vagrantcentos64.example.com"
+    admin.vm.network :forwarded_port, guest: 80, host: 8888
+    admin.vm.network :forwarded_port, guest: 7001, host: 7001
+  
+    admin.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+  
+    admin.vm.network :private_network, ip: "10.10.10.10"
+  
+    # admin.vm.network :public_network
+    # admin.ssh.forward_agent = true
+    # admin.vm.synced_folder "../data", "/vagrant_data"
+  
+    admin.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2548"]
+    end
+  
+    admin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
     
+    admin.vm.provision :puppet do |puppet|
+      puppet.manifests_path    = "puppet/manifests"
+      puppet.module_path       = "puppet/modules"
+      puppet.manifest_file     = "site.pp"
+      puppet.options           = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
+  
+      puppet.facter = {
+        "environment" => "development",
+        "vm_type"     => "vagrant",
+      }
+      
+    end
+  
+  end
+  
+  config.vm.define "node1" do |node1|
+    node1.vm.box = "centos64"
+    node1.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
+  
+    node1.vm.hostname = "vagrantcentos64.example.com"
+    node1.vm.network :forwarded_port, guest: 8002, host: 8002
+  
+    node1.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+  
+    node1.vm.network :private_network, ip: "10.10.10.100"
+  
+    # node1.vm.network :public_network
+    # node1.ssh.forward_agent = true
+    # node1.vm.synced_folder "../data", "/vagrant_data"
+  
+    node1.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2548"]
+    end
+  
+    node1.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+    
+    node1.vm.provision :puppet do |puppet|
+      puppet.manifests_path    = "puppet/manifests"
+      puppet.module_path       = "puppet/modules"
+      puppet.manifest_file     = "node.pp"
+      puppet.options           = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
+  
+      puppet.facter = {
+        "environment" => "development",
+        "vm_type"     => "vagrant",
+      }
+      
+    end
+
   end
 
-  # Enable provisioning with chef solo, specifying a cookbooks path, roles
-  # path, and data_bags path (all relative to this Vagrantfile), and adding
-  # some recipes and/or roles.
-  #
-  # config.vm.provision :chef_solo do |chef|
-  #   chef.cookbooks_path = "../my-recipes/cookbooks"
-  #   chef.roles_path = "../my-recipes/roles"
-  #   chef.data_bags_path = "../my-recipes/data_bags"
-  #   chef.add_recipe "mysql"
-  #   chef.add_role "web"
-  #
-  #   # You may also specify custom JSON attributes:
-  #   chef.json = { :mysql_password => "foo" }
-  # end
+  config.vm.define "node2" do |node2|
+    node2.vm.box = "centos64"
+    node2.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
+  
+    node2.vm.hostname = "vagrantcentos64.example.com"
+    node2.vm.network :forwarded_port, guest: 8001, host: 8001
+  
+    node2.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=777","fmode=777"]
+  
+    node2.vm.network :private_network, ip: "10.10.10.200"
+  
+    # node2.vm.network :public_network
+    # node2.ssh.forward_agent = true
+    # node2.vm.synced_folder "../data", "/vagrant_data"
+  
+    node2.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2548"]
+    end
+  
+    node2.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+    
+    node2.vm.provision :puppet do |puppet|
+      puppet.manifests_path    = "puppet/manifests"
+      puppet.module_path       = "puppet/modules"
+      puppet.manifest_file     = "node.pp"
+      puppet.options           = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
+  
+      puppet.facter = {
+        "environment" => "development",
+        "vm_type"     => "vagrant",
+      }
+      
+    end
 
-  # Enable provisioning with chef server, specifying the chef server URL,
-  # and the path to the validation key (relative to this Vagrantfile).
-  #
-  # The Opscode Platform uses HTTPS. Substitute your organization for
-  # ORGNAME in the URL and validation key.
-  #
-  # If you have your own Chef Server, use the appropriate URL, which may be
-  # HTTP instead of HTTPS depending on your configuration. Also change the
-  # validation key to validation.pem.
-  #
-  # config.vm.provision :chef_client do |chef|
-  #   chef.chef_server_url = "https://api.opscode.com/organizations/ORGNAME"
-  #   chef.validation_key_path = "ORGNAME-validator.pem"
-  # end
-  #
-  # If you're using the Opscode platform, your validator client is
-  # ORGNAME-validator, replacing ORGNAME with your organization name.
-  #
-  # If you have your own Chef Server, the default validation client name is
-  # chef-validator, unless you changed the configuration.
-  #
-  #   chef.validation_client_name = "ORGNAME-validator"
+  end
+
+
 end
