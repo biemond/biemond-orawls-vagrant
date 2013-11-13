@@ -21,7 +21,7 @@ domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
 domain_instances:
   'wlsDomain':
      domain_template:          "standard"
-     development_mode:         true
+     development_mode:         false
      log_output:               *logoutput
 #     repository_database_url: "jdbc:oracle:thin:@xxxx.alfa.local:1521/test.oracle.com"
 #     repository_prefix:       "DEV"
@@ -107,24 +107,26 @@ cluster_instances:
 
 # create filepersistence location for the jms servers
 file_persistence_instances:
-  'filePersistenceNode1':
-     log_output:           *logoutput
-     weblogic_type:        "filestore"
-     weblogic_object_name: "jmsFilePersistenceNode1"
-     script:               'createFilePersistenceStore.py'
-     params:
-        - "fileStoreName    = 'jmsFilePersistenceNode1'"
-        - "target           = 'wlsServer1'"
-        - "targetType       = 'Server'"
-  'filePersistenceNode2':
-     log_output:           *logoutput
-     weblogic_type:        "filestore"
-     weblogic_object_name: "jmsFilePersistenceNode2"
-     script:               'createFilePersistenceStore.py'
-     params:
-        - "fileStoreName    = 'jmsFilePersistenceNode2'"
-        - "target           = 'wlsServer2'"
-        - "targetType       = 'Server'"
+#  'filePersistenceNode1':
+#     log_output:           *logoutput
+#     weblogic_type:        "filestore"
+#     weblogic_object_name: "jmsFilePersistenceNode1"
+#     script:               'createFilePersistenceStore.py'
+#     params:
+#        - "fileStoreName    = 'jmsFilePersistenceNode1'"
+#        - "target           = 'wlsServer1'"
+#        - "targetType       = 'Server'"
+#  'filePersistenceNode2':
+#     log_output:           *logoutput
+#     weblogic_type:        "filestore"
+#     weblogic_object_name: "jmsFilePersistenceNode2"
+#     script:               'createFilePersistenceStore.py'
+#     params:
+#        - "fileStoreName    = 'jmsFilePersistenceNode2'"
+#        - "target           = 'wlsServer2'"
+#        - "targetType       = 'Server'"
+#
+
 
 # create jms servers with a server,file persistence target
 jms_servers_instances:
@@ -134,10 +136,10 @@ jms_servers_instances:
      weblogic_object_name: "jmsServer1"
      script:               'createJmsServer.py'
      params:
-        - "storeName        = 'jmsFilePersistenceNode1'"
+#        - "storeName        = 'jmsFilePersistenceNode1'"
         - "target           = 'wlsServer1'"
         - "targetType       = 'Server'"
-        - "storeType        = 'file'"
+#        - "storeType        = 'file'"
         - "jmsServerName    = 'jmsServer1'"
   'jmsServerNode2':
      log_output:           *logoutput
@@ -145,10 +147,10 @@ jms_servers_instances:
      weblogic_object_name: "jmsServer2"
      script:               'createJmsServer.py'
      params:
-        - "storeName        = 'jmsFilePersistenceNode2'"
+#        - "storeName        = 'jmsFilePersistenceNode2'"
         - "target           = 'wlsServer2'"
         - "targetType       = 'Server'"
-        - "storeType        = 'file'"
+#        - "storeType        = 'file'"
         - "jmsServerName    = 'jmsServer2'"
 
 #
