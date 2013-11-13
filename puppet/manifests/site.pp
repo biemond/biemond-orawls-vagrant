@@ -13,6 +13,7 @@ node 'admin.example.com' {
   include machines,managed_servers,clusters
   include jms_servers,file_persistences,jms_modules,jms_module_subdeployments
   include jms_module_quotas,jms_module_cfs,jms_module_objects_errors,jms_module_objects
+  include pack_domain
 
   Class['os'] ->
     Class['ssh'] ->
@@ -34,7 +35,8 @@ node 'admin.example.com' {
                                     Class['jms_module_quotas'] ->
                                       Class['jms_module_cfs'] ->
                                         Class['jms_module_objects_errors'] ->
-                                          Class['jms_module_objects']
+                                          Class['jms_module_objects'] ->
+                                            Class['pack_domain']
 }
 
 
@@ -326,4 +328,14 @@ class jms_module_objects{
   $jms_module_jms_instances = hiera('jms_module_jms_instances', [])
   create_resources('orawls::wlstexec',$jms_module_jms_instances, $default_params)
 
+}
+
+class pack_domain{
+
+  notify { 'class pack_domain':} 
+  $default_params = {}
+  $pack_domain_instances = hiera('pack_domain_instances', [])
+  create_resources('orawls::packdomain',$pack_domain_instances, $default_params)
+
+	
 }

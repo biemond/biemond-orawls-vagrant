@@ -21,7 +21,7 @@ domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
 domain_instances:
   'wlsDomain':
      domain_template:          "standard"
-     development_mode:         true
+     development_mode:         false
      log_output:               *logoutput
 #     repository_database_url: "jdbc:oracle:thin:@xxxx.alfa.local:1521/test.oracle.com"
 #     repository_prefix:       "DEV"
@@ -284,3 +284,10 @@ jms_module_jms_instances:
         - "limit             = '3'"
         - "policy            = 'Redirect'"
         - "errorObject       = 'ErrorQueue'"
+
+
+
+# pack domains
+pack_domain_instances:
+  'wlsDomain':
+     log_output:               *logoutput
