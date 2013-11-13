@@ -5,10 +5,9 @@
 # needs jdk7, orawls, orautils, fiddyspence-sysctl, erwbgy-limits puppet modules
 #
 
-node 'vagrantcentos64.example.com' {
+node 'admin.example.com' {
   
   include os,ssh,java,orawls::weblogic,orautils
-#  include opatch
   include bsu,fmw
   include domains,nodemanager,startwls,userconfig
   include machines,managed_servers,clusters
@@ -19,7 +18,6 @@ node 'vagrantcentos64.example.com' {
     Class['ssh'] ->
       Class['java'] ->
         Class['orawls::weblogic'] ->
-  #        Class['opatch_wls'] ->
           Class['bsu'] ->
             Class['fmw'] ->
               Class['domains'] ->
@@ -45,6 +43,16 @@ node 'vagrantcentos64.example.com' {
 class os {
 
   notify { "class os ${operatingsystem}":} 
+
+  host{"node1":
+    ip => "10.10.10.100",
+    host_aliases => ['node1.example.com','node1'],
+  }
+
+  host{"node2":
+    ip => "10.10.10.200",
+    host_aliases => ['node2.example.com','node2'],
+  }
 
   exec { "create swap file":
     command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",
@@ -175,13 +183,6 @@ class java {
 
 }
 
-class opatch_wls{
-
-  notify { 'class opatch_wls':} 
-  $default_params = {}
-  $opatch_instances = hiera('opatch_instances', [])
-  create_resources('orawls::opatch',$opatch_instances, $default_params)
-}
 
 class bsu{
 

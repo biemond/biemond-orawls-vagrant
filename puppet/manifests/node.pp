@@ -5,7 +5,7 @@
 # needs jdk7, orawls, orautils, fiddyspence-sysctl, erwbgy-limits puppet modules
 #
 
-node 'vagrantcentos64' {
+node 'node1.example.com' {
   
   include os,ssh,java,orawls::weblogic,orautils,copydomain,nodemanager
 
@@ -24,6 +24,12 @@ node 'vagrantcentos64' {
 class os {
 
   notify { "class os ${operatingsystem}":} 
+
+  host{"admin":
+    ip => "10.10.10.10",
+    host_aliases => ['admin.example.com','admin'],
+  }
+
 
   exec { "create swap file":
     command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",

@@ -1,47 +1,10 @@
 ---
-messageEnv: 'vagrant64'
+messageEnv: 'admin'
 
 orawls::weblogic::log_output:   true
 
-###### weblogic 12.1.2
-#domain_instances:
-#  'wlsDomain':
-#     domain_template:      "standard"
-#     domain_name:          "Wls12c"
-#     development_mode:     false
-#     adminserver_name:     "AdminServer"
-#     adminserver_address:  "10.10.10.10"
-#     adminserver_port:     7001
-#     nodemanager_port:     5556
-#     weblogic_password:    "weblogic1"
-#     log_output:           true
-#
-
-#control_instances:
-#  'startWLSAdminServer':
-#     domain_name:          "Wls12c"
-#     domain_dir:           "/opt/oracle/middleware12c/user_projects/domains/Wls12c"
-#     server_type:          'admin'
-#     target:               'Server'
-#     server:               'AdminServer'
-#     action:               'start'
-#     weblogic_password:    "weblogic1"
-#     adminserver_address:  '10.10.10.10'
-#     adminserver_port:     7001
-#     nodemanager_port:     5556
-#     log_output:           true
-#
 
 logoutput:                     &logoutput                     true
-
-# when you have more than one domain on a server
-domain_1_wls_password:        &domain_1_wls_password         "weblogic1"
-domain_1_name:                &domain_1_name                 "Wls1036"
-domain_1_adminserver:         &domain_1_adminserver          "AdminServer"
-domain_1_adminserver_address: &domain_1_adminserver_address  "10.10.10.10"
-domain_1_adminserver_port:    &domain_1_adminserver_port     7001
-domain_1_nodemanager_port:    &domain_1_nodemanager_port     5556
-
 
 # when you have just one domain on a server
 domain_name:                "Wls1036"
@@ -64,11 +27,6 @@ domain_instances:
 #     repository_prefix:       "DEV"
 #     repository_password:     "Welcome01"
 
-
-# copy domains to other nodes
-copy_instances:
-  'wlsDomain':
-     log_output:              *logoutput
 
 
 # create and startup the nodemanager
@@ -133,7 +91,7 @@ managed_servers_instances:
         - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
         - "wlsServerName    = 'wlsServer2'"
         - "machineName      = 'Node2'"
-        - "listenAddress    = 8002"
+        - "listenAddress    = 8001"
         - "nodeMgrLogDir    = '/data/logs'"
 
 # create cluster and assign the managed servers
