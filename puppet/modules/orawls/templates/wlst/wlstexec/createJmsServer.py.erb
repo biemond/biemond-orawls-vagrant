@@ -35,7 +35,7 @@ try:
     elif storeType == "jdbc":
         cmo.setPersistentStore(getMBean('/JDBCStores/'+storeName))
     else:
-      print "default persistence"  
+        print "default persistence"  
 
     set('Targets', jarray.array([ObjectName('com.bea:Name='+target+',Type='+targetType)], ObjectName))
 

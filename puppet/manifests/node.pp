@@ -5,16 +5,17 @@
 # needs jdk7, orawls, orautils, fiddyspence-sysctl, erwbgy-limits puppet modules
 #
 
-node 'node1.example.com' {
+node 'node1.example.com', 'node2.example.com' {
   
-  include os,ssh,java,orawls::weblogic,orautils,copydomain,nodemanager
+  include os,ssh,java,orawls::weblogic,bsu,orautils,copydomain,nodemanager
 
   Class['os'] ->
     Class['ssh'] ->
       Class['java'] ->
         Class['orawls::weblogic'] ->
-          Class['nodemanager'] ->
-            Class['copydomain']
+          Class['bsu'] ->
+            Class['nodemanager'] ->
+              Class['copydomain']
 
 }
 
@@ -159,6 +160,13 @@ class java {
 
 }
 
+class bsu{
+
+  notify { 'class bsu':} 
+  $default_params = {}
+  $bsu_instances = hiera('bsu_instances', [])
+  create_resources('orawls::bsu',$bsu_instances, $default_params)
+}
 
 class copydomain {
 

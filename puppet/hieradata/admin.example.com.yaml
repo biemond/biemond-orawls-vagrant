@@ -77,7 +77,7 @@ managed_servers_instances:
      weblogic_object_name: "wlsServer1"
      script:               'createServer.py'
      params:
-        - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'"
+        - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'"
         - "wlsServerName    = 'wlsServer1'"
         - "machineName      = 'Node1'"
         - "listenAddress    = 8001"
@@ -88,7 +88,7 @@ managed_servers_instances:
      weblogic_object_name: "wlsServer2"
      script:               'createServer.py'
      params:
-        - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
+        - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
         - "wlsServerName    = 'wlsServer2'"
         - "machineName      = 'Node2'"
         - "listenAddress    = 8001"
