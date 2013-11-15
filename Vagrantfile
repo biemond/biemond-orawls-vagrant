@@ -24,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # admin.vm.synced_folder "../data", "/vagrant_data"
   
     admin.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "1532"]
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
       vb.customize ["modifyvm", :id, "--name", "admin"]
     end
   
