@@ -1,11 +1,11 @@
-vagrant-wls12c-centos64
+biemond-orawls-vagrant
 =======================
 
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux and the use of Hiera  
 
 
-creates a patched 10.3.6 WebLogic cluster 
+creates a patched 10.3.6 WebLogic cluster ( admin,node1 , node2 )
 
 
 site.pp is located here:  
@@ -23,6 +23,9 @@ weblogic 10.3.6
 - ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip
 - ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip
 - ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip
+
+
+Should also work for WebLogic 12.1.2
 
 weblogic 12.1.2
 - wls_121200.jar or fmw_infra_121200.jar

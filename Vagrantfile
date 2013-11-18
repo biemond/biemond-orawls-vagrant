@@ -7,9 +7,8 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "admin" , primary: true do |admin|
-    admin.vm.box = "centos64-432r90405"
-    #admin.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
-    admin.vm.box_url = "https://dl.dropboxusercontent.com/s/09fvyojquq615ai/centos64-432r90405.box"
+    admin.vm.box = "centos-6.4-x86_64"
+    admin.vm.box_url = "https://dl.dropboxusercontent.com/s/yg9ceak6zd86wk7/centos-6.4-x86_64.box"
 
     admin.vm.hostname = "admin.example.com"
     # admin.vm.network :forwarded_port, guest: 80, host: 8888 ,auto_correct: true
@@ -46,9 +45,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   config.vm.define "node1" do |node1|
-    node1.vm.box = "centos64-432r90405"
-    #node1.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
-    node1.vm.box_url = "https://dl.dropboxusercontent.com/s/09fvyojquq615ai/centos64-432r90405.box"
+
+    node1.vm.box = "centos-6.4-x86_64"
+    node1.vm.box_url = "https://dl.dropboxusercontent.com/s/yg9ceak6zd86wk7/centos-6.4-x86_64.box"
   
     node1.vm.hostname = "node1.example.com"
     #node1.vm.network :forwarded_port, guest: 8002, host: 8002, auto_correct: true
@@ -84,10 +83,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "node2" do |node2|
-    node2.vm.box = "centos64-432r90405"
-    #node2.vm.box_url = "https://dl.dropboxusercontent.com/u/97268835/boxes/centos64.box"
-    node2.vm.box_url = "https://dl.dropboxusercontent.com/s/09fvyojquq615ai/centos64-432r90405.box"
-  
+
+    node2.vm.box = "centos-6.4-x86_64"
+    node2.vm.box_url = "https://dl.dropboxusercontent.com/s/yg9ceak6zd86wk7/centos-6.4-x86_64.box"
+
     node2.vm.hostname = "node2.example.com"
     #node2.vm.network :forwarded_port, guest: 8001, host: 8001
   
