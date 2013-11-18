@@ -58,7 +58,7 @@ class orawls::weblogic (
       $mountPoint = $source
     }
 
-    orawls::utils::structure{'weblogic structure ${version}':
+    orawls::utils::structure{"weblogic structure ${version}":
       oracle_base_home_dir => $oracle_base_home_dir,
       ora_inventory_dir    => $ora_inventory_dir,
       os_user              => $os_user,
@@ -76,7 +76,7 @@ class orawls::weblogic (
       mode    => 0775,
       owner   => $os_user,
       group   => $os_group,
-      require => Orawls::Utils::Structure['weblogic structure ${version}'],
+      require => Orawls::Utils::Structure["weblogic structure ${version}"],
     }
 
     # de xml used by the wls installer
@@ -88,12 +88,12 @@ class orawls::weblogic (
       owner   => $os_user,
       group   => $os_group,
       backup  => false,
-      require => Orawls::Utils::Structure['weblogic structure ${version}'],
+      require => Orawls::Utils::Structure["weblogic structure ${version}"],
     }
 
     if ($version == 1212) {
       # only necessary for WebLogic >= 1212
-      orawls::utils::orainst{'weblogic orainst ${version}':
+      orawls::utils::orainst{"weblogic orainst ${version}":
         ora_inventory_dir => $ora_inventory_dir,
         os_group          => $os_group,
       }
@@ -106,8 +106,8 @@ class orawls::weblogic (
         path        => $exec_path,
         user        => $os_user,
         group       => $os_group,
-        require     => [Orawls::Utils::Structure['weblogic structure ${version}'],
-                        Orawls::Utils::Orainst['weblogic orainst ${version}'],
+        require     => [Orawls::Utils::Structure["weblogic structure ${version}"],
+                        Orawls::Utils::Orainst["weblogic orainst ${version}"],
                         File["${download_dir}/${filename}"],
                         File["${download_dir}/weblogic_silent_install.xml"]],
       }
@@ -121,7 +121,7 @@ class orawls::weblogic (
         path        => $exec_path,
         user        => $os_user,
         group       => $os_group,
-        require     => [Orawls::Utils::Structure['weblogic structure ${version}'],
+        require     => [Orawls::Utils::Structure["weblogic structure ${version}"],
                         File["${download_dir}/${filename}"],
                         File["${download_dir}/weblogic_silent_install.xml"]],
       }
