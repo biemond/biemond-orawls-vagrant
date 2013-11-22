@@ -8,9 +8,12 @@ portNumber = '<%= @adminserver_port %>'
 user_config = '<%= @userConfigFile %>'
 user_key    = '<%= @userKeyFile %>' 
                      
-jmsQuota   = ""                     
-                                
-#subDeploymentName, jmsModuleName, jmsName,jmsJNDIName,jmsType,distributed,balancingPolicy,useRedirect,limit,policy,errorObject,jmsQuota
+jmsQuota            = ""                     
+subDeploymentName   = ""                     
+timeToLive          = ""
+
+
+#subDeploymentName, jmsModuleName, jmsName,jmsJNDIName,jmsType,distributed,balancingPolicy,useRedirect,limit,policy,errorObject,jmsQuota,timeToLive
 <% @params.each do |param| -%>   
 <%= param %>                    
 <% end -%>                      
@@ -50,7 +53,9 @@ try:
      
     cd('/JMSSystemResources/'+jmsModuleName+'/JMSResource/'+jmsModuleName+jmsWlsType+jmsName)
     cmo.setJNDIName(jmsJNDIName)
-    cmo.setSubDeploymentName(subDeploymentName)
+
+    if subDeploymentName:
+      cmo.setSubDeploymentName(subDeploymentName)
 
     print "distributed: ",distributed
     if distributed == "true" and jmsType == "queue":
@@ -64,6 +69,10 @@ try:
       cmo.setRedeliveryLimit( int(limit) )
       cmo.setExpirationPolicy(policy)
       cmo.setErrorDestination(getMBean('/JMSSystemResources/'+jmsModuleName+'/JMSResource/'+jmsModuleName+'/UniformDistributedQueues/'+errorObject))
+
+    if timeToLive:
+      cd('/JMSSystemResources/'+jmsModuleName+'/JMSResource/'+jmsModuleName+jmsWlsType+jmsName+'/DeliveryParamsOverrides/'+jmsName)
+      cmo.setTimeToLive(timeToLive)                                
 
     if jmsQuota:
       cd('/JMSSystemResources/'+jmsModuleName+'/JMSResource/'+jmsModuleName+jmsWlsType+jmsName)

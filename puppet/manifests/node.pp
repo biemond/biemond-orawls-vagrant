@@ -7,19 +7,10 @@
 
 node 'node1.example.com', 'node2.example.com' {
   
-  include os,ssh,java,orawls::weblogic,bsu,orautils,copydomain,nodemanager
+  include os, ssh, java, orawls::weblogic, bsu, orautils, copydomain, nodemanager
 
-  Class['os'] ->
-    Class['ssh'] ->
-      Class['java'] ->
-        Class['orawls::weblogic'] ->
-          Class['bsu'] ->
-            Class['nodemanager'] ->
-              Class['copydomain']
-
+  Class['java'] -> Class['orawls::weblogic'] 
 }
-
-
 
 # operating settings for Middleware
 class os {
@@ -28,9 +19,8 @@ class os {
 
   host{"admin":
     ip => "10.10.10.10",
-    host_aliases => ['admin.example.com','admin'],
+    host_aliases => ['admin.infoplus.nl','admin'],
   }
-
 
   exec { "create swap file":
     command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",
@@ -75,7 +65,6 @@ class os {
 
   $install = [ 'binutils.x86_64','unzip.x86_64']
 
-
   package { $install:
     ensure  => present,
   }
@@ -108,10 +97,10 @@ class os {
   sysctl { 'net.core.rmem_max':             ensure => 'present', permanent => 'yes', value => '4194304', }
   sysctl { 'net.core.wmem_default':         ensure => 'present', permanent => 'yes', value => '262144',}
   sysctl { 'net.core.wmem_max':             ensure => 'present', permanent => 'yes', value => '1048576',}
-
 }
 
 class ssh {
+  require os
 
   file { "/home/oracle/.ssh/":
     owner  => "oracle",
@@ -151,6 +140,7 @@ class ssh {
 
 
 class java {
+  require os
 
   notify { 'class java':} 
 
@@ -174,7 +164,8 @@ class java {
 
 }
 
-class bsu{
+class bsu {
+  require orawls::weblogic
 
   notify { 'class bsu':} 
   $default_params = {}
@@ -183,6 +174,8 @@ class bsu{
 }
 
 class copydomain {
+  require orawls::weblogic, bsu
+
 
   notify { 'class copydomain':} 
   $default_params = {}
@@ -193,6 +186,7 @@ class copydomain {
 
 
 class nodemanager {
+  require orawls::weblogic, bsu, copydomain
 
   notify { 'class nodemanager':} 
   $default_params = {}
