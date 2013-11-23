@@ -4,22 +4,20 @@ logoutput:                     &logoutput                     true
 # create 2 managed servers and assign them to the machines
 managed_servers_instances:
    - clusterOne:
-      'wlsServer1_node1':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "server"
-         weblogic_object_name: "wlsServer1"
          script:               'createServer.py'
+      wlsServer1_node1:
+         weblogic_object_name: "wlsServer1"
          params:
             - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'"
             - "wlsServerName    = 'wlsServer1'"
             - "machineName      = 'Node1'"
             - "listenAddress    = 8001"
             - "nodeMgrLogDir    = '/data/logs'"
-      'wlsServer2_node2':
-         log_output:           *logoutput
-         weblogic_type:        "server"
+      wlsServer2_node2:
          weblogic_object_name: "wlsServer2"
-         script:               'createServer.py'
          params:
             - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
             - "wlsServerName    = 'wlsServer2'"
@@ -27,15 +25,15 @@ managed_servers_instances:
             - "listenAddress    = 8001"
             - "nodeMgrLogDir    = '/data/logs'"
 
-
 # create cluster and assign the managed servers
 cluster_instances:
    - clusterOne:
-      'cluster_web':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "cluster"
-         weblogic_object_name: "WebCluster"
          script:               'createCluster.py'
+      cluster_web:
+         weblogic_object_name: "WebCluster"
          params:
             - "clusterName      = 'WebCluster'"
             - "clusterNodes     = 'wlsServer1,wlsServer2'"
@@ -44,20 +42,18 @@ cluster_instances:
 # create jms servers with a server,file persistence target
 jms_servers_instances:
    - clusterOne:
-      'jmsServerNode1':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsserver"
-         weblogic_object_name: "jmsServer1"
          script:               'createJmsServer.py'
+      jmsServerNode1:
+         weblogic_object_name: "jmsServer1"
          params:
             - "target           = 'wlsServer1'"
             - "targetType       = 'Server'"
             - "jmsServerName    = 'jmsServer1'"
-      'jmsServerNode2':
-         log_output:           *logoutput
-         weblogic_type:        "jmsserver"
+      jmsServerNode2:
          weblogic_object_name: "jmsServer2"
-         script:               'createJmsServer.py'
          params:
             - "target           = 'wlsServer2'"
             - "targetType       = 'Server'"
@@ -67,11 +63,12 @@ jms_servers_instances:
 # create jms module for cluster 
 jms_module_instances:
    - clusterOne:
-      'jmsClusterModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsmodule"
-         weblogic_object_name: "jmsClusterModule"
          script:               'createJmsModule.py'
+      jmsClusterModule:
+         weblogic_object_name: "jmsClusterModule"
          params:
             - "target           = 'WebCluster'"
             - "targetType       = 'Cluster'"
@@ -80,21 +77,19 @@ jms_module_instances:
 # create jms subdeployment for the jms module 
 jms_module_subdeployments_instances:
    - clusterOne:
-      'SubDeploymentWLSforJmsModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmssubdeployment"
-         weblogic_object_name: "jmsClusterModule/wlsServers"
          script:               'createJmsSubDeployment.py'
+      SubDeploymentWLSforJmsModule:
+         weblogic_object_name: "jmsClusterModule/wlsServers"
          params:
             - "target           = 'WebCluster'"
             - "targetType       = 'Cluster'"
             - "subName          = 'wlsServers'"
             - "jmsModuleName    = 'jmsClusterModule'"
-      'SubDeploymentJMSforJmsModule':
-         log_output:           *logoutput
-         weblogic_type:        "jmssubdeployment"
+      SubDeploymentJMSforJmsModule:
          weblogic_object_name: "jmsClusterModule/jmsServers"
-         script:               'createJmsSubDeployment.py'
          params:
             - "target           = 'jmsServer1,jmsServer2'"
             - "targetType       = 'JMSServer'"
@@ -104,11 +99,12 @@ jms_module_subdeployments_instances:
 # create jms quotas for the jms module 
 jms_module_quotas_instances:
    - clusterOne:
-      'QuotaBigforJmsModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsquota"
-         weblogic_object_name: "jmsClusterModule/QuotaBig"
          script:               'createJmsQuota.py'
+      QuotaBigforJmsModule:
+         weblogic_object_name: "jmsClusterModule/QuotaBig"
          params:
             - "jmsQuotaName     = 'QuotaBig'"
             - "bytesMaximum     = 9223372036854775807"
@@ -116,11 +112,8 @@ jms_module_quotas_instances:
             - "jmsModuleName    = 'jmsClusterModule'"
             - "shared           = false"
             - "policy           = 'FIFO'"
-      'QuotaLowforJmsModule':
-         log_output:           *logoutput
-         weblogic_type:        "jmsquota"
+      QuotaLowforJmsModule:
          weblogic_object_name: "jmsClusterModule/QuotaLow"
-         script:               'createJmsQuota.py'
          params:
             - "jmsQuotaName     = 'QuotaLow'"
             - "bytesMaximum     = 10000000000"
@@ -132,11 +125,12 @@ jms_module_quotas_instances:
 # create jms connection factory for jms module  
 jms_module_cf_instances:
    - clusterOne:
-      'createJmsConnectionFactoryforJmsModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
-         weblogic_object_name: "cf"
          script:               'createJmsConnectionFactory.py'
+      createJmsConnectionFactoryforJmsModule:
+         weblogic_object_name: "cf"
          params:
             - "subDeploymentName = 'wlsServers'"
             - "jmsModuleName     = 'jmsClusterModule'"
@@ -147,11 +141,12 @@ jms_module_cf_instances:
 
 jms_module_jms_errors_instances:
    - clusterOne:
-      'createJmsErrorQueueforJmsModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
-         weblogic_object_name: "ErrorQueue"
          script:               'createJmsQueueOrTopic.py'
+      createJmsErrorQueueforJmsModule:
+         weblogic_object_name: "ErrorQueue"
          params:
             - "subDeploymentName = 'jmsServers'"
             - "jmsModuleName     = 'jmsClusterModule'"
@@ -168,38 +163,28 @@ jms_module_jms_errors_instances:
 # create jms objects for jms module  
 jms_module_jms_instances:
    - clusterOne:
-      'createJmsQueueforJmsModule':
+      global_parameters:
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
-         weblogic_object_name: "Queue1"
          script:               'createJmsQueueOrTopic.py'
          params:
             - "subDeploymentName = 'jmsServers'"
             - "jmsModuleName     = 'jmsClusterModule'"
+            - "distributed       = 'true'"
+            - "balancingPolicy   = 'Round-Robin'"
+            - "useRedirect       = 'true'"
+            - "limit             = '3'"
+            - "policy            = 'Redirect'"
+            - "errorObject       = 'ErrorQueue'"
+      createJmsQueueforJmsModule:
+         weblogic_object_name: "Queue1"
+         params:
+            - "jmsType           = 'queue'"
             - "jmsName           = 'Queue1'"
             - "jmsJNDIName       = 'jms/Queue1'"
-            - "jmsType           = 'queue'"
-            - "distributed       = 'true'"
-            - "balancingPolicy   = 'Round-Robin'"
-            - "useRedirect       = 'true'"
-            - "limit             = '3'"
-            - "policy            = 'Redirect'"
-            - "errorObject       = 'ErrorQueue'"
-      'createJmsTopicforJmsModule':
-         log_output:           *logoutput
-         weblogic_type:        "jmsobject"
+      createJmsTopicforJmsModule:
          weblogic_object_name: "Topic1"
-         script:               'createJmsQueueOrTopic.py'
          params:
-            - "subDeploymentName = 'jmsServers'"
-            - "jmsModuleName     = 'jmsClusterModule'"
+            - "jmsType           = 'topic'"
             - "jmsName           = 'Topic1'"
             - "jmsJNDIName       = 'jms/Topic1'"
-            - "jmsType           = 'topic'"
-            - "distributed       = 'true'"
-            - "balancingPolicy   = 'Round-Robin'"
-            - "useRedirect       = 'true'"
-            - "limit             = '3'"
-            - "policy            = 'Redirect'"
-            - "errorObject       = 'ErrorQueue'"
-

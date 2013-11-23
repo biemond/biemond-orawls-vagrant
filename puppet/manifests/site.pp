@@ -10,7 +10,8 @@ node 'admin.example.com' {
   
   include os, ssh, java, orawls::weblogic, orautils
   include bsu, domains, nodemanager, startwls, userconfig
-  include machines , managed_servers , clusters
+  include machines, managed_servers
+  include clusters
   include jms_servers,jms_modules,jms_module_subdeployments
   include jms_module_quotas,jms_module_cfs,jms_module_objects_errors,jms_module_objects
   include pack_domain
@@ -239,14 +240,21 @@ class machines{
 class managed_servers{
   require machines
 
-
   notify { 'class managed_servers':} 
-  $entries = hiera_array('managed_servers_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('managed_servers_instances')
+
+
+  $allHieraEntries.each |$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        notice "$hieraTitle"
+
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries        = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',
+                          $entries, 
+                          $default_params['global_parameters'])
      }
   } 
 
@@ -257,15 +265,15 @@ class clusters{
 
   notify { 'class clusters':} 
 
-  $entries = hiera_array('cluster_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('cluster_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
-
 }
 
 
@@ -273,14 +281,16 @@ class jms_servers{
   require clusters
 
   notify { 'class jms_servers':} 
-  $entries = hiera_array('jms_servers_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_servers_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
+
 
 }
 
@@ -288,12 +298,14 @@ class jms_modules{
   require jms_servers
 
   notify { 'class jms_modules':} 
-  $entries = hiera_array('jms_module_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
 
@@ -304,12 +316,13 @@ class jms_module_subdeployments{
   require jms_modules
 
   notify { 'class jms_module_subdeployments':} 
-  $entries = hiera_array('jms_module_subdeployments_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_subdeployments_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
 
@@ -318,12 +331,13 @@ class jms_module_quotas{
   require jms_module_subdeployments
 
   notify { 'class jms_module_quotas':} 
-  $entries = hiera_array('jms_module_quotas_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_quotas_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
 
@@ -334,12 +348,13 @@ class jms_module_cfs{
   require jms_module_quotas
 
   notify { 'class jms_module_cfs':} 
-  $entries = hiera_array('jms_module_cf_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_cf_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
 
@@ -350,12 +365,13 @@ class jms_module_objects_errors{
   require jms_module_cfs
 
   notify { 'class jms_module_objects_errors':} 
-  $entries = hiera_array('jms_module_jms_errors_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_jms_errors_instances')
+  $allHieraEntries.each |$index,$hieraEntry| { 
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        $default_params = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        $entries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        create_resources('orawls::wlstexec',$entries, $default_params['global_parameters'])
      }
   } 
 
@@ -366,12 +382,79 @@ class jms_module_objects{
   require jms_module_objects_errors
 
   notify { 'class jms_module_objects':} 
-  $entries = hiera_array('jms_module_jms_instances')
-  $default_params = {}
-  
-  $entries.each |$index,$value| { 
-     $entries[$index].each |$index2,$value2| {
-        create_resources('orawls::wlstexec',$value2, $default_params)
+
+  $var = 
+    [{  'ClusterOne' => {
+            'global_parameters' => 
+               {
+                log_output     => true,
+                weblogic_type  => "jmsobject",
+                script         => 'createJmsQueueOrTopic.py',
+                params         => 
+                  [  "subDeploymentName = 'jmsServers'",
+                     "jmsModuleName     = 'jmsClusterModule'",
+                     "distributed       = 'true'",
+                     "balancingPolicy   = 'Round-Robin'",
+                     "useRedirect       = 'true'",
+                     "limit             = '3'",
+                     "policy            = 'Redirect'",
+                     "errorObject       = 'ErrorQueue'",
+                  ],
+              } ,
+            'createJmsQueueforJmsModule1' => 
+               {
+                 weblogic_object_name  => "Queue1",
+                 params                => 
+                   [ "jmsType           = 'queue'",
+                     "jmsName           = 'Queue1'",
+                     "jmsJNDIName       = 'jms/Queue1'",
+                   ],
+               } ,
+             'createJmsQueueforJmsModule2' => 
+               {
+                 weblogic_object_name  => "Queue2",
+                 params                => 
+                   [ "jmsType           = 'queue'",
+                     "jmsName           = 'Queue2'",
+                     "jmsJNDIName       = 'jms/Queue2'",
+                   ],
+              },
+        },       
+    },
+   ] 
+
+  # lookup all jms_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_jms_instances')
+
+  $allHieraEntries.each |$hieraEntry| {  
+      # every hiera entry
+      $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
+        notice "$hieraTitle"
+        # select global params of the hiera entry
+        $globals        = $hieraEntryValues.select |$x| {  $x[0] == 'global_parameters'  }
+        # only select params from global params, will merge later
+        $params         = $globals['global_parameters'].select |$x| {  $x[0] == 'params'  }
+        # remove params from global params, so we will get all the default params
+        $default_params = $globals['global_parameters'].reject |$x| {  $x[0] == 'params'  }
+        # get all entries except global params
+        $wlstEntries = $hieraEntryValues.reject |$x| {  $x[0] == 'global_parameters'  }
+        # for every create WLST object
+        $wlstEntries.each |$index5,$value5 | { 
+           $entry_other_params = $value5.reject |$x| {  $x[0] == 'params'  }
+           $entry_params = $value5['params']
+
+           # merge WLST params with global params
+           $all_params = $params['params'] + $entry_params
+           # create new hash 
+           $createEntry = {  "$index5" => 
+                                 {
+                                    weblogic_object_name  => $entry_other_params['weblogic_object_name'],
+                                    params                => $all_params ,
+                                 }
+                          }
+           # create WLST object , add entry plus default               
+           create_resources('orawls::wlstexec',$createEntry, $default_params)               
+        }
      }
   } 
 
