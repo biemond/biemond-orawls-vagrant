@@ -30,12 +30,11 @@ managed_servers_instances:
 # create cluster and assign the managed servers
 cluster_instances:
    - clusterTwo:
-      global_parameters:
+      cluster_web2:
+         weblogic_object_name: "WebCluster2"
          log_output:           *logoutput
          weblogic_type:        "cluster"
          script:               'createCluster.py'
-      cluster_web2:
-         weblogic_object_name: "WebCluster2"
          params:
             - "clusterName      = 'WebCluster2'"
             - "clusterNodes     = 'wlsServer3,wlsServer4'"
@@ -45,19 +44,22 @@ cluster_instances:
 jms_servers_instances:
    - clusterTwo:
       global_parameters:
+      jmsServerNode3:
          log_output:           *logoutput
          weblogic_type:        "jmsserver"
          script:               'createJmsServer.py'
-      jmsServerNode3:
          weblogic_object_name: "jmsServer3"
          params:
             - "target           = 'wlsServer3'"
-            - "targetType       = 'Server'"
             - "jmsServerName    = 'jmsServer3'"
+            - "targetType       = 'Server'"
       jmsServerNode4:
+         log_output:           *logoutput
+         weblogic_type:        "jmsserver"
+         script:               'createJmsServer.py'
          weblogic_object_name: "jmsServer4"
          params:
             - "target           = 'wlsServer4'"
-            - "targetType       = 'Server'"
             - "jmsServerName    = 'jmsServer4'"
+            - "targetType       = 'Server'"
 

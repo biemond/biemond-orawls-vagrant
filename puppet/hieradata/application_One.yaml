@@ -28,12 +28,11 @@ managed_servers_instances:
 # create cluster and assign the managed servers
 cluster_instances:
    - clusterOne:
-      global_parameters:
+      cluster_web:
+         weblogic_object_name: "WebCluster"
          log_output:           *logoutput
          weblogic_type:        "cluster"
          script:               'createCluster.py'
-      cluster_web:
-         weblogic_object_name: "WebCluster"
          params:
             - "clusterName      = 'WebCluster'"
             - "clusterNodes     = 'wlsServer1,wlsServer2'"
@@ -43,21 +42,24 @@ cluster_instances:
 jms_servers_instances:
    - clusterOne:
       global_parameters:
+      jmsServerNode1:
          log_output:           *logoutput
          weblogic_type:        "jmsserver"
          script:               'createJmsServer.py'
-      jmsServerNode1:
          weblogic_object_name: "jmsServer1"
          params:
             - "target           = 'wlsServer1'"
-            - "targetType       = 'Server'"
             - "jmsServerName    = 'jmsServer1'"
+            - "targetType       = 'Server'"
       jmsServerNode2:
+         log_output:           *logoutput
+         weblogic_type:        "jmsserver"
+         script:               'createJmsServer.py'
          weblogic_object_name: "jmsServer2"
          params:
             - "target           = 'wlsServer2'"
-            - "targetType       = 'Server'"
             - "jmsServerName    = 'jmsServer2'"
+            - "targetType       = 'Server'"
 
 #
 # create jms module for cluster 
@@ -67,12 +69,13 @@ jms_module_instances:
          log_output:           *logoutput
          weblogic_type:        "jmsmodule"
          script:               'createJmsModule.py'
+         params:
+            - "jmsModuleName    = 'jmsClusterModule'"
       jmsClusterModule:
          weblogic_object_name: "jmsClusterModule"
          params:
             - "target           = 'WebCluster'"
             - "targetType       = 'Cluster'"
-            - "jmsModuleName    = 'jmsClusterModule'"
 
 # create jms subdeployment for the jms module 
 jms_module_subdeployments_instances:
@@ -81,20 +84,20 @@ jms_module_subdeployments_instances:
          log_output:           *logoutput
          weblogic_type:        "jmssubdeployment"
          script:               'createJmsSubDeployment.py'
+         params:
+            - "jmsModuleName    = 'jmsClusterModule'"
       SubDeploymentWLSforJmsModule:
          weblogic_object_name: "jmsClusterModule/wlsServers"
          params:
             - "target           = 'WebCluster'"
             - "targetType       = 'Cluster'"
             - "subName          = 'wlsServers'"
-            - "jmsModuleName    = 'jmsClusterModule'"
       SubDeploymentJMSforJmsModule:
          weblogic_object_name: "jmsClusterModule/jmsServers"
          params:
             - "target           = 'jmsServer1,jmsServer2'"
             - "targetType       = 'JMSServer'"
             - "subName          = 'jmsServers'"
-            - "jmsModuleName    = 'jmsClusterModule'"
 
 # create jms quotas for the jms module 
 jms_module_quotas_instances:
@@ -103,24 +106,21 @@ jms_module_quotas_instances:
          log_output:           *logoutput
          weblogic_type:        "jmsquota"
          script:               'createJmsQuota.py'
+         params:
+            - "messagesMaximum  = 9223372036854775807"
+            - "jmsModuleName    = 'jmsClusterModule'"
+            - "shared           = false"
+            - "policy           = 'FIFO'"
       QuotaBigforJmsModule:
          weblogic_object_name: "jmsClusterModule/QuotaBig"
          params:
             - "jmsQuotaName     = 'QuotaBig'"
             - "bytesMaximum     = 9223372036854775807"
-            - "messagesMaximum  = 9223372036854775807"
-            - "jmsModuleName    = 'jmsClusterModule'"
-            - "shared           = false"
-            - "policy           = 'FIFO'"
       QuotaLowforJmsModule:
          weblogic_object_name: "jmsClusterModule/QuotaLow"
          params:
             - "jmsQuotaName     = 'QuotaLow'"
             - "bytesMaximum     = 10000000000"
-            - "messagesMaximum  = 10000"
-            - "jmsModuleName    = 'jmsClusterModule'"
-            - "shared           = false"
-            - "policy           = 'FIFO'"
 
 # create jms connection factory for jms module  
 jms_module_cf_instances:
@@ -129,15 +129,16 @@ jms_module_cf_instances:
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          script:               'createJmsConnectionFactory.py'
-      createJmsConnectionFactoryforJmsModule:
-         weblogic_object_name: "cf"
          params:
             - "subDeploymentName = 'wlsServers'"
             - "jmsModuleName     = 'jmsClusterModule'"
+            - "transacted        = 'false'"
+            - "timeout           = 100000"
+      createJmsConnectionFactoryforJmsModule:
+         weblogic_object_name: "cf"
+         params:
             - "cfName            = 'cf'"
             - "cfJNDIName        = 'jms/cf'"
-            - "transacted        = 'false'"
-            - "timeout           = 'xxxx'"
 
 jms_module_jms_errors_instances:
    - clusterOne:
@@ -145,20 +146,18 @@ jms_module_jms_errors_instances:
          log_output:           *logoutput
          weblogic_type:        "jmsobject"
          script:               'createJmsQueueOrTopic.py'
-      createJmsErrorQueueforJmsModule:
-         weblogic_object_name: "ErrorQueue"
          params:
             - "subDeploymentName = 'jmsServers'"
             - "jmsModuleName     = 'jmsClusterModule'"
-            - "jmsName           = 'ErrorQueue'"
-            - "jmsJNDIName       = 'jms/ErrorQueue'"
-            - "jmsType           = 'queue'"
             - "distributed       = 'true'"
             - "balancingPolicy   = 'Round-Robin'"
             - "useRedirect       = 'false'"
-            - "limit             = 'xxxxx'"
-            - "policy            = 'xxxxx'"
-            - "errorObject       = 'xxxxx'"
+      createJmsErrorQueueforJmsModule:
+         weblogic_object_name: "ErrorQueue"
+         params:
+            - "jmsName           = 'ErrorQueue'"
+            - "jmsJNDIName       = 'jms/ErrorQueue'"
+            - "jmsType           = 'queue'"
 
 # create jms objects for jms module  
 jms_module_jms_instances:
