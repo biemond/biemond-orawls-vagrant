@@ -19,7 +19,7 @@ class os {
 
   host{"admin":
     ip => "10.10.10.10",
-    host_aliases => ['admin.infoplus.nl','admin'],
+    host_aliases => ['admin.example.com','admin'],
   }
 
   exec { "create swap file":

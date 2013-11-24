@@ -28,12 +28,12 @@ class os {
 
   host{"node1":
     ip => "10.10.10.100",
-    host_aliases => ['node1.infoplus.nl','node1'],
+    host_aliases => ['node1.example.com','node1'],
   }
 
   host{"node2":
     ip => "10.10.10.200",
-    host_aliases => ['node2.infoplus.nl','node2'],
+    host_aliases => ['node2.example.com','node2'],
   }
 
   exec { "create swap file":
