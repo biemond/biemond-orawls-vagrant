@@ -171,16 +171,26 @@ jms_module_jms_instances:
             - "jmsModuleName     = 'jmsClusterModule'"
             - "distributed       = 'true'"
             - "balancingPolicy   = 'Round-Robin'"
-            - "useRedirect       = 'true'"
-            - "limit             = '3'"
-            - "policy            = 'Redirect'"
-            - "errorObject       = 'ErrorQueue'"
+            - "deliveryDelay     = 2000"
+            - "limit             = 3"
+            - "timeToLive        = 300000"
       createJmsQueueforJmsModule:
          weblogic_object_name: "Queue1"
          params:
             - "jmsType           = 'queue'"
             - "jmsName           = 'Queue1'"
             - "jmsJNDIName       = 'jms/Queue1'"
+            - "useRedirect       = 'true'"
+            - "policy            = 'Redirect'"
+            - "errorObject       = 'ErrorQueue'"
+      createJmsQueueforJmsModule2:
+         weblogic_object_name: "Queue2"
+         params:
+            - "jmsType           = 'queue'"
+            - "jmsName           = 'Queue2'"
+            - "jmsJNDIName       = 'jms/Queue2'"
+            - "useLogRedirect    = 'true'"
+            - "loggingPolicy     = '%header%,%properties%'"
       createJmsTopicforJmsModule:
          weblogic_object_name: "Topic1"
          params:
