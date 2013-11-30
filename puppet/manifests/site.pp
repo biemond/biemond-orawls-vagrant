@@ -12,8 +12,8 @@ node 'admin.example.com' {
   include bsu, domains, nodemanager, startwls, userconfig
   include machines, managed_servers
   include clusters
-  include jms_servers
-  include jms_modules,jms_module_subdeployments
+  include jms_servers,jms_saf_agents
+  include jms_modules,jms_module_subdeployments,jms_module_foreign_server_objects
   include jms_module_quotas,jms_module_cfs,jms_module_objects_errors,jms_module_objects
   include pack_domain
 
@@ -274,8 +274,20 @@ class jms_servers{
 
 }
 
-class jms_modules{
+class jms_saf_agents{
   require jms_servers
+
+  notify { 'class jms_saf_agents':} 
+  # lookup all managed_servers_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_saf_agents_instances')
+  orawls::utils::wlstbulk{ 'jms_saf_agents_instances':
+    entries_array => $allHieraEntries,
+  }
+
+}
+
+class jms_modules{
+  require jms_saf_agents
 
   notify { 'class jms_modules':} 
 
@@ -344,8 +356,21 @@ class jms_module_objects{
   }
 }
 
-class pack_domain{
+class jms_module_foreign_server_objects{
   require jms_module_objects
+
+  notify { 'class jms_module_foreign_server_objects':} 
+  # lookup all jms_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_foreign_server_instances')
+
+  orawls::utils::wlstbulk{ 'jms_module_foreign_server_objects':
+    entries_array => $allHieraEntries,
+  }
+}
+
+
+class pack_domain{
+  require jms_module_foreign_server_objects
 
   notify { 'class pack_domain':} 
   $default_params = {}

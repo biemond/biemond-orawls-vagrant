@@ -61,6 +61,27 @@ jms_servers_instances:
             - "jmsServerName    = 'jmsServer2'"
             - "targetType       = 'Server'"
 
+#target, serviceType, storeType,storeName,name
+
+jms_saf_agents_instances:
+   - clusterOne:
+      global_parameters:
+         log_output:           *logoutput
+         weblogic_type:        "safagent"
+         script:               'createSAFAgents.py'
+         params:
+            - "serviceType      = 'Both'"
+      jmsSAFAgent1:
+         weblogic_object_name: "jmsSAFAgent1"
+         params:
+            - "target           = 'wlsServer1'"
+            - "name             = 'jmsSAFAgent1'"
+      jmsSAFAgent2:
+         weblogic_object_name: "jmsSAFAgent2"
+         params:
+            - "target           = 'wlsServer2'"
+            - "name             = 'jmsSAFAgent2'"
+
 #
 # create jms module for cluster 
 jms_module_instances:
@@ -158,6 +179,29 @@ jms_module_jms_errors_instances:
             - "jmsName           = 'ErrorQueue'"
             - "jmsJNDIName       = 'jms/ErrorQueue'"
             - "jmsType           = 'queue'"
+
+
+jms_module_foreign_server_instances:
+ - clusterOne:
+    global_parameters:
+       log_output:           *logoutput
+       weblogic_type:        "foreignserver"
+       script:               'createJmsForeignServer.py'
+       params:
+          - "jmsModuleName    = 'jmsClusterModule'"
+    createAQForeignServerJmsModule:
+       weblogic_object_name: "jmsClusterModule/AQForeignServer"
+       params:
+          - "subDeployment             = 'jmsServers'"
+          - "JNDIInitialContextFactory = 'oracle.jms.AQjmsInitialContextFactory'"
+          - "JNDIpropertyName          = 'datasource'"
+          - "JNDIpropertyValue         = 'jdbc/hrDS'"
+          - "name                      = 'AQForeignServer'"
+    createForeignServerJmsModule:
+       weblogic_object_name: "jmsClusterModule/ForeignServer"
+       params:
+          - "name              = 'ForeignServer'"
+          - "connectionURL     = 't3://10.10.10.10:7001'"
 
 # create jms objects for jms module  
 jms_module_jms_instances:

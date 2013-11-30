@@ -511,7 +511,7 @@ def get_domain(name,i,wlsversion)
       end
 
       safagents = ""
-      root.elements.each("jdbc-store") do |agent|
+      root.elements.each("saf-agent") do |agent|
         safagents += agent.elements['name'].text + ";"
       end
 
@@ -566,6 +566,18 @@ def get_domain(name,i,wlsversion)
             jmsmoduleQuotaStr
           end
         end
+
+        jmsmoduleForeingServerStr = "" 
+        jmsroot.elements.each("foreign-server") do |fs| 
+          jmsmoduleForeingServerStr +=  fs.attributes["name"] + ";"
+        end
+
+        Facter.add("#{prefix}_domain_#{n}_jmsmodule_#{k}_foreign_servers") do
+          setcode do
+            jmsmoduleForeingServerStr
+          end
+        end
+
 
 
         jmsroot.elements.each("connection-factory") do |cfs| 
