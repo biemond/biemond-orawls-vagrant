@@ -13,8 +13,10 @@ node 'admin.example.com' {
   include machines, managed_servers
   include clusters
   include jms_servers,jms_saf_agents
-  include jms_modules,jms_module_subdeployments,jms_module_foreign_server_objects
-  include jms_module_quotas,jms_module_cfs,jms_module_objects_errors,jms_module_objects
+  include jms_modules,jms_module_subdeployments
+  include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
+  include jms_module_quotas,jms_module_cfs,jms_module_objects_errors
+  include jms_module_objects
   include pack_domain
 
   Class['java'] -> Class['orawls::weblogic']
@@ -368,9 +370,21 @@ class jms_module_foreign_server_objects{
   }
 }
 
+class jms_module_foreign_server_entries_objects{
+  require jms_module_foreign_server_objects
+
+  notify { 'class jms_module_foreign_server_entries_objects':} 
+  # lookup all jms_instances in all hiera files
+  $allHieraEntries = hiera_array('jms_module_foreign_server_objects_instances')
+
+  orawls::utils::wlstbulk{ 'jms_module_foreign_server_objects_instances':
+    entries_array => $allHieraEntries,
+  }
+}
+
 
 class pack_domain{
-  require jms_module_foreign_server_objects
+  require jms_module_foreign_server_entries_objects
 
   notify { 'class pack_domain':} 
   $default_params = {}
