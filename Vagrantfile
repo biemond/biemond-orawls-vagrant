@@ -36,11 +36,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.options           = "--verbose --parser future --hiera_config /vagrant/puppet/hiera.yaml"
   
       puppet.facter = {
-        "environment" => "development",
-        "vm_type"     => "vagrant",
-        "env_app1"    => "application_One",
-        "env_app2"    => "application_Two",
-   }
+        "environment"            => "development",
+        "vm_type"                => "vagrant",
+        "env_app1"               => "application_One",
+        "env_app2"               => "application_Two",
+        "override_weblogic_user" => "wls",
+      }
       
     end
   
@@ -76,10 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.options           = "--verbose --parser future --hiera_config /vagrant/puppet/hiera.yaml"
   
       puppet.facter = {
-        "environment" => "development",
-        "vm_type"     => "vagrant",
-        "env_app1"    => "application_One",
-        "env_app2"    => "application_Two",
+        "environment"            => "development",
+        "vm_type"                => "vagrant",
+        "env_app1"               => "application_One",
+        "env_app2"               => "application_Two",
+        "override_weblogic_user" => "wls",
       }
       
     end
@@ -116,10 +118,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.options           = "--verbose --parser future --hiera_config /vagrant/puppet/hiera.yaml"
   
       puppet.facter = {
-        "environment" => "development",
-        "vm_type"     => "vagrant",
-        "env_app1"    => "application_One",
-        "env_app2"    => "application_Two",
+        "environment"            => "development",
+        "vm_type"                => "vagrant",
+        "env_app1"               => "application_One",
+        "env_app2"               => "application_Two",
+        "override_weblogic_user" => "wls",
       }
       
     end

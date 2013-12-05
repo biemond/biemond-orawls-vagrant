@@ -68,13 +68,14 @@ class os {
   }
 
   # http://raftaman.net/?p=1311 for generating password
-  user { 'oracle' :
+  # password = oracle
+  user { 'wls' :
     ensure     => present,
     groups     => 'dba',
     shell      => '/bin/bash',
     password   => '$1$DSJ51vh6$4XzzwyIOk6Bi/54kglGk3.',
-    home       => "/home/oracle",
-    comment    => 'Oracle user created by Puppet',
+    home       => "/home/wls",
+    comment    => 'wls user created by Puppet',
     managehome => true,
     require    => Group['dba'],
   }
@@ -89,7 +90,7 @@ class os {
   class { 'limits':
     config => {
                '*'       => {  'nofile'  => { soft => '2048'   , hard => '8192',   },},
-               'oracle'  => {  'nofile'  => { soft => '65536'  , hard => '65536',  },
+               'wls'     => {  'nofile'  => { soft => '65536'  , hard => '65536',  },
                                'nproc'   => { soft => '2048'   , hard => '16384',   },
                                'memlock' => { soft => '1048576', hard => '1048576',},
                                'stack'   => { soft => '10240'  ,},},
@@ -122,39 +123,39 @@ class ssh {
 
   notice 'class ssh'
 
-  file { "/home/oracle/.ssh/":
-    owner  => "oracle",
+  file { "/home/wls/.ssh/":
+    owner  => "wls",
     group  => "dba",
     mode   => "700",
     ensure => "directory",
-    alias  => "oracle-ssh-dir",
+    alias  => "wls-ssh-dir",
   }
   
-  file { "/home/oracle/.ssh/id_rsa.pub":
+  file { "/home/wls/.ssh/id_rsa.pub":
     ensure  => present,
-    owner   => "oracle",
+    owner   => "wls",
     group   => "dba",
     mode    => "644",
     source  => "/vagrant/ssh/id_rsa.pub",
-    require => File["oracle-ssh-dir"],
+    require => File["wls-ssh-dir"],
   }
   
-  file { "/home/oracle/.ssh/id_rsa":
+  file { "/home/wls/.ssh/id_rsa":
     ensure  => present,
-    owner   => "oracle",
+    owner   => "wls",
     group   => "dba",
     mode    => "600",
     source  => "/vagrant/ssh/id_rsa",
-    require => File["oracle-ssh-dir"],
+    require => File["wls-ssh-dir"],
   }
   
-  file { "/home/oracle/.ssh/authorized_keys":
+  file { "/home/wls/.ssh/authorized_keys":
     ensure  => present,
-    owner   => "oracle",
+    owner   => "wls",
     group   => "dba",
     mode    => "644",
     source  => "/vagrant/ssh/id_rsa.pub",
-    require => File["oracle-ssh-dir"],
+    require => File["wls-ssh-dir"],
   }        
 }
 

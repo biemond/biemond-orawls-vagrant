@@ -11,7 +11,7 @@ wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
 wls_version:              &wls_version              1036
 
 # global OS vars
-wls_os_user:              &wls_os_user              "oracle"
+wls_os_user:              &wls_os_user              "wls"
 wls_os_group:             &wls_os_group             "dba"
 wls_download_dir:         &wls_download_dir         "/data/install"
 wls_source:               &wls_source               "/vagrant"

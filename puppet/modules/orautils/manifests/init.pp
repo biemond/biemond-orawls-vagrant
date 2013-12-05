@@ -22,7 +22,12 @@ class orautils(
     CentOS, RedHat, OracleLinux, Ubuntu, Debian, SLES, Solaris: {
 
     # fixed
-    $user             = "oracle"
+
+    if $oraUserParam != undef {
+      $user           = $oraUserParam 
+    } else {  
+      $user           = "oracle"
+    }
     $group            = "dba"
     $mode             = "0775"
 
