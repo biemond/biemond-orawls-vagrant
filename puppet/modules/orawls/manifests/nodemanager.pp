@@ -20,7 +20,12 @@ define orawls::nodemanager (
     $nodeMgrHome = "${weblogic_home_dir}/common/nodemanager"
 
   } elsif $version == 1212 {
-    $nodeMgrHome = "${weblogic_home_dir}/../user_projects/domains/${domain_name}/nodemanager"
+
+    if $::override_weblogic_domain_folder == undef {
+      $nodeMgrHome = "${weblogic_home_dir}/../user_projects/domains/${domain_name}/nodemanager"
+    } else {
+      $nodeMgrHome = "${::override_weblogic_domain_folder}/domains/${domain_name}/nodemanager"
+    }
 
   } else {
     $nodeMgrHome = "${weblogic_home_dir}/common/nodemanager"
@@ -33,8 +38,18 @@ define orawls::nodemanager (
   }
 
   $exec_path    = "${jdk_home_dir}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:"
-  $checkCommand = "/bin/ps -ef | grep -v grep | /bin/grep 'weblogic.NodeManager'"
-  $nativeLib    = "linux/x86_64"
+  case $::kernel {
+    Linux: {
+      $checkCommand = "/bin/ps -ef | grep -v grep | /bin/grep 'weblogic.NodeManager'"
+      $nativeLib    = "linux/x86_64"
+      $suCommand    = "su -l ${os_user}"
+    }
+    SunOS: {
+      $checkCommand = "/usr/ucb/ps wwxa | grep -v grep | /bin/grep 'weblogic.NodeManager'"
+      $nativeLib    = "solaris/x64"
+      $suCommand    = "su - ${os_user}"
+    }
+  }
 
   Exec {
      logoutput => $log_output,
@@ -42,8 +57,15 @@ define orawls::nodemanager (
 
   # nodemanager is part of the domain creation
   if $version == "1212" {
+
+    if $::override_weblogic_domain_folder == undef {
+      $domainsHome = "${weblogic_home_dir}/../user_projects/domains"
+    } else {
+      $domainsHome = "${::override_weblogic_domain_folder}/domains"
+    }
+
     exec { "startNodemanager 1212 ${title}":
-      command => "nohup ${weblogic_home_dir}/../user_projects/domains/${domain_name}/bin/startNodeManager.sh &",
+      command => "nohup ${domainsHome}/${domain_name}/bin/startNodeManager.sh &",
       unless  => "${checkCommand}",
       path    => $exec_path,
       user    => $os_user,
@@ -55,10 +77,10 @@ define orawls::nodemanager (
       command     => "/bin/sleep 20",
       subscribe   => Exec["startNodemanager 1212 ${title}"],
       refreshonly => true,
-      path      => $exec_path,
-      user      => $os_user,
-      group     => $os_group,
-      cwd       => $nodeMgrHome,
+      path        => $exec_path,
+      user        => $os_user,
+      group       => $os_group,
+      cwd         => $nodeMgrHome,
     }
   } elsif (  $version == 1111 or $version == 1036 or $version == 1211 ){
     if $log_dir != undef {
