@@ -18,7 +18,7 @@ Reference Solaris implementation, the vagrant test case for full working WebLogi
 https://github.com/biemond/biemond-orawls-vagrant-solaris  
 
 Reference Oracle SOA Suite, the vagrant test case for full working WebLogic 10.3.6 SOA Suite + OSB cluster example  
-https://github.com/biemond/vagrant-soasuite  
+https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemond-orawls-vagrant-solaris-soa
 
 
 Orawls WebLogic Features
@@ -54,6 +54,13 @@ all templates creates a WebLogic domain, logs the domain creation output
 - domain 'soa_bpm'     -> SOA Suite + BAM + BPM + JRF + EM + OWSM 
 
 
+orawls::utils::wlstbulk is for now disabled so you can also use this in puppet Enterprise 3.0  
+requirements
+- needs puppet version > 3.2 ( make use of iteration and lambda expressions )
+- need to set --parser future ( puppet agent )
+- to use this you need uncomment this orawls::utils::wlstbulk define and enable future parser
+
+
 Override the default Oracle operating system user
 -------------------------------------------------
 default this orawls module uses oracle as weblogic install user  
@@ -77,10 +84,15 @@ three options
 
 Oracle Big files and alternate download location
 ------------------------------------------------
-Some manifests like weblogic.pp supports an alternative mountpoint for the big oracle setup/install files.  
-When not provided it uses the files location of the wls puppet module  
-else you can use $source => "/mnt" or "puppet:///modules/orawls/" (default) or  "puppet:///middleware/" 
+Some manifests like orawls:weblogic bsu opatch fmw supports an alternative mountpoint for the big oracle setup/install files.  
+When not provided it uses the files folder located in the orawls puppet module  
+else you can use $source =>
+- "/mnt"
+- "/vagrant"
+- "puppet:///modules/orawls/" (default)
+- "puppet:///middleware/"  
 
+when the files are also accesiable locally then you can also set $remote_file => false this will not move the files to the download folder, just extract or install 
 
 Orawls WebLogic Facter
 ----------------------
@@ -1303,6 +1315,8 @@ execute any WLST script you want( bulk mode )
 requirements
 - need puppet version > 3.2 ( make use of iteration and lambda expressions
 - need to set --parser future ( puppet agent )
+
+to use this you need uncomment this orawls::utils::wlstbulk define and enable future parser
 
 use hiera_array, this will search for this entry in all hiera data files
 

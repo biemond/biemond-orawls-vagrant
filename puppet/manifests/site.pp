@@ -9,8 +9,10 @@ node 'admin.example.com' {
 
   
   include os, ssh, java, orawls::weblogic, orautils
-  include bsu, domains, nodemanager, startwls, userconfig
-  include machines, managed_servers
+  include bsu
+  include domains, nodemanager, startwls, userconfig
+  include machines
+  include managed_servers
   include clusters
   include jms_servers,jms_saf_agents
   include jms_modules,jms_module_subdeployments

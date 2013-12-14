@@ -32,6 +32,7 @@ orawls::weblogic::os_user:              *wls_os_user
 orawls::weblogic::os_group:             *wls_os_group
 orawls::weblogic::download_dir:         *wls_download_dir
 orawls::weblogic::source:               *wls_source
+orawls::weblogic::remote_file:          false
 
 
 # patches for WebLogic 10.3.6
@@ -40,6 +41,7 @@ bsu_instances:
     patch_id:                "BYJ1"
     patch_file:              "p17071663_1036_Generic.zip"
     log_output:              true
+    remote_file:             false
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:

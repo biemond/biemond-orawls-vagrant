@@ -24,15 +24,15 @@ class orautils(
     # fixed
 
     if $oraUserParam != undef {
-      $user           = $oraUserParam 
-    } else {  
+      $user           = $oraUserParam
+    } else {
       $user           = "oracle"
     }
     $group            = "dba"
     $mode             = "0775"
 
     # ok
-	  $shell            = $orautils::params::shell
+    $shell            = $orautils::params::shell
     $userHome         = $orautils::params::userHome
     $oraInstHome      = $orautils::params::oraInstHome
 
