@@ -4,6 +4,7 @@ biemond-orawls-vagrant
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux and the use of Hiera  
 
+uses CentOS 6.5 box with puppet 3.4.0 Future Parser
 
 creates a patched 10.3.6 WebLogic cluster ( admin,node1 , node2 )
 
@@ -20,10 +21,6 @@ weblogic 10.3.6
 - wls1036_generic.jar
 - p17071663_1036_Generic.zip
 
-- ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip
-- ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip
-- ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip
-
 Using the following facts
 
 - environment => "development"
@@ -31,7 +28,7 @@ Using the following facts
 - env_app1    => "application_One"
 - env_app2    => "application_Two"
 
-also need to set "--parser future" to the puppet configuration, cause it uses lambda expressions for collection of yaml entries from application_One and application_Two
+also need to set "--parser future" (Puppet >= 3.40) to the puppet configuration, cause it uses lambda expressions for collection of yaml entries from application_One and application_Two
 
 
 Should also work for WebLogic 12.1.2

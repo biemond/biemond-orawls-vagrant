@@ -1,0 +1,13 @@
+---
+
+# create cluster and assign the managed servers
+cluster_instances:
+   - clusterOne:
+      cluster_web:
+         weblogic_object_name: "WebCluster"
+         log_output:           *logoutput
+         weblogic_type:        "cluster"
+         script:               'createCluster.py'
+         params:
+            - "clusterName      = 'WebCluster'"
+            - "clusterNodes     = 'wlsServer1,wlsServer2'"
