@@ -139,7 +139,7 @@ define orawls::utils::wlstbulk(
     # every hiera entry
     $hieraEntry.each |$hieraTitle,$hieraEntryValues| {
       # select global params of the hiera entry
-      # notice $hieraTitle
+      #notice $hieraTitle
       $globals        = $hieraEntryValues.filter |$x| {  $x[0] == 'global_parameters'  }
       # only select params from global params, will merge later
       if ( $globals['global_parameters'] != undef ) {
@@ -147,7 +147,7 @@ define orawls::utils::wlstbulk(
         # remove params from global params, so we will get all the default params
         $default_params = $globals['global_parameters'].filter |$x| {  $x[0] != 'params'  }
       } else {
-        # notice "params is null"
+        #notice "params is null"
         $params         = {}
         $default_params = {}
       }

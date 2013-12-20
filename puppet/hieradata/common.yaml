@@ -2,6 +2,8 @@
 messageDefault: 'default'
 messageEnv:     'common'
 
+apps_config_dir:    "/vagrant/puppet/apps"
+
 
 # global WebLogic vars
 wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"

@@ -1,7 +1,9 @@
 ---
+logoutput:                     &logoutput                     true
+
 
 # create cluster and assign the managed servers
-cluster_instances:
+clusters_instances:
    - clusterOne:
       cluster_web:
          weblogic_object_name: "WebCluster"

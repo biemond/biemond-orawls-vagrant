@@ -1,6 +1,10 @@
 ---
 messageEnv: 'admin'
 
+weblogic_apps:
+  - one
+  - two
+
 orawls::weblogic::log_output:   true
 
 logoutput:                     &logoutput                     true
