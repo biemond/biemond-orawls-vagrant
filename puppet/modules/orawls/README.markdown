@@ -31,7 +31,7 @@ Orawls WebLogic Features
 - creates a standard WebLogic domain
 - pack a WebLogic domain
 - copy a WebLogic domain to a other node with SSH, unpack and enroll to a nodemanager
-- SOA Suite ( with BPM ) and BAM Cluster configuration ( convert single soa/bam servers to clusters ) 
+- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters ) 
 - startup the nodemanager
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
@@ -849,10 +849,10 @@ when you just have one WebLogic domain on a server
 
 
 ### orawls::utils::fmwcluster
-convert existing cluster to a soa suite cluster and BPM is optional and also convert BAM to a cluster  
+convert existing cluster to a osb or soa suite cluster (BPM is optional) and also convert BAM to a BAM cluster  
 see this for an example https://github.com/biemond/biemond-orawls-vagrant-solaris-soa  
-you need to create a soa or bam cluster with some managed servers first 
-for the soa suite managed servers make sure to set the coherence arguments parameters  
+you need to create a osb, soa or bam cluster with some managed servers first 
+for the osb or soa suite managed servers make sure to set the coherence arguments parameters  
 
 
     $default_params = {}
@@ -866,11 +866,12 @@ hiera configuration
          domain_dir:           "/opt/oracle/middleware11g/user_projects/domains/soa_basedomain"
          soa_cluster_name:     "SoaCluster"
          bam_cluster_name:     "BamCluster"
-         log_output:           *logoutput
+         osb_cluster_name:     "OsbCluster"
+         log_output:           true
          bpm_enabled:          true
          bam_enabled:          true
          soa_enabled:          true
-    
+         osb_enabled:          true
 
 
 ###orawls::wlstexec
@@ -1102,7 +1103,7 @@ Create 2 managed servers and assign them to the machines
             - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'"
             - "wlsServerName    = 'wlsServer1'"
             - "machineName      = 'Node1'"
-            - "listenAddress    = 9201"
+            - "listenPort       = 9201"
             - "nodeMgrLogDir    = '/data/logs'"
       'wlsServer2_node2':
          log_output:           *logoutput
@@ -1113,7 +1114,7 @@ Create 2 managed servers and assign them to the machines
             - "javaArguments    = '-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m -Dweblogic.Stdout=/data/logs/wlsServer2.out -Dweblogic.Stderr=/data/logs/wlsServer2_err.out'"
             - "wlsServerName    = 'wlsServer2'"
             - "machineName      = 'Node2'"
-            - "listenAddress    = 9201"
+            - "listenPort       = 9201"
             - "nodeMgrLogDir    = '/data/logs'"
     
 

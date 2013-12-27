@@ -17,10 +17,9 @@ class os {
 
   notify { "class os ${operatingsystem}":} 
 
-  host{"admin":
-    ip => "10.10.10.10",
-    host_aliases => ['admin.example.com','admin'],
-  }
+  $default_params = {}
+  $host_instances = hiera('hosts', [])
+  create_resources('host',$host_instances, $default_params)
 
   exec { "create swap file":
     command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",

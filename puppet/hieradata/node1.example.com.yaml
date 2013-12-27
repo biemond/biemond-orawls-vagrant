@@ -27,9 +27,9 @@ copy_instances:
   'wlsDomain':
      log_output:              *logoutput
 
-
 # create and startup the nodemanager
 nodemanager_instances:
   'nodemanager':
      log_output:           *logoutput
+     nodemanager_address:  "10.10.10.100"
 

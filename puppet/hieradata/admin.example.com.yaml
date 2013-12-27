@@ -35,6 +35,7 @@ pack_domain_instances:
 nodemanager_instances:
   'nodemanager':
      log_output:           *logoutput
+     nodemanager_address:  "10.10.10.10"
 
 # startup adminserver for extra configuration
 control_instances:

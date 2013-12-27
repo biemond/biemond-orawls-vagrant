@@ -33,15 +33,9 @@ class os {
 
   notice "class os ${operatingsystem}"
 
-  host{"node1":
-    ip => "10.10.10.100",
-    host_aliases => ['node1.example.com','node1'],
-  }
-
-  host{"node2":
-    ip => "10.10.10.200",
-    host_aliases => ['node2.example.com','node2'],
-  }
+  $default_params = {}
+  $host_instances = hiera('hosts', [])
+  create_resources('host',$host_instances, $default_params)
 
   exec { "create swap file":
     command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",
