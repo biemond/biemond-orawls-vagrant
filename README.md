@@ -14,6 +14,12 @@ https://github.com/biemond/biemond-orawls-vagrant/blob/master/puppet/manifests/s
 
 The used hiera files https://github.com/biemond/biemond-orawls-vagrant/tree/master/puppet/hieradata
 
+Add the all the Oracle binaris to /software, edit Vagrantfile and update
+- admin.vm.synced_folder "/Users/edwin/software", "/software"
+- node1.vm.synced_folder "/Users/edwin/software", "/software"
+- node2.vm.synced_folder "/Users/edwin/software", "/software"
+
+
 used the following software
 - jdk-7u45-linux-x64.tar.gz
 

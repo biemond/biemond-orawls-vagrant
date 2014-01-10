@@ -178,7 +178,7 @@ class java {
       x64                  => true,
       downloadDir          => "/data/install",
       urandomJavaFix       => true,
-      sourcePath           => "/vagrant",
+      sourcePath           => "/software",
   }
 
 }
