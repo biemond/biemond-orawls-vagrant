@@ -4,7 +4,7 @@ biemond-orawls-vagrant
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux and the use of Hiera  
 
-uses CentOS 6.5 box with puppet 3.4.0 Future Parser
+uses CentOS 6.5 box with puppet 3.4.2 Future Parser
 
 creates a patched 10.3.6 WebLogic cluster ( admin,node1 , node2 )
 
