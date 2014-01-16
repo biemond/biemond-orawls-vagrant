@@ -25,23 +25,14 @@ used the following software
 
 weblogic 10.3.6
 - wls1036_generic.jar
-- p17071663_1036_Generic.zip
+- p17071663_1036_Generic.zip ( 10.3.6.06 BSU Patch)
 
 Using the following facts
 
 - environment => "development"
 - vm_type     => "vagrant"
-- env_app1    => "application_One"
-- env_app2    => "application_Two"
 
 also need to set "--parser future" (Puppet >= 3.40) to the puppet configuration, cause it uses lambda expressions for collection of yaml entries from application_One and application_Two
-
-
-Should also work for WebLogic 12.1.2
-
-weblogic 12.1.2
-- wls_121200.jar or fmw_infra_121200.jar
-- p16175470_121200_Generic.zip
 
 
 # admin server  
