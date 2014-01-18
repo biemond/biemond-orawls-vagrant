@@ -25,7 +25,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ["modifyvm", :id, "--name", "admin"]
     end
   
-    admin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+    admin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;mkdir -p /etc/facter;ln -sf /vagrant/facts /etc/facter/facts.d;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
     
     admin.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"
@@ -65,7 +65,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ["modifyvm", :id, "--name", "node1"]
     end
   
-    node1.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+    node1.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;mkdir -p /etc/facter;ln -sf /vagrant/facts /etc/facter/facts.d;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
     
     node1.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"
@@ -105,7 +105,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       vb.customize ["modifyvm", :id, "--name", "node2"]
     end
   
-    node2.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml"
+    node2.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;mkdir -p /etc/facter;ln -sf /vagrant/facts /etc/facter/facts.d;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
     
     node2.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"

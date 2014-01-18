@@ -1,0 +1,12 @@
+# optional , default = oracle
+override_weblogic_user=wls
+
+# optional , default = t3://localhost:7001
+override_weblogic_connect_url=t3://10.10.10.10:7001
+
+# optional , default = AdminServer
+override_weblogic_adminserver=AdminServer
+
+weblogic_domain=Wls1036
+
+weblogic_domains_path=/opt/oracle/wlsdomains/domains
