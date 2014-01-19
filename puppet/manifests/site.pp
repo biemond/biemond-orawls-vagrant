@@ -237,6 +237,8 @@ class machines{
   $default_params = {}
   $machines_instances = hiera('machines_instances', [])
   create_resources('orawls::wlstexec',$machines_instances, $default_params)
+
+
 }
 
 

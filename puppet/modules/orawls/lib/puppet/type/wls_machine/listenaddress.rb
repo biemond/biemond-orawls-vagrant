@@ -1,8 +1,9 @@
 newproperty(:listenaddress) do
   include EasyType
-  include EasyType::Validators::Name
 
   desc "The listenaddress of the machine"
+  defaultto 'localhost'
+
 
   to_translate_to_resource do | raw_resource|
     raw_resource['listenaddress']

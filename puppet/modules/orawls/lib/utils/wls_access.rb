@@ -25,15 +25,32 @@ module Utils
 			parent.extend(WlsAccess)
 		end
 
-		def wlst( script, content, user, domain, domainpath, parameters = {})
+		def wlst( content, parameters = {})
+           
+            script = "wlstScript"
+
 			Puppet.info "Executing: #{script}"
+
+		    weblogicUser = Facter.value('override_weblogic_user')
+		    if weblogicUser.nil?
+		       weblogicUser = "oracle"
+		    end   
+		    Puppet.info "oracle operating user: " + weblogicUser
+
+            weblogicDomain = Facter.value('weblogic_domain')
+            fail "weblogicDomain fact is not defined." unless weblogicDomain
+            Puppet.info "oracle weblogic domain: " + weblogicDomain
+
+            weblogicDomainsPath = Facter.value('weblogic_domains_path')
+            fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
+            Puppet.info "oracle weblogic domains path: " + weblogicDomainsPath
             
 			tmpFile = Tempfile.new([ script, '.py' ])
 			tmpFile.write(content)
 			tmpFile.close
 			FileUtils.chmod(0555, tmpFile.path)
 
-			csv_string = execute_wlst( script , tmpFile , user, domain, domainpath, parameters)
+			csv_string = execute_wlst( script , tmpFile , weblogicUser, weblogicDomain, weblogicDomainsPath, parameters)
 			convert_csv_data_to_hash(csv_string)
 		end
 
@@ -46,6 +63,7 @@ module Utils
 			raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
 			File.read("/tmp/"+script+".out")
 		end
+
 
 		def convert_csv_data_to_hash(csv_data)
 			data = []
