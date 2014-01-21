@@ -12,7 +12,7 @@ end
 
 module Utils
 	module WlsAccess
-	  	
+
 
 		class QueryResults < Hash
 			def column_data(column_name)
@@ -32,20 +32,20 @@ module Utils
 		    script = "wlstScript"
 
 			Puppet.info "Executing: #{script}"
-		    Puppet.info "oracle operating user: " + weblogicUser
-	        fail "weblogicDomain fact is not defined." unless weblogicDomain
-	        Puppet.info "oracle weblogic domain: " + weblogicDomain
+		    # Puppet.info "oracle operating user: " + weblogicUser
+	     #    fail "weblogicDomain fact is not defined." unless weblogicDomain
+	     #    Puppet.info "oracle weblogic domain: " + weblogicDomain
 
-            weblogicDomainsPath = Facter.value('weblogic_domains_path')
-            fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
-            Puppet.info "oracle weblogic domains path: " + weblogicDomainsPath
+      #       weblogicDomainsPath = Facter.value('weblogic_domains_path')
+      #       fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
+      #       Puppet.info "oracle weblogic domains path: " + weblogicDomainsPath
             
 			tmpFile = Tempfile.new([ script, '.py' ])
 			tmpFile.write(content)
 			tmpFile.close
 			FileUtils.chmod(0555, tmpFile.path)
 
-			csv_string = execute_wlst( script , tmpFile , weblogicUser, weblogicDomain, weblogicDomainsPath, parameters)
+			csv_string = execute_wlst( script , tmpFile , parameters)
 			convert_csv_data_to_hash(csv_string)
 		end
 
@@ -73,9 +73,8 @@ module Utils
 		end
 
 
-		def execute_wlst(script, tmpFile, user, domain, domainpath, parameters)
-            Puppet.info  "su - #{user} -c '. #{domainpath}/#{domain}/bin/setDomainEnv.sh;java weblogic.WLST #{tmpFile.path}'"		
-			output = `su - #{user} -c '. #{domainpath}/#{domain}/bin/setDomainEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
+		def execute_wlst(script, tmpFile, parameters)
+			output = `su - #{weblogicUser} -c '. #{weblogicDomainsPath}/#{weblogicDomain}/bin/setDomainEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
 			raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
 			File.read("/tmp/"+script+".out")
 		end
