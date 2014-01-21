@@ -27,19 +27,12 @@ module Utils
 
 		def wlst( content, parameters = {})
            
-            script = "wlstScript"
+	    script = "wlstScript"
 
 			Puppet.info "Executing: #{script}"
-
-		    weblogicUser = Facter.value('override_weblogic_user')
-		    if weblogicUser.nil?
-		       weblogicUser = "oracle"
-		    end   
-		    Puppet.info "oracle operating user: " + weblogicUser
-
-            weblogicDomain = Facter.value('weblogic_domain')
-            fail "weblogicDomain fact is not defined." unless weblogicDomain
-            Puppet.info "oracle weblogic domain: " + weblogicDomain
+	    Puppet.info "oracle operating user: " + weblogicUser
+      fail "weblogicDomain fact is not defined." unless weblogicDomain
+      Puppet.info "oracle weblogic domain: " + weblogicDomain
 
             weblogicDomainsPath = Facter.value('weblogic_domains_path')
             fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
@@ -56,6 +49,20 @@ module Utils
 
 
 		private
+
+		def weblogicUser
+			Facter.value('override_weblogic_user') || "oracle"
+		end
+
+		def weblogicDomain
+      Facter.value('weblogic_domain')
+    end
+
+    def weblogicDomainsPath
+    	Facter.value('weblogic_domains_path')
+    end
+
+
 
 		def execute_wlst(script, tmpFile, user, domain, domainpath, parameters)
             Puppet.info  "su - #{user} -c '. #{domainpath}/#{domain}/bin/setDomainEnv.sh;java weblogic.WLST #{tmpFile.path}'"		
