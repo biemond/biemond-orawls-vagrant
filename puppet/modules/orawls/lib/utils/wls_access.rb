@@ -1,6 +1,7 @@
 require 'tempfile'
 require 'fileutils'
 require 'csv'
+require 'utils/erb_reader'
 begin
 	require 'ruby-debug'
 	require 'pry'
@@ -27,12 +28,12 @@ module Utils
 
 		def wlst( content, parameters = {})
            
-	    script = "wlstScript"
+		    script = "wlstScript"
 
 			Puppet.info "Executing: #{script}"
-	    Puppet.info "oracle operating user: " + weblogicUser
-      fail "weblogicDomain fact is not defined." unless weblogicDomain
-      Puppet.info "oracle weblogic domain: " + weblogicDomain
+		    Puppet.info "oracle operating user: " + weblogicUser
+	        fail "weblogicDomain fact is not defined." unless weblogicDomain
+	        Puppet.info "oracle weblogic domain: " + weblogicDomain
 
             weblogicDomainsPath = Facter.value('weblogic_domains_path')
             fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
@@ -55,13 +56,21 @@ module Utils
 		end
 
 		def weblogicDomain
-      Facter.value('weblogic_domain')
-    end
+        	Facter.value('weblogic_domain')
+        end
 
-    def weblogicDomainsPath
-    	Facter.value('weblogic_domains_path')
-    end
+        def weblogicDomainsPath
+        	Facter.value('weblogic_domains_path')
+    	end
 
+        def weblogicAdminServer
+        	Facter.value('override_weblogic_adminserver') || "AdminServer"
+    	end
+
+
+        def weblogicConnectUrl
+        	Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
+    	end
 
 
 		def execute_wlst(script, tmpFile, user, domain, domainpath, parameters)
@@ -70,7 +79,6 @@ module Utils
 			raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
 			File.read("/tmp/"+script+".out")
 		end
-
 
 		def convert_csv_data_to_hash(csv_data)
 			data = []

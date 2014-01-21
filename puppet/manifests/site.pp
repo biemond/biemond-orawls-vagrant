@@ -238,13 +238,13 @@ class machines{
   $machines_instances = hiera('machines_instances', [])
   create_resources('orawls::wlstexec',$machines_instances, $default_params)
 
- wls_machine { 'test2':
-  ensure        => 'present',
-  listenaddress => '10.10.10.10',
-  listenport    => '5556',
-  machinetype   => 'UnixMachine',
-   nmtype        => 'SSL',
-}
+  wls_machine { 'test2':
+    ensure        => 'present',
+    listenaddress => '10.10.10.10',
+    listenport    => '5556',
+    machinetype   => 'UnixMachine',
+    nmtype        => 'SSL',
+  }
 }
 
 
