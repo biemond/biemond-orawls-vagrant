@@ -1,10 +1,10 @@
 connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
 
-machineName    = '#{self[:name]}'
-machineDnsName = '#{self[:listenaddress]}'
-portNumber     =  #{self[:listenport]}
-machineType    = '#{self[:machinetype]}'
-nmType         = '#{self[:nmtype]}'
+machineName    = '<%= name %>'
+machineDnsName = '<%= listenaddress %>'
+portNumber     =  <%= listenport %>
+machineType    = '<%= machinetype %>'
+nmType         = '<%= nmtype %>'
 
 edit()
 startEdit()

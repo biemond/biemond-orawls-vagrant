@@ -32,13 +32,7 @@ module Utils
 		    script = "wlstScript"
 
 			Puppet.info "Executing: #{script}"
-		    # Puppet.info "oracle operating user: " + weblogicUser
-	     #    fail "weblogicDomain fact is not defined." unless weblogicDomain
-	     #    Puppet.info "oracle weblogic domain: " + weblogicDomain
 
-      #       weblogicDomainsPath = Facter.value('weblogic_domains_path')
-      #       fail "oracle weblogic domains path fact is not defined." unless weblogicDomainsPath
-      #       Puppet.info "oracle weblogic domains path: " + weblogicDomainsPath
             
 			tmpFile = Tempfile.new([ script, '.py' ])
 			tmpFile.write(content)
@@ -52,49 +46,50 @@ module Utils
 
 		private
 
-		def weblogicUser
-			Facter.value('override_weblogic_user') || "oracle"
-		end
 
-		def weblogicDomain
-        	Facter.value('weblogic_domain')
-        end
-
-        def weblogicDomainsPath
-        	Facter.value('weblogic_domains_path')
-    	end
-
-		def weblogicConnectUrl
-		  Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
-		end
-
-		def weblogicAdminServer
-		  Facter.value('override_weblogic_adminserver') || "AdminServer"
-		end
-
-
-		def execute_wlst(script, tmpFile, parameters)
-			output = `su - #{weblogicUser} -c '. #{weblogicDomainsPath}/#{weblogicDomain}/bin/setDomainEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
-			raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
-			File.read("/tmp/"+script+".out")
-		end
-
-		def convert_csv_data_to_hash(csv_data)
-			data = []
-			headers = []
-
-			csv_data.split("\n").each do | row |
-				columnized = row.split(':')
-				columnized.map!{|column| column.strip}
-				if headers.empty?
-					headers = columnized
-				else
-					values = headers.zip(columnized)
-					data << QueryResults[values]
-				end
+			def weblogicUser
+				Facter.value('override_weblogic_user') || "oracle"
 			end
-			data
-		end
+
+			def weblogicDomain
+	        	Facter.value('weblogic_domain')
+	        end
+
+	        def weblogicDomainsPath
+	        	Facter.value('weblogic_domains_path')
+	    	end
+
+			def weblogicConnectUrl
+			  Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
+			end
+
+			def weblogicAdminServer
+			  Facter.value('override_weblogic_adminserver') || "AdminServer"
+			end
+
+
+			def execute_wlst(script, tmpFile, parameters)
+				output = `su - #{weblogicUser} -c '. #{weblogicDomainsPath}/#{weblogicDomain}/bin/setDomainEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
+				raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
+				File.read("/tmp/"+script+".out")
+			end
+
+			def convert_csv_data_to_hash(csv_data)
+				data = []
+				headers = []
+
+				csv_data.split("\n").each do | row |
+					columnized = row.split(':')
+					columnized.map!{|column| column.strip}
+					if headers.empty?
+						headers = columnized
+					else
+						values = headers.zip(columnized)
+						data << QueryResults[values]
+					end
+				end
+				data
+			end
 
 	end
 end
