@@ -41,7 +41,7 @@ module EasyType
 			@before.each do | before|
 				@before_results << @context.send(@command, before, @options)
 			end
-			value = @context.send(@command, @line, @options )
+			value = @context.send(@command, @line, @options ) if @line
 			@after.each do | after|
 				@after_results << @context.send(@command, after, @options)
 			end

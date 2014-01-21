@@ -74,7 +74,28 @@ module EasyType
     # and when it is modified e.g. in de @property_flush
     #
     def should_be_in_command(property)
-      defined?(property.on_apply) && @property_flush[property.name]
+      is_modified_and_defined(property) || is_in_a_modified_group(property)
+    end
+
+    private
+
+    def is_in_a_modified_group(property)
+      if resource.groups.include_property?(property.class) 
+        groups = resource.groups
+        group = groups.group_for(property.class)
+        properties = groups.contents_for(group)
+        names = properties.collect {|p| p.name}
+        is_modified = names.reduce(false) do |value, entry|
+          value || @property_flush[entry]
+        end
+        defined?(property.on_apply) && is_modified
+      else
+        false
+      end
+    end
+
+    def is_modified_and_defined(property)
+      defined?(property.on_apply) && @property_flush[property.name] 
     end
 
     module ClassMethods

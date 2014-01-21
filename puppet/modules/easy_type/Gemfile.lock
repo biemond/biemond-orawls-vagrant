@@ -46,14 +46,14 @@ GEM
       nokogiri (~> 1.5)
       ruby-hmac
     formatador (0.2.4)
-    gh (0.13.0)
+    gh (0.13.2)
       addressable
       backports
       faraday (~> 0.8)
       multi_json (~> 1.0)
       net-http-persistent (>= 2.7)
       net-http-pipeline
-    guard (2.2.5)
+    guard (2.3.0)
       formatador (>= 0.2.4)
       listen (~> 2.1)
       lumberjack (~> 1.0)

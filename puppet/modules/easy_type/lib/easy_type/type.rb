@@ -1,3 +1,5 @@
+require 'easy_type/group'
+
 module EasyType
 
 	#
@@ -12,7 +14,59 @@ module EasyType
 			parent.extend(ClassMethods)
 		end
 
+		#
+		# Return the groups the type contains 
+		#
+		def groups
+			self.class.groups
+		end
+
 		module ClassMethods
+			#
+			# define a group of parameters. A group means a change in one of
+			# it's members all the information in the group is added tot 
+			# the command
+			#
+			# example:
+			#  group(:name) do # name is optional
+			# 		property :a
+			# 		property :b
+			#	 end
+			#
+			def group(group_name = :default, &block)
+				include EasyType::FileIncluder
+
+			  @group_name = group_name # make it global
+				@groups ||= EasyType::Group.new
+
+
+				alias :orig_parameter :parameter
+				alias :orig_property :property
+
+			  def parameter(parameter_name)
+			  	process_group_entry(include_file("puppet/type/#{name}/#{parameter_name}"))
+			  end
+
+			  def property(property_name)
+			  	process_group_entry(include_file("puppet/type/#{name}/#{property_name}"))
+			  end
+
+			  def process_group_entry(entry)
+			  	@groups.add(name,entry)
+			  end
+
+				yield if block
+
+				alias :parameter :orig_parameter
+				alias :property :orig_property
+			end
+			#
+			# return all groups in this type
+			#
+			def groups
+				@groups ||= EasyType::Group.new
+				@groups
+			end
 			#
 			# include's the parameter declaration
 			#

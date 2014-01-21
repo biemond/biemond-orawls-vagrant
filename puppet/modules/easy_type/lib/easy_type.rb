@@ -7,6 +7,7 @@ require 'easy_type/validators'
 require 'easy_type/provider'
 require 'easy_type/file_includer'
 require 'easy_type/command_builder'
+require 'easy_type/group'
 
 module EasyType
 	def self.included(parent)

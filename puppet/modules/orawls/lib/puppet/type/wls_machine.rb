@@ -31,6 +31,7 @@ module Puppet
       wlst erb_template('index.py', binding)
     end
 
+
     on_create do
       Puppet.info "create #{name} "
       erb_template('create.py', binding)
