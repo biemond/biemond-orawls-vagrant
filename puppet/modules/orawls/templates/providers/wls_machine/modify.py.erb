@@ -1,4 +1,4 @@
-connect(url='#{weblogicConnectUrl}',adminServerName='#{weblogicAdminServer}',timeout='5000')
+connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
 
 machineName    = '#{self[:name]}'
 machineDnsName = '#{self[:listenaddress]}'
@@ -11,11 +11,6 @@ startEdit()
 
 try:
     f = open("/tmp/wlstScript.out", "w")
-    cd('/')
-    if machineType == 'UnixMachine':
-      cmo.createUnixMachine(machineName)
-    else:
-      cmo.createMachine(machineName)
 
     cd('/Machines/'+machineName+'/NodeManager/'+machineName)
     cmo.setNMType(nmType)
@@ -23,7 +18,6 @@ try:
     cmo.setListenPort(portNumber)
 
     f.close()
-
     save()
     activate()
 

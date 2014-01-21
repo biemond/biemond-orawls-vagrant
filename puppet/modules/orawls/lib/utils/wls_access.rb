@@ -12,6 +12,7 @@ end
 
 module Utils
 	module WlsAccess
+	  	
 
 		class QueryResults < Hash
 			def column_data(column_name)
@@ -63,14 +64,13 @@ module Utils
         	Facter.value('weblogic_domains_path')
     	end
 
-        def weblogicAdminServer
-        	Facter.value('override_weblogic_adminserver') || "AdminServer"
-    	end
+		def weblogicConnectUrl
+		  Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
+		end
 
-
-        def weblogicConnectUrl
-        	Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
-    	end
+		def weblogicAdminServer
+		  Facter.value('override_weblogic_adminserver') || "AdminServer"
+		end
 
 
 		def execute_wlst(script, tmpFile, user, domain, domainpath, parameters)
