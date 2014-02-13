@@ -25,6 +25,7 @@ node 'admin.example.com' {
   include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
   include pack_domain
 
+
   Class[java] -> Class[orawls::weblogic]
 }  
 
@@ -371,4 +372,5 @@ class pack_domain{
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)
 }
+
 

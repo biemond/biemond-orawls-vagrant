@@ -1,0 +1,29 @@
+connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
+
+
+m = ls('/Servers')
+
+f = open("/tmp/wlstScript.out", "w")
+print >>f, "name:listenaddress:listenport:ssllistenport:sslenabled:machine:logfilename:arguments"
+for token in m.split("dr--"):
+    token=token.strip().lstrip().rstrip()
+    if token:
+        print '___'+token+'___'
+        cd('/Servers/'+token)
+        listenAddress = get('ListenAddress')
+        listenPort    = str(get('ListenPort'))
+        cd('/Servers/'+token+'/SSL/'+token)
+        sslListenPort = str(get('ListenPort'))
+        sslEnabled    = str(get('Enabled'))
+
+        cd('/Servers/'+token+'/ServerStart/'+token)
+        arguments     = get('Arguments')
+
+        cd('/Servers/'+token+'/Log/'+token)
+        logfilename     = get('FileName')
+
+        print >>f, token+":"+listenAddress+":"+listenPort+":"+sslListenPort+":"+sslEnabled+":"+'aaa'+":"+logfilename+":"+arguments
+f.close()
+
+disconnect()
+exit()

@@ -1,3 +1,4 @@
+
 connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
 
 machineName    = '<%= name %>'
@@ -25,7 +26,7 @@ try:
     f.close()
 
     save()
-    activate()
+    activate()          
 
 except:
     print "Unexpected error:", sys.exc_info()[0]

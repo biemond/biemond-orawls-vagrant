@@ -5,6 +5,4 @@ CLASSPATH=$MDW_HOME/server/lib/weblogic.jar
 
 export PATH JAVA_HOME MDW_HOME CLASSPATH
 
-rm -f *.out
-
-java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning $1
+java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning
