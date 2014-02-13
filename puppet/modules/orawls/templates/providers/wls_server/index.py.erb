@@ -22,7 +22,14 @@ for token in m.split("dr--"):
         cd('/Servers/'+token+'/Log/'+token)
         logfilename     = get('FileName')
 
-        print >>f, token+";"+listenAddress+";"+listenPort+";"+sslListenPort+";"+sslEnabled+";"+'aaa'+";"+logfilename+";"+arguments
+        n = ls('/Servers/'+token+'/Machine')
+        machine = 'none'
+        for token2 in n.split("drw-"):
+            token2=token2.strip().lstrip().rstrip()
+            if token2:
+               machine = token2
+
+        print >>f, token+";"+listenAddress+";"+listenPort+";"+sslListenPort+";"+sslEnabled+";"+machine+";"+logfilename+";"+arguments
 f.close()
 
 disconnect()
