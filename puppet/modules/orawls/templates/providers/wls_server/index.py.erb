@@ -4,7 +4,7 @@ connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer
 m = ls('/Servers')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name:listenaddress:listenport:ssllistenport:sslenabled:machine:logfilename:arguments"
+print >>f, "name;listenaddress;listenport;ssllistenport;sslenabled;machine;logfilename;arguments"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
@@ -22,7 +22,7 @@ for token in m.split("dr--"):
         cd('/Servers/'+token+'/Log/'+token)
         logfilename     = get('FileName')
 
-        print >>f, token+":"+listenAddress+":"+listenPort+":"+sslListenPort+":"+sslEnabled+":"+'aaa'+":"+logfilename+":"+arguments
+        print >>f, token+";"+listenAddress+";"+listenPort+";"+sslListenPort+";"+sslEnabled+";"+'aaa'+";"+logfilename+";"+arguments
 f.close()
 
 disconnect()

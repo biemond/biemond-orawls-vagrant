@@ -3,7 +3,7 @@ connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer
 m = ls('/Machines')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name:machinetype:nmtype:listenaddress:listenport"
+print >>f, "name;machinetype;nmtype;listenaddress;listenport"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
@@ -11,7 +11,7 @@ for token in m.split("dr--"):
         cd('/Machines/'+token)
         type = get('Type')
         cd('NodeManager/'+token)
-        print >>f, token+":"+type+":"+get('NMType')+":"+get('ListenAddress')+":"+str(get('ListenPort'))
+        print >>f, token+";"+type+";"+get('NMType')+";"+get('ListenAddress')+";"+str(get('ListenPort'))
 
 f.close()
 

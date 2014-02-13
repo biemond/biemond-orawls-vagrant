@@ -79,7 +79,7 @@ module Utils
 				headers = []
 
 				csv_data.split("\n").each do | row |
-					columnized = row.split(':')
+					columnized = row.split(';')
 					columnized.map!{|column| column.strip}
 					if headers.empty?
 						headers = columnized
