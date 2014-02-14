@@ -14,17 +14,21 @@ module Puppet
 
     ensurable
 
+    def do_command(line, options = {})
+      "do command #{line}"
+    end
+
 		set_command(:do_command)
 
-    on_create do
+    on_create do | command_builder|
     	"on_create"
     end
 
-    on_modify do
+    on_modify do | command_builder|
     	"on_modify"
     end
 
-    on_destroy do
+    on_destroy do | command_builder|
     	"on_destroy"
     end
 
@@ -51,7 +55,7 @@ module Puppet
       	raw_resource[:my_property]
       end
 
-      on_apply do |builder| 
+      on_apply do | command_builder|
       	"my_property applied"
       end
 
@@ -65,10 +69,6 @@ module Puppet
   	provide(:simple) do
   		include EasyType::Provider
 		  mk_resource_methods
-
-			def do_command(line, options)
-				"do command #{line}"
-			end
   	end
 
 

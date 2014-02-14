@@ -92,7 +92,7 @@ describe 'the provider' do
 
 				it "executes the command" do
 					resource.provider.my_property = "changed"
-					expect(resource.provider).to receive(:do_command).and_call_original
+					expect_any_instance_of(Puppet::Type::Test).to receive(:do_command).and_call_original
 					resource.provider.flush
 				end
 			end
@@ -114,7 +114,7 @@ describe 'the provider' do
 
 				it "executes the command" do
 					resource.provider.first_in_group = "changed"
-					expect(resource.provider).to receive(:do_command).and_call_original
+					expect_any_instance_of(Puppet::Type::Test).to receive(:do_command).and_call_original
 					resource.provider.flush
 				end
 			end

@@ -1,54 +1,3 @@
-[![Code Climate](https://codeclimate.com/github/hajee/easy_type.png)](https://codeclimate.com/github/hajee/easy_type) [![Build Status](https://travis-ci.org/hajee/easy_type.png)](https://travis-ci.org/hajee/easy_type) [![Dependency Status](https://gemnasium.com/hajee/easy_type.png)](https://gemnasium.com/hajee/easy_type) [![Coverage Status](https://coveralls.io/repos/hajee/easy_type/badge.png)](https://coveralls.io/r/hajee/easy_type)
-
-#easy_type
-
-Robert scratched his head. How would he get a Puppet class to manage a complex resource on his systems? I guess I’ll have to make a Custom Type, he thought. But last time I looked into that, I noticed you need to know a lot about Puppet Internals. 
-
-If you recognize this thought process, easy_type is for you. Like the name says, easy type is designed to make it easy to build a Custom Puppet Type. 
-
-##Tutorial
-Check [this blog post](http://hajee.github.io/2014/01/26/puppet-custom-types-the-easy-way/) for a tutorial on using `easy_type`.
-
-##Documentation
-Check the [rdoc](http://rubydoc.info/github/hajee/easy_type/master/frames) documentation for easy_type
-
-##Get Started
-To get started, you first need to include `easy_type` in your `Puppetfile` or otherwise get it into your puppet directories. To add it to your `Puppetfile`, you can add the following line:
-
-```ruby
-mod "hajee/easy_type", “0.x.0”
-```
-
-Change the x to the version you would like. You can also use the latest from git.
-
-```ruby
-mod  easy_type, :git => "git@github.com:hajee/easy_type.git"
-```
-
-After that run the librarian to add the right modules to your puppet tree:
-
-```sh
-librarian-puppet install
-```
-
-#Creating your type
-
-To create your custom type you will have to create the right directory structure. Go to your module directory and create the next directories:
-
-```bash
-mkdir -p module_name/lib
-``` 
-
-To create a good starting point for defining your type, copy the scaffold
-
-```sh
-cp -Rv easy_type/scaffold module_name/lib/puppet
-```
-
-Start editing the example_type.rb file
-
-Here is it's content:
-```ruby
 require 'easy_type'
 
 module Puppet
@@ -435,23 +384,3 @@ module Puppet
     #
   end
 end
-
-```
-
-License
--------
-
-MIT License
-
-
-Contact
--------
-Bert Hajee hajee@moretIA.com
-
-Support
--------
-Please log tickets and issues at our [Projects site](https://github.com/hajee/easy_type)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hajee/easy_type/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

@@ -1,19 +1,26 @@
+#
+#
+# Define all common mungers available for all types
+#
 module EasyType
+  #
+  # The Integer munger, munges a specified value to an Integer.
+  #
 	module Mungers
 		module Integer
-
-		  ##
-		  #
-		  #
-			def munge(value)
+      # @private
+			def unsafe_munge(value)
 				Integer(value)
       end
 
 		end
 
+    #
+    # The Integer munger, munges a specified value to an Integer.
+    #
 		module Size
-
-			def munge(size)
+      # @private
+			def unsafe_munge(size)
         case size
         when /^\d+(K|k)$/ then size.chop.to_i * 1024
         when /^\d+(M|m)$/ then size.chop.to_i * 1024 * 1024
@@ -25,14 +32,18 @@ module EasyType
       end
     end
 
+    #
+    # The Upcase munger, munges a specified value to an uppercase String
+    #
     module Upcase
-      def munge(string)
+      # @private
+      def unsafe_munge(string)
         string.upcase
       end
     end
 
     module Downcase
-      def munge(string)
+      def unsafe_munge(string)
         string.downcase
       end
     end

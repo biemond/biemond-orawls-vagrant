@@ -1,13 +1,12 @@
 require 'spec_helper'
-require 'easy_type/type'
-require 'easy_type/file_includer'
+require 'easy_type'
 
 describe EasyType::Type do
 
 	before do
 		module Puppet
 			newtype(:test) do
-				include EasyType::Type
+				include EasyType
 				newparam(:name) do
 					isnamevar
 				end
@@ -25,9 +24,14 @@ describe EasyType::Type do
 	describe ".on_create" do
 
 		before do
-			class Puppet::Type::Test
-				on_create do
-					"done"
+
+			module Puppet
+				class Type
+					class Test
+						on_create do
+							"done"
+						end
+					end
 				end
 			end
 		end
@@ -40,9 +44,14 @@ describe EasyType::Type do
 	describe ".on_destroy" do
 
 		before do
-			class Puppet::Type::Test
-				on_destroy do
-					"done"
+			module Puppet
+				class Type
+					class Test
+
+						on_destroy do
+							"done"
+						end
+					end
 				end
 			end
 		end
@@ -57,9 +66,13 @@ describe EasyType::Type do
 	describe ".on_modify" do
 
 		before do
-			class Puppet::Type::Test
-				on_modify do
-					"done"
+			module Puppet
+				class Type
+					class Test
+						on_modify do
+							"done"
+						end
+					end
 				end
 			end
 		end
@@ -73,9 +86,13 @@ describe EasyType::Type do
 	describe ".to_get_raw_resources" do
 
 		before do
-			class Puppet::Type::Test
-				to_get_raw_resources do
-					"done"
+			module Puppet
+				class Type
+					class Test
+						to_get_raw_resources do
+							"done"
+						end
+					end
 				end
 			end
 		end
@@ -90,11 +107,13 @@ describe EasyType::Type do
 	describe ".property & .parameter" do
 
 		before do
-			class Puppet::Type::Test
-				include EasyType
-				extend EasyType::FileIncluder
-				property	:a_test
-				parameter :b_test
+			module Puppet
+				class Type
+					class Test
+						property	:a_test
+						parameter :b_test
+					end
+				end
 			end
 		end
 
@@ -114,7 +133,6 @@ describe EasyType::Type do
 		context "a group with invalid content" do
 			subject do
 				class Puppet::Type::Test
-					include EasyType
 					group do
 						erronous_command
 					end
@@ -129,11 +147,14 @@ describe EasyType::Type do
 
 		context "a group with valid content" do
 			before do
-				class Puppet::Type::Test
-					include EasyType
-					group(:test) do
-						parameter	:a_test
-						property 	:b_test
+				module Puppet
+					class Type
+						class Test
+							group(:test) do
+								parameter	:a_test
+								property 	:b_test
+							end
+						end
 					end
 				end
 			end
@@ -161,5 +182,50 @@ describe EasyType::Type do
 
 		end
 	end
+
+	describe ".set_command" do
+
+
+		context "is called with a valid method" do
+			before do
+				module Puppet
+					class Type
+						class Test
+							def self.an_existing_method
+								"called a test method"
+							end
+
+							set_command :an_existing_method
+						end
+					end
+				end
+			end
+
+		end
+
+		context "is called with just a symbol, representing no method" do
+
+			before do
+				module Puppet
+					class Type
+						class Test
+
+							set_command :echo
+						end
+					end
+				end
+			end
+
+
+			it "defines a method named after the command" do
+				# Using the .map {|m| m.to_sym} because Ruby 1.8.7 returns strings instead of symbols
+				expect(subject.class.methods.map {|m| m.to_sym}).to include(:echo) 
+			end
+
+
+		end
+
+	end
+
 end
 
