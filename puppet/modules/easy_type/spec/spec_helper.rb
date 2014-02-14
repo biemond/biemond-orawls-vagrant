@@ -1,6 +1,8 @@
 begin
 	require 'coveralls'
-	Coveralls.wear!
+	Coveralls.wear! do
+		add_filter 'test_type.rb'
+	end
 rescue LoadError
 	puts "No Coveralls support"
 end
@@ -10,6 +12,7 @@ require 'rubygems'
 require 'rspec/mocks'
 require 'puppet'
 require 'puppetlabs_spec_helper/puppetlabs_spec_helper'
+require 'support/shared_examples'
 
 
 RSpec.configure do |configuration|
