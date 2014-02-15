@@ -12,18 +12,11 @@ end
 module Utils
   module WlsAccess
 
-
-  #   class QueryResults < Hash
-  #     def column_data(column_name)
-  #       fetch(column_name) do 
-  #         fail "Column #{column_name} not found in results. Results contain #{keys.join(',')}"
-  #       end
-  #     end
-  #   end
-
+    DEFAULT_FILE = "~/.wls_setting.yaml"
 
     def self.included(parent)
       parent.extend(WlsAccess)
+      parent.extend(Settings)
     end
 
     def wlst( content, parameters = {})
@@ -44,24 +37,28 @@ module Utils
 
     private
 
+      def config_file
+        Pathname.new(DEFAULT_FILE).expand_path
+      end
+
       def weblogicUser
-        Facter.value('override_weblogic_user') || "oracle"
+        setting_for('user') || "oracle"
       end
 
       def weblogicDomain
-        Facter.value('weblogic_domain')
+        setting_for('domain')
       end
 
       def weblogicDomainsPath
-        Facter.value('weblogic_domains_path')
+        setting_for('domains_path')
       end
 
       def weblogicConnectUrl
-        Facter.value('override_weblogic_connect_url') || "t3://localhost:7001"
+        setting_for('connect_url') || "t3://localhost:7001"
       end
 
       def weblogicAdminServer
-        Facter.value('override_weblogic_adminserver') || "AdminServer"
+        setting_for('adminserver') || "AdminServer"
       end
 
       def execute_wlst(script, tmpFile, parameters)
