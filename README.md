@@ -4,8 +4,31 @@ biemond-orawls-vagrant
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux, Solaris and the use of Hiera
 
-Also support WebLogic resource like wls_machines  
+Also support WebLogic resource like wls_machine, wls_server  
 puppet resource wls_machine --verbose  ( as root or use sudo )
+
+
+wls_machine { 'test2':
+  ensure        => 'present',
+  listenaddress => '10.10.10.10',
+  listenport    => '5556',
+  machinetype   => 'UnixMachine',
+  nmtype        => 'SSL',
+}
+
+
+wls_server { 'wlsServer3':
+  ensure                         => 'present',
+  arguments                      => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out',
+  listenaddress                  => '10.10.10.100',
+  listenport                     => '8002',
+  logfilename                    => '/data/logs/wlsServer3.log',
+  machine                        => 'Node1',
+  sslenabled                     => '0',
+  sslhostnameverificationignored => '1',
+  ssllistenport                  => '7002',
+}
+
 
 Details
 - CentOS 6.5 vagrant box

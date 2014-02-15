@@ -1,14 +1,20 @@
 connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
 
-machineName    = '<%= name %>'
+name    = '<%= name %>'
 
 edit()
 startEdit()
 
 try:
-    editService.getConfigurationManager().removeReferencesToBean(getMBean('/Machines/'+machineName))
+
+    cd('/Servers/'+name)
+    cmo.setCluster(None)
+    cmo.setMachine(None)
+
+    editService.getConfigurationManager().removeReferencesToBean(getMBean('/Servers/'+name))
+
     cd('/')
-    cmo.destroyMachine(getMBean('/Machines/'+machineName))
+    cmo.destroyServer(getMBean('/Servers/'+name))
 
     save()
     activate()

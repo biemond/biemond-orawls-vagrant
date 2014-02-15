@@ -271,6 +271,20 @@ class managed_servers{
   require machines
   notify { 'class managed_servers':} 
   wlst_yaml{'servers':} 
+
+  wls_server { 'wlsServerTest':
+    ensure        => 'present',
+    arguments     => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServerTest.out -Dweblogic.Stderr=/data/logs/wlsServerTest_err.out',
+    listenaddress => '10.10.10.200',
+    listenport    => '8002',
+    logfilename   => '/data/logs/wlsServerTest.log',
+    machine       => 'test2',
+    sslenabled    => '0',
+    ssllistenport => '8202',
+    sslhostnameverificationignored => '1',
+  }
+
+
 }
 
 class clusters{

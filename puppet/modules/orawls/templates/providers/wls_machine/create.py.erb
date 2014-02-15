@@ -11,7 +11,6 @@ edit()
 startEdit()
 
 try:
-    f = open("/tmp/wlstScript.out", "w")
     cd('/')
     if machineType == 'UnixMachine':
       cmo.createUnixMachine(machineName)
@@ -23,10 +22,11 @@ try:
     cmo.setListenAddress(machineDnsName)
     cmo.setListenPort(portNumber)
 
-    f.close()
-
     save()
     activate()          
+
+    f = open("/tmp/wlstScript.out", "w")
+    f.close()
 
 except:
     print "Unexpected error:", sys.exc_info()[0]

@@ -29,7 +29,6 @@ module Puppet
     end
 
     on_destroy do
-      extend Utils::ERBReader
       Puppet.info "destroy #{name} "
       template('providers/wls_server/destroy.py', binding)
     end
@@ -42,6 +41,7 @@ module Puppet
     property  :machine
     property  :arguments
     property  :logfilename
+    property  :sslhostnameverificationignored
 
   private 
 
@@ -73,6 +73,9 @@ module Puppet
       self[:logfilename]
     end
 
+    def sslhostnameverificationignored
+      self[:sslhostnameverificationignored]
+    end
 
   end
 end
