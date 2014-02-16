@@ -1,8 +1,4 @@
-
 *.gz
-
 *.zip
-
 *.jar
 .vagrant/*
-facts/facts
