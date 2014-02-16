@@ -1,0 +1,25 @@
+---
+logoutput:                     &logoutput                     true
+
+server_instances:
+      'wlsServer3':
+         ensure:                         'present'
+         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer3.out -Dweblogic.Stderr=/data/logs/wlsServer3_err.out'
+         listenaddress:                  '10.10.10.100'
+         listenport:                     '8002'
+         logfilename:                    '/data/logs/wlsServer3.log'
+         machine:                        'Node1'
+         sslenabled:                     '1'
+         ssllistenport:                  '8202'
+         sslhostnameverificationignored: '1'
+      'wlsServer4':
+         ensure:                         'present'
+         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer4.out -Dweblogic.Stderr=/data/logs/wlsServer4_err.out'
+         listenaddress:                  '10.10.10.200'
+         listenport:                     '8002'
+         logfilename:                    '/data/logs/wlsServer4.log'
+         machine:                        'Node2'
+         sslenabled:                     '1'
+         ssllistenport:                  '8202'
+         sslhostnameverificationignored: '1'
+

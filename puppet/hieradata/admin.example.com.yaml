@@ -55,20 +55,15 @@ userconfig_instances:
 
 # create 2 machines
 machines_instances:
-  'createMachine_node1':
-     log_output:           *logoutput
-     weblogic_type:        "machine"
-     weblogic_object_name: "Node1"
-     script:               'createMachine.py'
-     params:
-        - "machineName      = 'Node1'"
-        - "machineDnsName   = '10.10.10.100'"
-  'createMachine_node2':
-     log_output:           *logoutput
-     weblogic_type:        "machine"
-     weblogic_object_name: "Node2"
-     script:               'createMachine.py'
-     params:
-        - "machineName      = 'Node2'"
-        - "machineDnsName   = '10.10.10.200'"
-
+  'Node1':
+    ensure:         'present'
+    listenaddress:  '10.10.10.100'
+    listenport:     '5556'
+    machinetype:    'UnixMachine'
+    nmtype:         'SSL'
+  'Node2':
+    ensure:         'present'
+    listenaddress:  '10.10.10.200'
+    listenport:     '5556'
+    machinetype:    'UnixMachine'
+    nmtype:         'SSL'

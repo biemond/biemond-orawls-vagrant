@@ -247,20 +247,25 @@ class machines{
   notify { 'class machines':} 
   $default_params = {}
   $machines_instances = hiera('machines_instances', [])
-  create_resources('orawls::wlstexec',$machines_instances, $default_params)
+  create_resources('wls_machine',$machines_instances, $default_params)
 
-
-
-  wls_machine { 'test2':
-    ensure        => 'present',
-    listenaddress => '10.10.10.10',
-    listenport    => '5556',
-    machinetype   => 'UnixMachine',
-    nmtype        => 'SSL',
-    require       => Wls_setting['default'],
-  }
 }
 
+define wlst_yaml_provider()
+{
+  $type            = $title
+  $apps            = hiera('weblogic_apps')
+  $apps_config_dir = hiera('apps_config_dir')
+
+  $apps.each |$app| { 
+    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/${type}/${app}_${type}.yaml")
+    if $allHieraEntriesYaml != undef {
+      if $allHieraEntriesYaml["${type}_instances"] != undef {
+          create_resources("wls_${type}",$allHieraEntriesYaml["${type}_instances"])
+      }  
+    }
+  }  
+}
 
 define wlst_yaml()
 {
@@ -283,22 +288,7 @@ define wlst_yaml()
 class managed_servers{
   require machines
   notify { 'class managed_servers':} 
-  wlst_yaml{'servers':} 
-
-  wls_server { 'wlsServerTest':
-    ensure        => 'present',
-    arguments     => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServerTest.out -Dweblogic.Stderr=/data/logs/wlsServerTest_err.out',
-    listenaddress => '10.10.10.200',
-    listenport    => '8002',
-    logfilename   => '/data/logs/wlsServerTest.log',
-    machine       => 'test2',
-    sslenabled    => '0',
-    ssllistenport => '8202',
-    sslhostnameverificationignored => '1',
-    require       => Wls_setting['default'],
-  }
-
-
+  wlst_yaml_provider{'server':} 
 }
 
 class clusters{
