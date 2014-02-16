@@ -21,6 +21,7 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         listenport    => '5556',
         machinetype   => 'UnixMachine',
         nmtype        => 'SSL',
+        require       => Wls_setting['default'],
       }
 
       wls_server { 'wlsServer3':
@@ -33,6 +34,7 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         sslenabled                     => '0',
         sslhostnameverificationignored => '1',
         ssllistenport                  => '7002',
+        require                        => Wls_setting['default'],
       }
 
 

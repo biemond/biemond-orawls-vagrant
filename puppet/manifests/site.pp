@@ -257,6 +257,7 @@ class machines{
     listenport    => '5556',
     machinetype   => 'UnixMachine',
     nmtype        => 'SSL',
+    require       => Wls_setting['default'],
   }
 }
 
@@ -294,6 +295,7 @@ class managed_servers{
     sslenabled    => '0',
     ssllistenport => '8202',
     sslhostnameverificationignored => '1',
+    require       => Wls_setting['default'],
   }
 
 

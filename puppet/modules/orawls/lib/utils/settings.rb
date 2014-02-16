@@ -2,6 +2,10 @@ require 'yaml'
 
 module Settings
 
+  def self.included(parent)
+    parent.extend(Settings)
+  end
+
   def setting_for(key)
     settings[key]
   end

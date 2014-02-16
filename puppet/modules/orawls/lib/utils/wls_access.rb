@@ -1,6 +1,7 @@
 require 'tempfile'
 require 'fileutils'
 require 'csv'
+require 'utils/settings'
 #begin
 #  require 'ruby-debug'
 #  require 'pry'
@@ -12,11 +13,12 @@ require 'csv'
 module Utils
   module WlsAccess
 
+    include Settings
+
     DEFAULT_FILE = "~/.wls_setting.yaml"
 
     def self.included(parent)
       parent.extend(WlsAccess)
-      parent.extend(Settings)
     end
 
     def wlst( content, parameters = {})
