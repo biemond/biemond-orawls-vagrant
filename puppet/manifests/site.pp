@@ -201,6 +201,16 @@ class domains{
   $default_params = {}
   $domain_instances = hiera('domain_instances', [])
   create_resources('orawls::domain',$domain_instances, $default_params)
+
+  wls_setting { 'default':
+    admin_server => 'AdminServer',
+    connect_url  => 't3://10.10.10.10:7001',
+    domain       => 'Wls1036',
+    domains_path => '/opt/oracle/wlsdomains/domains',
+    user         => 'wls',
+  }
+
+
 }
 
 class nodemanager {
@@ -238,6 +248,8 @@ class machines{
   $default_params = {}
   $machines_instances = hiera('machines_instances', [])
   create_resources('orawls::wlstexec',$machines_instances, $default_params)
+
+
 
   wls_machine { 'test2':
     ensure        => 'present',

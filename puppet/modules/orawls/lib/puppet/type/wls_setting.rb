@@ -1,6 +1,6 @@
 require 'easy_type'
 require 'yaml'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 module Puppet
   newtype(:wls_setting) do

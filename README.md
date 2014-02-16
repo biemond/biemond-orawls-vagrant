@@ -7,6 +7,13 @@ optimized for linux, Solaris and the use of Hiera
 Also support WebLogic resource like wls_machine, wls_server  
 puppet resource wls_machine --verbose  ( as root or use sudo )
 
+      wls_setting { 'default':
+        admin_server => 'AdminServer',
+        connect_url  => 't3://10.10.10.10:7001',
+        domain       => 'Wls1036',
+        domains_path => '/opt/oracle/wlsdomains/domains',
+        user         => 'wls',
+      }
 
       wls_machine { 'test2':
         ensure        => 'present',
@@ -15,7 +22,6 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         machinetype   => 'UnixMachine',
         nmtype        => 'SSL',
       }
-
 
       wls_server { 'wlsServer3':
         ensure                         => 'present',

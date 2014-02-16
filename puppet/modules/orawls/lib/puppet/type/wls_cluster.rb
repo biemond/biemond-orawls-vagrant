@@ -1,5 +1,6 @@
 require 'easy_type'
 require 'utils/wls_access'
+require 'utils/settings'
 require 'facter'
 
 module Puppet

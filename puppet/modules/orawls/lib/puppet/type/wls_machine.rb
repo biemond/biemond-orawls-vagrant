@@ -39,7 +39,6 @@ module Puppet
     property  :nmtype
     property  :listenaddress
     property  :listenport
-#    property  :servers
 
   private 
 
