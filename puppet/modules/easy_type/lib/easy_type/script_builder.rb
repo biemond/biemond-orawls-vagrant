@@ -53,25 +53,31 @@ module EasyType
 		end
 
 		def <<(line)
-			raise ArgumentError, 'no command specified' unless last_command
-			last_command.arguments << line if line
+			catch(:no_last_command) do
+				check_last_command
+				last_command.arguments << line if line
+			end
 		end
 
 		#
 		# For backward compatibility
 		#
 		def line
-			raise ArgumentError, 'no command specified' unless last_command
-			last_command.arguments.join(' ')
+			catch(:no_last_command) do
+				check_last_command
+				last_command.arguments.join(' ')
+			end
 		end
 
 		#
 		# For backward compatibility
 		#
 		def line=(line)
-			raise ArgumentError, 'no command specified' unless last_command
-			last_command.arguments.clear
-			last_command.arguments << line.split(' ')
+			catch(:no_last_command) do
+				check_last_command
+				last_command.arguments.clear
+				last_command.arguments << line.split(' ')
+			end
 		end
 
 
@@ -104,6 +110,13 @@ module EasyType
 		end
 
 		private
+
+			def check_last_command
+				unless last_command
+					Puppet.debug 'no command specified'	
+					throw(:no_last_command)
+				end
+			end
 
 			def add_to_queue(queue, line, &block)
 				raise ArgumentError, 'block or line must be present' unless block or line
