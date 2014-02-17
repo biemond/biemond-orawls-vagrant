@@ -1,15 +1,22 @@
 Oracle WebLogic / Fusion Middleware puppet module V2
 ====================================================
 
-Got the same options as the wls module but optimized for Hiera, totally refactored and only for Linux and Solaris
+Got the same options as the wls module but 
+- optimized for Hiera
+- totally refactored
+- only for Linux and Solaris
+- wls_machine, wls_server, wls_cluster type/provider instead of wlstexec scripts
 
 For full hiera examples, see the usages below this page
 
-created by Edwin Biemond  email biemond at gmail dot com   
+created by Edwin Biemond email biemond at gmail dot com   
 [biemond.blogspot.com](http://biemond.blogspot.com)    
 [Github homepage](https://github.com/biemond/biemond-orawls)  
 
 Should work for all Linux,Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10 sparc and x86  
+
+Example of Puppet 3.12 enterprise test case for full working WebLogic 10.3.6 cluster example  
+https://github.com/biemond/biemond-orawls/blob/master/puppet_enterprise_example_1.md 
 
 Reference implementation, the vagrant test case for full working WebLogic 10.3.6 cluster example  
 https://github.com/biemond/biemond-orawls-vagrant  
@@ -20,6 +27,7 @@ https://github.com/biemond/biemond-orawls-vagrant-solaris
 Reference Oracle SOA Suite, the vagrant test case for full working WebLogic 10.3.6 SOA Suite + OSB cluster example  
 https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemond-orawls-vagrant-solaris-soa
 
+Dependency with hajee/easy_type >= 0.5.0
 
 Orawls WebLogic Features
 ------------------------
@@ -57,7 +65,7 @@ all templates creates a WebLogic domain, logs the domain creation output
 
 orawls::utils::wlstbulk is for now disabled so you can also use this in puppet Enterprise 3.0  
 requirements
-- needs puppet version > 3.2 ( make use of iteration and lambda expressions )
+- needs puppet version > 3.4 ( make use of iteration and lambda expressions )
 - need to set --parser future ( puppet agent )
 - to use this you need uncomment this orawls::utils::wlstbulk define and enable future parser
 
