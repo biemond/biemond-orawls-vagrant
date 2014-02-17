@@ -4,15 +4,18 @@ biemond-orawls-vagrant
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux, Solaris and the use of Hiera
 
-Also support WebLogic resource like wls_machine, wls_server  
+Also support WebLogic resource like wls_machine, wls_server, wls_cluster  
 puppet resource wls_machine --verbose  ( as root or use sudo )
 
+      $domain_address = hiera('domain_adminserver_address')
+      $domain_port    = hiera('domain_adminserver_port')
+
       wls_setting { 'default':
-        admin_server => 'AdminServer',
-        connect_url  => 't3://10.10.10.10:7001',
-        domain       => 'Wls1036',
-        domains_path => '/opt/oracle/wlsdomains/domains',
-        user         => 'wls',
+        user               => hiera('wls_os_user'),
+        weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
+        connect_url        => "t3://${domain_address}:${domain_port}",
+        weblogic_user      => hiera('wls_weblogic_user'),
+        weblogic_password  => hiera('domain_wls_password'),
       }
 
       wls_machine { 'test2':
@@ -21,7 +24,6 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         listenport    => '5556',
         machinetype   => 'UnixMachine',
         nmtype        => 'SSL',
-        require       => Wls_setting['default'],
       }
 
       wls_server { 'wlsServer3':
@@ -34,9 +36,14 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         sslenabled                     => '0',
         sslhostnameverificationignored => '1',
         ssllistenport                  => '7002',
-        require                        => Wls_setting['default'],
       }
 
+      wls_cluster { 'WebCluster':
+        ensure         => 'present',
+        messagingmode  => 'unicast',
+        migrationbasis => 'consensus',
+        servers        => 'wlsServer3,wlsServer4',
+      }
 
 Details
 - CentOS 6.5 vagrant box

@@ -16,10 +16,10 @@ module Puppet
 
     parameter :name
     property  :user
-    property  :domain
-    property  :domains_path
+    property  :weblogic_home_dir
+    property  :weblogic_user
     property  :connect_url
-    property  :admin_server
+    property  :weblogic_password
 
     def self.configuration
       @configuration

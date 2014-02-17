@@ -1,5 +1,4 @@
-connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
-
+connect('<%= weblogicUser %>','<%= weblogicPassword %>'  ,'<%= weblogicConnectUrl %>')
 
 m = ls('/Servers')
 

@@ -1,4 +1,4 @@
-connect(url='<%= weblogicConnectUrl %>',adminServerName='<%= weblogicAdminServer %>',timeout='5000')
+connect('<%= weblogicUser %>','<%= weblogicPassword %>'  ,'<%= weblogicConnectUrl %>')
 
 machineName    = '<%= name %>'
 machineDnsName = '<%= listenaddress %>'

@@ -202,12 +202,15 @@ class domains{
   $domain_instances = hiera('domain_instances', [])
   create_resources('orawls::domain',$domain_instances, $default_params)
 
+  $domain_address = hiera('domain_adminserver_address')
+  $domain_port    = hiera('domain_adminserver_port')
+
   wls_setting { 'default':
-    admin_server => 'AdminServer',
-    connect_url  => 't3://10.10.10.10:7001',
-    domain       => 'Wls1036',
-    domains_path => '/opt/oracle/wlsdomains/domains',
-    user         => 'wls',
+    user               => hiera('wls_os_user'),
+    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
+    connect_url        => "t3://${domain_address}:${domain_port}",
+    weblogic_user      => hiera('wls_weblogic_user'),
+    weblogic_password  => hiera('domain_wls_password'),
   }
 
 
@@ -267,24 +270,6 @@ define wlst_yaml_provider()
   }  
 }
 
-define wlst_yaml()
-{
-  $type            = $title
-  $apps            = hiera('weblogic_apps')
-  $apps_config_dir = hiera('apps_config_dir')
-
-  $apps.each |$app| { 
-    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/${type}/${app}_${type}.yaml")
-    if $allHieraEntriesYaml != undef {
-      if $allHieraEntriesYaml["${type}_instances"] != undef {
-        orawls::utils::wlstbulk{ "${type}_instances_${app}":
-          entries_array => $allHieraEntriesYaml["${type}_instances"],
-        }
-      }  
-    }
-  }  
-}
-
 class managed_servers{
   require machines
   notify { 'class managed_servers':} 
@@ -294,7 +279,7 @@ class managed_servers{
 class clusters{
   require managed_servers
   notify { 'class clusters':} 
-  wlst_yaml{'clusters':} 
+  wlst_yaml_provider{'cluster':} 
 }
 
 define wlst_jms_yaml()

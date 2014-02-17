@@ -43,28 +43,28 @@ module Utils
         Pathname.new(DEFAULT_FILE).expand_path
       end
 
-      def weblogicUser
+      def operatingSystemUser
         setting_for('user') || "oracle"
       end
 
-      def weblogicDomain
-        setting_for('domain')
+      def weblogicHomeDir
+        setting_for('weblogic_home_dir')
       end
 
-      def weblogicDomainsPath
-        setting_for('domains_path')
+      def weblogicUser
+        setting_for('weblogic_user') || "weblogic"
       end
 
       def weblogicConnectUrl
         setting_for('connect_url') || "t3://localhost:7001"
       end
 
-      def weblogicAdminServer
-        setting_for('adminserver') || "AdminServer"
+      def weblogicPassword
+        setting_for('weblogic_password') || "weblogic1"
       end
 
       def execute_wlst(script, tmpFile, parameters)
-        output = `su - #{weblogicUser} -c '. #{weblogicDomainsPath}/#{weblogicDomain}/bin/setDomainEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
+        output = `su - #{operatingSystemUser} -c '. #{weblogicHomeDir}/server/bin/setWLSEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
         raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
         File.read("/tmp/"+script+".out")
       end
