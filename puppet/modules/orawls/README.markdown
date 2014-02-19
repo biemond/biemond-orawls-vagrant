@@ -5,7 +5,7 @@ Got the same options as the wls module but
 - optimized for Hiera
 - totally refactored
 - only for Linux and Solaris
-- wls_machine, wls_server, wls_cluster type/provider instead of wlstexec scripts
+
 
 For full hiera examples, see the usages below this page
 
@@ -43,6 +43,10 @@ Orawls WebLogic Features
 - startup the nodemanager
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
+
+Wls scripts
+-----------
+
 - create Machines, Managed Servers, Clusters, Server templates, Dynamic Clusters, Coherence clusters ( all 12.1.2 )
 - create Persistence Store
 - create JMS Server, Module, SubDeployment, Quota, Connection Factory, JMS (distributed) Queue or Topic
@@ -65,7 +69,7 @@ all templates creates a WebLogic domain, logs the domain creation output
 
 orawls::utils::wlstbulk is for now disabled so you can also use this in puppet Enterprise 3.0  
 requirements
-- needs puppet version > 3.4 ( make use of iteration and lambda expressions )
+- needs puppet version >= 3.4 ( make use of iteration and lambda expressions )
 - need to set --parser future ( puppet agent )
 - to use this you need uncomment this orawls::utils::wlstbulk define and enable future parser
 
@@ -463,7 +467,9 @@ when you set the defaults hiera variables
 
 
 ###orawls::domain 
-creates WebLogic a standard | OSB or SOA Suite WebLogic Domain
+creates WebLogic a standard | OSB or SOA Suite WebLogic Domain  
+
+optional override the default server arguments in the domain.py template with java_arguments parameter  
 
     orawls::domain { 'wlsDomain12c':
       version                    => 1212,  # 1036|1111|1211|1212
@@ -477,6 +483,7 @@ creates WebLogic a standard | OSB or SOA Suite WebLogic Domain
       adminserver_address        => "localhost",
       adminserver_port           => 7001,
       nodemanager_port           => 5556,
+      java_arguments             => { "ADM" => "...", "OSB" => "...", "SOA" => "...", "BAM" => "..."},
       weblogic_user              => "weblogic",
       weblogic_password          => "weblogic1",
       os_user                    => "oracle",
@@ -531,6 +538,9 @@ vagrantcentos64.example.com.yaml
          os_group:             "dba"
          log_dir:              "/data/logs"
          download_dir:         "/data/install"
+         java_arguments:      
+            ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
+            OSB:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m"
          log_output:           true
 
 or when you set the defaults hiera variables
@@ -546,6 +556,8 @@ or when you set the defaults hiera variables
          adminserver_port:     7001
          nodemanager_port:     5556
          weblogic_password:    "weblogic1"
+         java_arguments:      
+            ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
          log_output:           true
     
 when you just have one WebLogic domain on a server
@@ -558,6 +570,7 @@ when you just have one WebLogic domain on a server
     domain_adminserver_port:    7001
     domain_nodemanager_port:    5556
     domain_wls_password:        "weblogic1"
+    
     
     # create a standard domain
     domain_instances:
@@ -880,6 +893,8 @@ hiera configuration
          bam_enabled:          true
          soa_enabled:          true
          osb_enabled:          true
+
+
 
 
 ###orawls::wlstexec

@@ -25,6 +25,8 @@ domain_instances:
      domain_template:          "standard"
      development_mode:         false
      log_output:               *logoutput
+     java_arguments:      
+         ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
 
 # pack domains
 pack_domain_instances:
