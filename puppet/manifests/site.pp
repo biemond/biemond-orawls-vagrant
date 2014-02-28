@@ -300,6 +300,22 @@ define wlst_jms_yaml()
   }  
 }
 
+define wlst_jms_yaml_provider()
+{
+  $type            = $title
+  $apps            = hiera('weblogic_apps')
+  $apps_config_dir = hiera('apps_config_dir')
+
+  $apps.each |$app| { 
+    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
+    if $allHieraEntriesYaml != undef {
+      if $allHieraEntriesYaml["${type}_instances"] != undef {
+          create_resources("wls_${type}",$allHieraEntriesYaml["${type}_instances"])
+      }  
+    }
+  }  
+}
+
 class jms_servers{
   require clusters
   notify { 'class jms_servers':} 
@@ -309,7 +325,7 @@ class jms_servers{
 class jms_saf_agents{
   require jms_servers
   notify { 'class jms_saf_agents':} 
-  wlst_jms_yaml{'saf_agents':} 
+  wlst_jms_yaml_provider{'safagent':} 
 }
 
 class jms_modules{

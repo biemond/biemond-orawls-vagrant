@@ -1,0 +1,13 @@
+---
+
+safagent_instances:
+    'jmsSAFAgent1':
+          ensure:      'present'
+          target:      'wlsServer1'
+          targettype:  'Server'
+          servicetype: 'Sending-only'
+    'jmsSAFAgent2':
+          ensure:      'absent'
+          target:      'wlsServer2'
+          targettype:  'Server'
+          servicetype: 'Both'

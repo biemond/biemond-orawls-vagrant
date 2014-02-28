@@ -4,7 +4,7 @@ biemond-orawls-vagrant
 The reference implementation of https://github.com/biemond/biemond-orawls  
 optimized for linux, Solaris and the use of Hiera
 
-Also support WebLogic resource like wls_machine, wls_server, wls_cluster  
+Also support WebLogic resource like wls_machine, wls_server, wls_cluster, wls_safagent  
 puppet resource wls_machine --verbose  ( as root or use sudo )
 
       $domain_address = hiera('domain_adminserver_address')
@@ -43,6 +43,13 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         messagingmode  => 'unicast',
         migrationbasis => 'consensus',
         servers        => 'wlsServer3,wlsServer4',
+      }
+
+      wls_safagent { 'jmsSAFAgent1':
+        ensure      => 'present',
+        servicetype => 'Sending-only',
+        target      => 'wlsServer1',
+        targettype  => 'Server',
       }
 
 Details
