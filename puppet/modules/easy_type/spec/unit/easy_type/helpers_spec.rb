@@ -7,6 +7,16 @@ require 'easy_type/helpers.rb'
 describe "convert_csv_data_to_hash" do
 	include EasyType::Helpers
 
+	context "with deprecated option :column_delimeter" do
+		subject { "col1,col2,col3\nvalue1,value2,value3"}
+
+		it "returns an Array of Hashes" do
+			expect(convert_csv_data_to_hash(subject)).to \
+					eq [{'col1' => 'value1', 'col2' => 'value2', 'col3' => 'value3'}]
+		end
+
+	end
+
 	context "a valid comma separated string with header" do
 		subject { "col1,col2,col3\nvalue1,value2,value3"}
 
@@ -14,6 +24,24 @@ describe "convert_csv_data_to_hash" do
 			expect(convert_csv_data_to_hash(subject)).to \
 					eq [{'col1' => 'value1', 'col2' => 'value2', 'col3' => 'value3'}]
 		end
+
+		context "with deprecated option :column_delimeter" do
+	
+			it "returns a depraction message" do
+	      Puppet.expects(:deprecation_warning)
+				convert_csv_data_to_hash(subject, [], :column_delimeter => ',' )
+			end
+		end
+
+		context "with deprecated option :line_delimeter" do
+	
+			it "returns a depraction message" do
+	      Puppet.expects(:deprecation_warning)
+				convert_csv_data_to_hash(subject, [], :row_sep => :auto, :line_delimeter => "\n" )
+			end
+		end
+
+
 	end
 
 	context "a valid comma separated string with header and a marker line" do

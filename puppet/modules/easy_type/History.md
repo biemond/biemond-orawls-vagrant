@@ -10,3 +10,5 @@ History
 						pass the commandbuilder in the on_apply function
 
 16-02-2014	Renamed all to easy_type. It fits the purpose better
+
+19-02-2014	Started using the CSV parser class for parsing the CSV's. 

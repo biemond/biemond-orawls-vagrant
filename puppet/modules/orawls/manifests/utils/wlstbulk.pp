@@ -133,8 +133,8 @@ define orawls::utils::wlstbulk(
     $entries_array = undef,
 ){
 
-# uncomment here
-#
+#uncomment here
+
    $entries_array.each |$hieraEntry| {
     # every hiera entry
     $hieraEntry.each |$hieraTitle,$hieraEntryValues| {

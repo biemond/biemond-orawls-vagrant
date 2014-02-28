@@ -1,10 +1,11 @@
 class BlankSlate
-	# if RUBY_VERSION == "1.8.7"
-	# 	REQUIRED_METHODS = ['instance_eval', 'object_id', '__send__', '__id__']
-	# else
-	# 	REQUIRED_METHODS = [:instance_eval, :object_id, :__send__, :__id__, :debugger, :puts, :extend]
-	# end
-	# instance_methods.each { |m| undef_method m unless REQUIRED_METHODS.include?(m) }
+	ruby_18 do
+		REQUIRED_METHODS = ['instance_eval', 'object_id', '__send__', '__id__']
+	end
+	ruby_19 do
+		REQUIRED_METHODS = [:instance_eval, :object_id, :__send__, :__id__, :debugger, :puts, :extend]
+	end
+	instance_methods.each { |m| undef_method m unless REQUIRED_METHODS.include?(m) }
 
 	attr_accessor :entries, :type, :results
 	TYPES = [:main, :before, :after]

@@ -21,6 +21,14 @@ end
 describe EasyType::Mungers::Size do
 	include EasyType::Mungers::Size
 
+	it "returns an integer when given an integer" do
+		expect(unsafe_munge(100)).to eql 100
+	end
+
+	it "returns an float when given a float" do
+		expect(unsafe_munge(100.5)).to eql 100.5
+	end
+
 	it "returns an integer when given an integer like string" do
 		expect(unsafe_munge('100')).to eql 100
 	end

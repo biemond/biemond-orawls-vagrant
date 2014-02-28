@@ -21,6 +21,7 @@ module EasyType
 		module Size
       # @private
 			def unsafe_munge(size)
+        return size if size.is_a?(Numeric)
         case size
         when /^\d+(K|k)$/ then size.chop.to_i * 1024
         when /^\d+(M|m)$/ then size.chop.to_i * 1024 * 1024

@@ -1,3 +1,5 @@
+require 'version_differentiator'
+
 class CommandEntry
 
 	attr_reader :command, :arguments, :context
@@ -13,7 +15,9 @@ class CommandEntry
 
 
 	def execute
-		normalized_command = RUBY_VERSION == "1.8.7" ? command.to_s : command.to_sym
+		normalized_command = ''
+		ruby_18 { normalized_command = command.to_s}
+		ruby_19 { normalized_command = command.to_sym}
 		if @@binding.methods.include?(normalized_command)
 			@@binding.send(normalized_command, *normalized_arguments)
 		else

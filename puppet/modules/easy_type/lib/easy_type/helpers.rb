@@ -1,3 +1,8 @@
+require 'version_differentiator'
+ruby_18 {require '1.8.7/csv'; CSV=FasterCSV}
+ruby_19 {require 'csv'}
+
+
 module EasyType
 	#
 	# Contains a set of helpe methods and classed tha can be used throughtout EasyType
@@ -26,28 +31,43 @@ module EasyType
 		#
 		# @param [String] csv_data comma separated string
 		# @param [Array] headers of [Symbols] specifying the key's of the Hash
+		# @param [Hash] options parsing options. You can specify all options of CSV.parse here
 		# @return [Array] of [InstancesResults] a special Hash 
 		#
-		def convert_csv_data_to_hash(csv_data, headers = [], options = {})
-			data = []
-			line_delimeter = options.fetch(:line_delimeter) { "\n"}
-			column_delimeter = options.fetch(:column_delimeter) {','}
-			row_header = options.fetch(:row_header) { '----'}
+		HEADER_LINE_REGEX = /^(\s*\-+\s*)*$/
 
-			csv_data.split(line_delimeter).each do | row |
-				columnized = row.split(column_delimeter)
-				columnized.map!{|column| column.strip}
+
+		def convert_csv_data_to_hash(csv_data, headers = [], options = {})
+			options = check_options(options)
+			data = []
+			skip_lines = options.delete(:skip_lines) {HEADER_LINE_REGEX }
+			CSV.parse(csv_data, options) do |row|
 				if headers.empty?
-					headers = columnized
-				elsif row.include?(row_header)
+					headers = row
+				elsif row.join() =~ skip_lines
 					#do nothing
 				else
-					values = headers.zip(columnized)
+					values = headers.zip(row)
 					data << InstancesResults[values]
 				end
 			end
 			data
 		end
+private
+
+		def check_options(options)
+			deprecated_option(options,:column_delimeter, :col_sep)
+			deprecated_option(options,:line_delimeter, :row_sep)
+			options
+ 		end
+
+ 		def deprecated_option(options, old_id, new_id)
+			old_value = options.delete(old_id)
+			if old_value
+	 			Puppet.deprecation_warning("#{old_id} deprecated. Please use #{new_id}")
+	 			options[new_id] = old_value
+	 		end
+		end		
 	end
 end
 

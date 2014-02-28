@@ -53,7 +53,7 @@ module EasyType
 		end
 
 		def <<(line)
-			catch(:no_last_command) do
+			catch(:no_last_commands) do
 				check_last_command
 				last_command.arguments << line if line
 			end
@@ -63,7 +63,7 @@ module EasyType
 		# For backward compatibility
 		#
 		def line
-			catch(:no_last_command) do
+			catch(:no_last_commands) do
 				check_last_command
 				last_command.arguments.join(' ')
 			end
@@ -73,7 +73,7 @@ module EasyType
 		# For backward compatibility
 		#
 		def line=(line)
-			catch(:no_last_command) do
+			catch(:no_last_commands) do
 				check_last_command
 				last_command.arguments.clear
 				last_command.arguments << line.split(' ')
