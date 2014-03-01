@@ -1,0 +1,11 @@
+---
+
+jmsserver_instances:
+   jmsServer1:
+     ensure:      'present'
+     target:      'wlsServer1'
+     targettype:  'Server'
+   jmsServer2:
+     ensure:      'present'
+     target:      'wlsServer2'
+     targettype:  'Server'

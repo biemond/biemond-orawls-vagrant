@@ -319,7 +319,7 @@ define wlst_jms_yaml_provider()
 class jms_servers{
   require clusters
   notify { 'class jms_servers':} 
-  wlst_jms_yaml{'servers':} 
+  wlst_jms_yaml_provider{'jmsserver':} 
 }
 
 class jms_saf_agents{
