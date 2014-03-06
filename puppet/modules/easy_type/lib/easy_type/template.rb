@@ -1,3 +1,6 @@
+require 'puppet/file_serving'
+require 'puppet/file_serving/content'
+
 module EasyType
   #
   # Contains a template helper method. 
@@ -15,31 +18,19 @@ module EasyType
     # this is eqal to the normal template path of a module
     # 
     # @example
-    #  template 'create_tablespace.sql', binding
+    #  template 'puppet:///modules/my_module_name/create_tablespace.sql.erb', binding
     #
-    # @param [String] name this is the name of the template to be used
+    # @param [String] name this is the name of the template to be used. 
     # @param [Binding] context this is the binding to be used in the template
     #
     # @raise [ArgumentError] when the file doesn't exist
     # @return [String] interpreted ERB template
     #
     def template(name, context)
-      full_name = get_erb_file(name)
-      raise ArgumentError, "file #{name} not found" unless full_name
-      ERB.new(IO.read(full_name)).result(context)
+      template_file = Puppet::FileServing::Content.indirection.find(name)
+      raise Puppet::ParseError, "Could not find template '#{name}'" unless template_file
+      ERB.new(template_file.content).result(context)
     end
+  end
 
-    private
-      # @private
-      def get_erb_file(name)
-        name = name + '.erb' unless name =~ /\.erb$/
-        dir = $LOAD_PATH.find { |dir| path_name(dir, name).exist?}
-        dir and path_name(dir, name)
-      end
-
-      # @private
-      def path_name(dir, name)
-        Pathname.new(dir).parent + 'templates' + name
-      end
-    end
 end
