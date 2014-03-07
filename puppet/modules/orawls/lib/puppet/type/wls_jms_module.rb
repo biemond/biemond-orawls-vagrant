@@ -18,7 +18,6 @@ module Puppet
     to_get_raw_resources do
       Puppet.info "index #{name}"
       wlst template('puppet:///modules/orawls/providers/wls_jms_module/index.py.erb', binding)
-      Puppet.info "finish #{name} "
     end
 
     on_create do
@@ -37,22 +36,17 @@ module Puppet
     end
 
     parameter :name
-    property  :servers
-    property  :migrationbasis
-    property  :messagingmode
+    property  :target
+    property  :targettype
 
   private 
 
-    def servers
-      self[:servers]
+    def target
+      self[:target]
     end
 
-    def migrationbasis
-      self[:migrationbasis]
-    end
-
-    def messagingmode
-      self[:messagingmode]
+    def targettype
+      self[:targettype]
     end
 
   end

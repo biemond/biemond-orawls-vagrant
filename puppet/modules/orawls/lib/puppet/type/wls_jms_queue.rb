@@ -18,7 +18,6 @@ module Puppet
     to_get_raw_resources do
       Puppet.info "index #{name}"
       wlst template('puppet:///modules/orawls/providers/wls_jms_queue/index.py.erb', binding)
-      Puppet.info "finish #{name} "
     end
 
     on_create do

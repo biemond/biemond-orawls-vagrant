@@ -18,7 +18,6 @@ module Puppet
     to_get_raw_resources do
       Puppet.info "index #{name}"
       wlst template('puppet:///modules/orawls/providers/wls_jms_subdeployment/index.py.erb', binding)
-      Puppet.info "finish #{name} "
     end
 
     on_create do
@@ -36,13 +35,40 @@ module Puppet
       template('puppet:///modules/orawls/providers/wls_jms_subdeployment/destroy.py.erb', binding)
     end
 
+    def self.title_patterns
+      identity = lambda {|x| x}
+      [
+        [
+          /^(.*):(.*)$/,
+          [
+            [ :jmsmodule, identity ],
+            [ :name     , identity ]
+          ]
+        ]
+      ]
+    end
+
     parameter :name
-    property  :jmsmodule
+    parameter :jmsmodule
+    property  :target
+    property  :targettype
 
   private 
 
+    def name
+       self[:name]
+    end
+
     def jmsmodule
-      self[:jmsmodule]
+       self[:jmsmodule]
+    end
+
+    def target
+      self[:target]
+    end
+
+    def targettype
+      self[:targettype]
     end
 
   end
