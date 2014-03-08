@@ -35,13 +35,45 @@ module Puppet
       template('puppet:///modules/orawls/providers/wls_jms_queue/destroy.py.erb', binding)
     end
 
+    def self.title_patterns
+      identity = lambda {|x| x}
+      [
+        [
+          /^(.*):(.*)$/,
+          [
+            [ :jmsmodule, identity ],
+            [ :name     , identity ]
+          ]
+        ]
+      ]
+    end
+
     parameter :name
-    property  :jmsmodule
+    parameter :jmsmodule
+    property  :distributed
+    property  :jndiname
+    property  :subdeployment
 
   private 
 
+    def name
+       self[:name]
+    end
+
     def jmsmodule
-      self[:jmsmodule]
+       self[:jmsmodule]
+    end
+
+    def distributed
+       self[:distributed]
+    end
+
+    def jndiname
+       self[:jndiname]
+    end
+
+    def subdeployment
+       self[:subdeployment]
     end
 
   end

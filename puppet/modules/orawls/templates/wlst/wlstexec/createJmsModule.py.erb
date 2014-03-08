@@ -1,4 +1,5 @@
 
+
 wlsUser    = '<%= @weblogic_user %>'
 password   = sys.argv[1] 
 machine    = '<%= @adminserver_address %>'
@@ -6,10 +7,8 @@ portNumber = '<%= @adminserver_port %>'
 
 user_config = '<%= @userConfigFile %>'
 user_key    = '<%= @userKeyFile %>'
-
-storeType   = ''
                                 
-#target, serviceType, storeType,storeName,name
+#target, targetType, jmsModuleName
 <% @params.each do |param| -%>   
 <%= param %>                    
 <% end -%>                      
@@ -28,16 +27,9 @@ startEdit()
 
 try:
     cd('/')
-    cmo.createSAFAgent(name)
-    cd('/SAFAgents/'+name)
-
-    if storeType == "file":
-      cmo.setStore(getMBean('/FileStores/'+storeName))
-    elif storeType == "jdbc":
-      cmo.setStore(getMBean('/JDBCStores/'+storeName))
-
-    set('Targets', jarray.array([ObjectName('com.bea:Name='+target+',Type=Server')], ObjectName))
-    cmo.setServiceType(serviceType)
+    cmo.createJMSSystemResource(jmsModuleName)
+    cd('/SystemResources/'+jmsModuleName)
+    set('Targets', jarray.array([ObjectName('com.bea:Name='+target+',Type='+targetType)], ObjectName))
 
     save()
     activate()          
