@@ -36,23 +36,39 @@ module Puppet
     end
 
     parameter :name
-    property  :servers
-    property  :migrationbasis
-    property  :messagingmode
+    property  :target
+    property  :targettype
+    property  :jndinames
+    property  :drivername
+    property  :url
+    property  :usexa
 
   private 
 
-    def servers
-      self[:servers]
+    def target
+      self[:target]
     end
 
-    def migrationbasis
-      self[:migrationbasis]
+    def targettype
+      self[:targettype]
     end
 
-    def messagingmode
-      self[:messagingmode]
+    def jndinames
+      self[:jndinames]
     end
+
+    def drivername
+      self[:drivername]
+    end
+
+    def url
+      self[:url]
+    end
+
+    def usexa
+      self[:usexa]
+    end
+
 
   end
 end

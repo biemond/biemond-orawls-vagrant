@@ -6,15 +6,24 @@ def quote(text):
     else: 
         return ""
 
-m = ls('/SystemResources')
+m = ls('/JDBCSystemResources')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;target;targettype"
+print >>f, "name;target;targettype;drivername;jndinames;url;usexa"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
         print '___'+token+'___'
-        cd('/SystemResources/'+token)
+        cd('/JDBCSystemResources/'+token + '/JDBCResource/' + token)
+
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDriverParams/' + token )
+        url      = get('Url')
+        driver   = get('DriverName')
+        usexa    = str(get('UseXaDataSourceInterface'))
+        #password = get('Password')
+
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDataSourceParams/' + token )
+        jndinames = get('JNDINames')
 
         n = ls('/SystemResources/'+token+'/Targets')
         target     = []
@@ -26,7 +35,8 @@ for token in m.split("dr--"):
                cd('/SystemResources/'+token+'/Targets/'+token2)
                targetType.append(get('Type'))
 
-        print >>f, ";".join(map(quote, [token,','.join(target),','.join(targetType)]))
+        print >>f, ";".join(map(quote, [token,','.join(target),','.join(targetType),driver,','.join(jndinames),url,usexa]))
+f.close()
 
 disconnect()
 exit()

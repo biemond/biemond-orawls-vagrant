@@ -7,13 +7,16 @@ describe EasyType::Template do
 	let(:my_variable) {'my variable'}
 	subject { template(file, binding)}
 
+	MyTemplate = Struct.new(:content)
+
 
 	context "a file does exist" do
 
-		let(:file) { "existing_test_template.txt"}
+		let(:file) { "puppet:///modules/easy_type/existing_test_template.txt.erb"}
+
 
 		it "evaluates the template" do
-			pending "Need to checkout how to stub puppet:// file syntax"
+			expect(self).to receive(:load_file).with('puppet:///modules/easy_type/existing_test_template.txt.erb').and_return(MyTemplate.new('template contains <%= my_variable %>'))
 			expect(subject).to eq "template contains my variable"
 		end
 	end
@@ -21,7 +24,7 @@ describe EasyType::Template do
 
 	context "a file does not exist" do
 
-		let(:file) { "non_existing_file.txt"}
+		let(:file) { "puppet:///modules/easy_type/non_existing_file.txt"}
 
 		it "raises an ArgumentError" do
 			expect{subject}.to raise_error(ArgumentError)
