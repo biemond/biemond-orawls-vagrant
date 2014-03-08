@@ -1,9 +1,10 @@
 newproperty(:distributed) do
   include EasyType
-  include EasyType::Validators::Name
+  include EasyType::Mungers::Integer
 
   desc "Distributed topic"
-  newvalues(1, 0)
+  newvalues(1,0)
+  defaultto 0
 
   to_translate_to_resource do | raw_resource|
     raw_resource['distributed']
