@@ -90,6 +90,11 @@ module Puppet
        self[:balancingpolicy]
     end
 
+
+    def defaulttargeting
+       self[:defaulttargeting]
+    end
+
     def quota
        self[:quota]
     end

@@ -50,6 +50,11 @@ module Puppet
 
     parameter :name
     parameter :jmsmodule
+    property  :jndiname
+    property  :subdeployment
+    property  :defaulttargeting
+    property  :transactiontimeout
+    property  :xaenabled
 
   private 
 
@@ -60,6 +65,28 @@ module Puppet
     def jmsmodule
        self[:jmsmodule]
     end
+
+    def transactiontimeout
+       self[:transactiontimeout]
+    end
+
+    def xaenabled
+       self[:xaenabled]
+    end
+
+
+    def jndiname
+       self[:jndiname]
+    end
+
+    def subdeployment
+       self[:subdeployment]
+    end
+
+    def defaulttargeting
+       self[:defaulttargeting]
+    end
+
 
   end
 end
