@@ -9,24 +9,17 @@ def quote(text):
 m = ls('/JMSSystemResources')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;target;targettype"
+print >>f, "name"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
-        print '___'+token+'___'
-        cd('/JMSSystemResources/'+token)
-
-        n = ls('/JMSSystemResources/'+token+'/Targets')
-        target     = []
-        targetType = []
+        n = ls('/JMSSystemResources/'+token+'/JMSResource/'+token+'/ConnectionFactories')
         for token2 in n.split("dr--"):
             token2=token2.strip().lstrip().rstrip()
             if not token2 == '':
-               target.append(token2)
-               cd('/JMSSystemResources/'+token+'/Targets/'+token2)
-               targetType.append(get('Type'))
-
-        print >>f, ";".join(map(quote, [token,','.join(target),','.join(targetType)]))
+                print >>f, ";".join(map(quote, [token+":"+token2]))
+        
+f.close()
 
 disconnect()
 exit()
