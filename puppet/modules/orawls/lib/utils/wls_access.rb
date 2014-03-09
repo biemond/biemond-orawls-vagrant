@@ -42,6 +42,10 @@ module Utils
         Pathname.new(DEFAULT_FILE).expand_path
       end
 
+      def environment
+        'default'  || 'default'
+      end
+
       def operatingSystemUser
         setting_for('user') || "oracle"
       end

@@ -42,6 +42,13 @@ module Puppet
     property  :drivername
     property  :url
     property  :usexa
+    property  :user
+    property  :testtablename
+    property  :globaltransactionsprotocol
+    property  :extraproperties
+    property  :extrapropertiesvalues
+    property  :maxcapacity
+    property  :initialcapacity
 
   private 
 
@@ -69,6 +76,33 @@ module Puppet
       self[:usexa]
     end
 
+    def user
+      self[:user]
+    end
+
+    def testtablename
+      self[:testtablename]
+    end
+
+    def globaltransactionsprotocol
+      self[:globaltransactionsprotocol]
+    end 
+
+    def extraproperties
+       self[:extraproperties]
+    end 
+
+    def extrapropertiesvalues
+       self[:extrapropertiesvalues]
+    end  
+
+    def maxcapacity
+       self[:maxcapacity]
+    end 
+
+    def initialcapacity
+       self[:initialcapacity]
+    end  
 
   end
 end

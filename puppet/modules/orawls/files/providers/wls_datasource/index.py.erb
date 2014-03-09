@@ -9,7 +9,7 @@ def quote(text):
 m = ls('/JDBCSystemResources')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;target;targettype;drivername;jndinames;url;usexa"
+print >>f, "name;target;targettype;drivername;jndinames;url;usexa;user;testtablename;globaltransactionsprotocol;extraproperties;extrapropertiesvalues;maxcapacity;initialcapacity"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
@@ -22,8 +22,31 @@ for token in m.split("dr--"):
         usexa    = str(get('UseXaDataSourceInterface'))
         #password = get('Password')
 
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCConnectionPoolParams/' + token )
+        maxcapacity     = get('MaxCapacity')
+        initialcapacity = get('InitialCapacity')
+
         cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDataSourceParams/' + token )
         jndinames = get('JNDINames')
+
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCConnectionPoolParams/' + token )
+        testTableName = get('TestTableName')
+
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDriverParams/' + token + '/Properties/' + token + '/Properties/user')
+        user = get('Value')
+
+        cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDataSourceParams/' + token)
+        globalTransactionsProtocol = get('GlobalTransactionsProtocol')
+
+        p = ls('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDriverParams/' + token + '/Properties/' + token + '/Properties')
+        properties     = []
+        propertyValues = []
+        for token3 in p.split("dr--"):
+            token3=token3.strip().lstrip().rstrip()
+            if not token3 == '' and not token3 == 'user':
+               properties.append(token3)
+               cd('/JDBCSystemResources/' + token + '/JDBCResource/' + token + '/JDBCDriverParams/' + token + '/Properties/' + token + '/Properties/'+token3)
+               propertyValues.append(get('Value'))
 
         n = ls('/SystemResources/'+token+'/Targets')
         target     = []
@@ -35,7 +58,7 @@ for token in m.split("dr--"):
                cd('/SystemResources/'+token+'/Targets/'+token2)
                targetType.append(get('Type'))
 
-        print >>f, ";".join(map(quote, [token,','.join(target),','.join(targetType),driver,','.join(jndinames),url,usexa]))
+        print >>f, ";".join(map(quote, [token,','.join(target),','.join(targetType),driver,','.join(jndinames),url,usexa,user,testTableName,globalTransactionsProtocol,','.join(properties),','.join(propertyValues),maxcapacity,initialcapacity]))
 f.close()
 
 disconnect()

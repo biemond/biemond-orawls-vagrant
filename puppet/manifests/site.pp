@@ -205,6 +205,14 @@ class domains{
   $domain_address = hiera('domain_adminserver_address')
   $domain_port    = hiera('domain_adminserver_port')
 
+  wls_setting { 'domain2':
+    user               => hiera('wls_os_user'),
+    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
+    connect_url        => "t3://${domain_address}:9001",
+    weblogic_user      => hiera('wls_weblogic_user'),
+    weblogic_password  => hiera('domain_wls_password'),
+  }
+
   wls_setting { 'default':
     user               => hiera('wls_os_user'),
     weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
