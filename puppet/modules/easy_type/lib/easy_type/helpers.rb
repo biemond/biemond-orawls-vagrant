@@ -43,11 +43,11 @@ module EasyType
 			skip_lines = options.delete(:skip_lines) {HEADER_LINE_REGEX }
 			CSV.parse(csv_data, options) do |row|
 				if headers.empty?
-					headers = row
+					headers = row.collect(&:strip)
 				elsif row.join() =~ skip_lines
 					#do nothing
 				else
-					values = headers.zip(row)
+					values = headers.zip(row.collect(&:strip))
 					data << InstancesResults[values]
 				end
 			end

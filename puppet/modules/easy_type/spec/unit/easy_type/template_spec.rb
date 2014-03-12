@@ -27,6 +27,7 @@ describe EasyType::Template do
 		let(:file) { "puppet:///modules/easy_type/non_existing_file.txt"}
 
 		it "raises an ArgumentError" do
+			Puppet[:server] = '' # force file mode
 			expect{subject}.to raise_error(ArgumentError)
 		end
 	end

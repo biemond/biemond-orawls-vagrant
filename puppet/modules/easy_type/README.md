@@ -438,6 +438,19 @@ end
 
 ```
 
+Spread the word
+---------------
+If you like easy_type, You can spread the word by adding a badge to the README.md file of your newly created type.
+
+```
+[![Powered By EasyType](https://raw.github.com/hajee/easy_type/master/powered_by_easy_type.png)](https://github.com/hajee/easy_type)
+```
+
+This will look like this:
+
+[![Powered By EasyType](https://raw.github.com/hajee/easy_type/master/powered_by_easy_type.png)](https://github.com/hajee/easy_type)
+
+
 License
 -------
 

@@ -7,7 +7,7 @@ safagent_instances:
           targettype:  'Server'
           servicetype: 'Sending-only'
     'jmsSAFAgent2':
-          ensure:      'absent'
+          ensure:      'present'
           target:      'wlsServer2'
           targettype:  'Server'
           servicetype: 'Both'
