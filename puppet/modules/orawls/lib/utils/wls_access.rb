@@ -23,9 +23,7 @@ module Utils
     def wlst( content, parameters = {})
            
       script = "wlstScript"
-
       Puppet.info "Executing: #{script}"
-
             
       tmpFile = Tempfile.new([ script, '.py' ])
       tmpFile.write(content)

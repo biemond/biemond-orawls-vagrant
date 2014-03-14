@@ -339,25 +339,25 @@ class jms_saf_agents{
 class jms_modules{
   require jms_saf_agents
   notify { 'class jms_modules':} 
-  wlst_jms_yaml{'modules':} 
+  wlst_jms_yaml_provider{'jms_module':} 
 }
 
 class jms_module_subdeployments{
   require jms_modules
   notify { 'class jms_module_subdeployments':} 
-  wlst_jms_yaml{'subdeployments':} 
+  wlst_jms_yaml_provider{'jms_subdeployment':} 
 }
 
 class jms_module_quotas{
   require jms_module_subdeployments
   notify { 'class jms_module_quotas':} 
-  wlst_jms_yaml{'quotas':} 
+  wlst_jms_yaml_provider{'jms_quota':} 
 }
 
 class jms_module_cfs{
   require jms_module_quotas
   notify { 'class jms_module_cfs':} 
-  wlst_jms_yaml{'cf':} 
+  wlst_jms_yaml_provider{'jms_connection_factory':} 
 }
 
 class jms_module_objects_errors{

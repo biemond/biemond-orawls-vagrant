@@ -42,7 +42,13 @@ module Puppet
           /^(.*):(.*)$/,
           [
             [ :jmsmodule, identity ],
-            [ :name     , identity ]
+            [ :name, identity ]
+          ]
+        ],
+        [
+          /^([^=]+)$/,
+          [
+            [ :name, identity ]
           ]
         ]
       ]
@@ -58,10 +64,6 @@ module Puppet
 
   private 
 
-    def name
-       self[:name]
-    end
-
     def jmsmodule
        self[:jmsmodule]
     end
@@ -74,7 +76,6 @@ module Puppet
        self[:xaenabled]
     end
 
-
     def jndiname
        self[:jndiname]
     end
@@ -86,7 +87,6 @@ module Puppet
     def defaulttargeting
        self[:defaulttargeting]
     end
-
 
   end
 end

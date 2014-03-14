@@ -38,6 +38,8 @@ module Puppet
       template('puppet:///modules/orawls/providers/wls_machine/destroy.py.erb', binding)
     end
 
+    include_file 'puppet/type/wls_setting/setting'
+
     parameter :name
     property  :machinetype
     property  :nmtype

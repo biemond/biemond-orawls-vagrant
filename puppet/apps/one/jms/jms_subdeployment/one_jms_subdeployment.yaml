@@ -1,0 +1,11 @@
+---
+
+jms_subdeployment_instances:
+   'jmsClusterModule:jmsServers':
+      ensure:     'present'
+      target:     'jmsServer1,jmsServer2'
+      targettype: 'JMSServer,JMSServer'
+   'jmsClusterModule:wlsServers':
+      ensure:     'present'
+      target:     'WebCluster'
+      targettype: 'Cluster'

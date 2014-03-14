@@ -66,10 +66,6 @@ module Puppet
 
   private 
 
-    def name
-       self[:name]
-    end
-
     def jmsmodule
        self[:jmsmodule]
     end

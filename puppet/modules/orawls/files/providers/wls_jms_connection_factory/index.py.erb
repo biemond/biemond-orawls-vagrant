@@ -9,7 +9,7 @@ def quote(text):
 m = ls('/JMSSystemResources')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;jndiname;subdeployment;defaulttargeting;xaenabled;transactiontimeout"
+print >>f, "name;jmsmodule;jndiname;subdeployment;defaulttargeting;xaenabled;transactiontimeout"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
@@ -25,7 +25,7 @@ for token in m.split("dr--"):
                xaEnabled          = str(get('XAConnectionFactoryEnabled'))
                transactionTimeout = get('TransactionTimeout')
                
-               print >>f, ";".join(map(quote, [token+":"+token2,jndiname,subdeployment,defaultTargeting,xaEnabled,transactionTimeout]))
+               print >>f, ";".join(map(quote, [token+":"+token2,token,jndiname,subdeployment,defaultTargeting,xaEnabled,transactionTimeout]))
         
 f.close()
 

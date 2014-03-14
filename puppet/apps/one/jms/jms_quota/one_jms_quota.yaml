@@ -1,0 +1,15 @@
+---
+# create jms quotas for the jms module 
+jms_quota_instances:
+   'jmsClusterModule:QuotaBig':
+      ensure:           'present'
+      bytesmaximum:     '9223372036854775807'
+      messagesmaximum:  '9223372036854775807'
+      policy:           'FIFO'
+      shared:           '1'
+   'jmsClusterModule:QuotaLow':
+      ensure:           'present'
+      bytesmaximum:     '20000000000'
+      messagesmaximum:  '9223372036854775807'
+      policy:           'FIFO'
+      shared:           '0'

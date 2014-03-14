@@ -1,0 +1,18 @@
+---
+
+jms_connection_factory_instances:
+  'jmsClusterModule:cf':
+      ensure:             'present'
+      jmsmodule:          'jmsClusterModule'
+      defaulttargeting:   '0'
+      jndiname:           'jms/cf'
+      subdeployment:      'wlsServers'
+      transactiontimeout: '3600'
+      xaenabled:          '0'
+  'jmsClusterModule:cf2':
+      ensure:             'present'
+      jmsmodule:          'jmsClusterModule'
+      defaulttargeting:   '1'
+      jndiname:           'jms/cf2'
+      transactiontimeout: '3600'
+      xaenabled:          '1'

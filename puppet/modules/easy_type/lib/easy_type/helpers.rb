@@ -47,7 +47,7 @@ module EasyType
 				elsif row.join() =~ skip_lines
 					#do nothing
 				else
-					values = headers.zip(row.collect(&:strip))
+					values = headers.zip(row)
 					data << InstancesResults[values]
 				end
 			end

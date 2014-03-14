@@ -9,7 +9,7 @@ def quote(text):
 m = ls('/JMSSystemResources')
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;target;targettype"
+print >>f, "name;jmsmodule;target;targettype"
 for token in m.split("dr--"):
     token=token.strip().lstrip().rstrip()
     if token:
@@ -31,7 +31,7 @@ for token in m.split("dr--"):
                        cd('/JMSSystemResources/'+token+'/SubDeployments/'+token2+'/Targets/'+token3)
                        targetType.append(get('Type'))
 
-                print >>f, ";".join(map(quote, [token+":"+token2,','.join(target),','.join(targetType)]))
+                print >>f, ";".join(map(quote, [token+":"+token2,token,','.join(target),','.join(targetType)]))
         
 f.close()
 
