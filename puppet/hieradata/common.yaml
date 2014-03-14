@@ -25,7 +25,8 @@ wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"
 wls_weblogic_user:        &wls_weblogic_user        "weblogic"
 wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
 wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
-wls_domains_dir:          &wls_domains_dir          "/opt/oracle/domains"
+wls_domains_dir:          &wls_domains_dir          "/opt/oracle/wlsdomains/domains"
+wls_apps_dir:             &wls_apps_dir             "/opt/oracle/wlsdomains/applications"
 wls_version:              &wls_version              1036
 
 # global OS vars
@@ -42,6 +43,7 @@ orawls::weblogic::version:              *wls_version
 orawls::weblogic::filename:             "wls1036_generic.jar"
 orawls::weblogic::middleware_home_dir:  *wls_middleware_home_dir
 orawls::weblogic::domains_dir:          *wls_domains_dir
+orawls::weblogic::apps_dir:             *wls_apps_dir
 orawls::weblogic::log_output:           false
 
 # hiera default anchors
