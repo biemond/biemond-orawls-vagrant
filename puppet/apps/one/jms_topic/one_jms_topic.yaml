@@ -1,0 +1,13 @@
+---
+jms_topic_instances:
+   'jmsClusterModule:Topic1':
+     ensure:            'present'
+     defaulttargeting:  '0'
+     distributed:       '1'
+     expirationpolicy:  'Discard'
+     jndiname:          'jms/Topic1'
+     redeliverydelay:   '2000'
+     redeliverylimit:   '2'
+     subdeployment:     'jmsServers'
+     timetodeliver:     '-1'
+     timetolive:        '300000'

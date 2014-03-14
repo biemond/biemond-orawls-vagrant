@@ -42,7 +42,13 @@ module Puppet
           /^(.*):(.*)$/,
           [
             [ :jmsmodule, identity ],
-            [ :name     , identity ]
+            [ :name, identity ]
+          ]
+        ],
+        [
+          /^([^=]+)$/,
+          [
+            [ :name, identity ]
           ]
         ]
       ]
@@ -80,6 +86,10 @@ module Puppet
 
     def subdeployment
        self[:subdeployment]
+    end
+
+    def defaulttargeting
+       self[:defaulttargeting]
     end
 
     def balancingpolicy

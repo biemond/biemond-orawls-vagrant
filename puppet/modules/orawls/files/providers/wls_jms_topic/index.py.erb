@@ -25,7 +25,7 @@ def topic(token,token2,location,distributed):
     else:
        quota = ''
 
-    defaultTargeting = get('DefaultTargetingEnabled')  
+    defaultTargeting = str(get('DefaultTargetingEnabled'))  
 
     cd(location+'/DeliveryFailureParams/'+token2)
     redeliveryLimit         = get('RedeliveryLimit')
@@ -45,12 +45,12 @@ def topic(token,token2,location,distributed):
     timeToDeliver   = get('TimeToDeliver')                             
     redeliveryDelay = get('RedeliveryDelay')
 
-    print >>f, ";".join(map(quote, [token+":"+token2,str(distributed),jndiname,subdeployment,balancingPolicy,quota,defaultTargeting,redeliveryLimit,expirationPolicy,errorDestination,expirationLoggingPolicy,timeToLive,timeToDeliver,redeliveryDelay]))
+    print >>f, ";".join(map(quote, [token+":"+token2,token,str(distributed),jndiname,subdeployment,balancingPolicy,quota,defaultTargeting,redeliveryLimit,expirationPolicy,errorDestination,expirationLoggingPolicy,timeToLive,timeToDeliver,redeliveryDelay]))
 
 
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;distributed;jndiname;subdeployment;balancingpolicy;quota;defaulttargeting;redeliverylimit;expirationpolicy;errordestination;expirationloggingpolicy;timetolive;timetodeliver;redeliverydelay"
+print >>f, "name;jmsmodule;distributed;jndiname;subdeployment;balancingpolicy;quota;defaulttargeting;redeliverylimit;expirationpolicy;errordestination;expirationloggingpolicy;timetolive;timetodeliver;redeliverydelay"
 
 m = ls('/JMSSystemResources')
 for token in m.split("dr--"):

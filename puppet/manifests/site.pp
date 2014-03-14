@@ -19,7 +19,6 @@ node 'admin.example.com' {
   include jms_module_subdeployments
   include jms_module_quotas
   include jms_module_cfs
-  include jms_module_objects_errors
   include jms_module_queues_objects
   include jms_module_topics_objects
   include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
@@ -290,6 +289,54 @@ class clusters{
   wlst_yaml_provider{'cluster':} 
 }
 
+class jms_servers{
+  require clusters
+  notify { 'class jms_servers':} 
+  wlst_yaml_provider{'jmsserver':} 
+}
+
+class jms_saf_agents{
+  require jms_servers
+  notify { 'class jms_saf_agents':} 
+  wlst_yaml_provider{'safagent':} 
+}
+
+class jms_modules{
+  require jms_saf_agents
+  notify { 'class jms_modules':} 
+  wlst_yaml_provider{'jms_module':} 
+}
+
+class jms_module_subdeployments{
+  require jms_modules
+  notify { 'class jms_module_subdeployments':} 
+  wlst_yaml_provider{'jms_subdeployment':} 
+}
+
+class jms_module_quotas{
+  require jms_module_subdeployments
+  notify { 'class jms_module_quotas':} 
+  wlst_yaml_provider{'jms_quota':} 
+}
+
+class jms_module_cfs{
+  require jms_module_quotas
+  notify { 'class jms_module_cfs':} 
+  wlst_yaml_provider{'jms_connection_factory':} 
+}
+
+class jms_module_queues_objects{
+  require jms_module_cfs
+  notify { 'class jms_module_queues_objects':} 
+  wlst_yaml_provider{'jms_queue':} 
+}
+
+class jms_module_topics_objects{
+  require jms_module_queues_objects
+  notify { 'class jms_module_topics_objects':} 
+  wlst_yaml_provider{'jms_topic':} 
+}
+
 define wlst_jms_yaml()
 {
   $type            = $title
@@ -300,84 +347,11 @@ define wlst_jms_yaml()
     $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
     if $allHieraEntriesYaml != undef {
       if $allHieraEntriesYaml["${type}_instances"] != undef {
-        orawls::utils::wlstbulk{ "jms_${type}_instances_${app}":
-          entries_array => $allHieraEntriesYaml["${type}_instances"],
-        }
+          create_resources("${type}",$allHieraEntriesYaml["${type}_instances"])
       }  
     }
   }  
 }
-
-define wlst_jms_yaml_provider()
-{
-  $type            = $title
-  $apps            = hiera('weblogic_apps')
-  $apps_config_dir = hiera('apps_config_dir')
-
-  $apps.each |$app| { 
-    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
-    if $allHieraEntriesYaml != undef {
-      if $allHieraEntriesYaml["${type}_instances"] != undef {
-          create_resources("wls_${type}",$allHieraEntriesYaml["${type}_instances"])
-      }  
-    }
-  }  
-}
-
-class jms_servers{
-  require clusters
-  notify { 'class jms_servers':} 
-  wlst_jms_yaml_provider{'jmsserver':} 
-}
-
-class jms_saf_agents{
-  require jms_servers
-  notify { 'class jms_saf_agents':} 
-  wlst_jms_yaml_provider{'safagent':} 
-}
-
-class jms_modules{
-  require jms_saf_agents
-  notify { 'class jms_modules':} 
-  wlst_jms_yaml_provider{'jms_module':} 
-}
-
-class jms_module_subdeployments{
-  require jms_modules
-  notify { 'class jms_module_subdeployments':} 
-  wlst_jms_yaml_provider{'jms_subdeployment':} 
-}
-
-class jms_module_quotas{
-  require jms_module_subdeployments
-  notify { 'class jms_module_quotas':} 
-  wlst_jms_yaml_provider{'jms_quota':} 
-}
-
-class jms_module_cfs{
-  require jms_module_quotas
-  notify { 'class jms_module_cfs':} 
-  wlst_jms_yaml_provider{'jms_connection_factory':} 
-}
-
-class jms_module_objects_errors{
-  require jms_module_cfs
-  notify { 'class jms_module_objects_errors':} 
-  wlst_jms_yaml{'error_queues':} 
-}
-
-class jms_module_queues_objects{
-  require jms_module_objects_errors
-  notify { 'class jms_module_queues_objects':} 
-  wlst_jms_yaml{'queues':} 
-}
-
-class jms_module_topics_objects{
-  require jms_module_queues_objects
-  notify { 'class jms_module_topics_objects':} 
-  wlst_jms_yaml{'topics':} 
-}
-
 
 class jms_module_foreign_server_objects{
   require jms_module_topics_objects
