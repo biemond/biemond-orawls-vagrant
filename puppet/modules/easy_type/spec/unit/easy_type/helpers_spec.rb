@@ -26,7 +26,7 @@ describe "convert_csv_data_to_hash" do
 		end
 
 		context "with spaces in the header and values" do
-			subject { "col1   ,col2   ,col3   \nvalue1   ,value2   ,value3   "}
+			subject { "col1   ,col2   ,col3   \nvalue1,value2,value3"}
 
 			it "returns an Array of hashes with trimmed values" do
 				expect(convert_csv_data_to_hash(subject)).to \

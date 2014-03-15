@@ -274,20 +274,20 @@ class managed_servers{
   wlst_yaml_provider{'server':} 
 }
 
-class datasources{
-  require managed_servers
-  notify { 'class datasource':} 
-  wlst_yaml_provider{'datasource':} 
-}
 
 class clusters{
-  require datasources
+  require managed_servers
   notify { 'class clusters':} 
   wlst_yaml_provider{'cluster':} 
 }
 
-class file_persistence{
+class datasources{
   require clusters
+  notify { 'class datasource':} 
+  wlst_yaml_provider{'datasource':} 
+}
+class file_persistence{
+  require datasources
   notify { 'class file_persistence':} 
   wlst_yaml_provider{'file_persistence_store':} 
 }
