@@ -2,7 +2,7 @@ newproperty(:globaltransactionsprotocol) do
   include EasyType
 
   desc "The global Transactions Protocol"
-  newvalues('TwoPhaseCommit','EmulateTwoPhaseCommit','OnePhaseCommit')
+  newvalues('TwoPhaseCommit','EmulateTwoPhaseCommit','OnePhaseCommit','None')
   defaultto 'TwoPhaseCommit'
 
   to_translate_to_resource do | raw_resource|

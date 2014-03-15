@@ -21,7 +21,7 @@ node 'admin.example.com' {
   include jms_module_cfs
   include jms_module_queues_objects
   include jms_module_topics_objects
-  include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
+  #include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
   include pack_domain
 
 
@@ -204,14 +204,6 @@ class domains{
   $domain_address = hiera('domain_adminserver_address')
   $domain_port    = hiera('domain_adminserver_port')
 
-  wls_setting { 'domain2':
-    user               => hiera('wls_os_user'),
-    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
-    connect_url        => "t3://${domain_address}:9001",
-    weblogic_user      => hiera('wls_weblogic_user'),
-    weblogic_password  => hiera('domain_wls_password'),
-  }
-
   wls_setting { 'default':
     user               => hiera('wls_os_user'),
     weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
@@ -219,7 +211,6 @@ class domains{
     weblogic_user      => hiera('wls_weblogic_user'),
     weblogic_password  => hiera('domain_wls_password'),
   }
-
 
 }
 
@@ -234,7 +225,6 @@ class nodemanager {
 
 class startwls {
   require orawls::weblogic, domains,nodemanager
-
 
   notify { 'class startwls':} 
   $default_params = {}
@@ -283,8 +273,14 @@ class managed_servers{
   wlst_yaml_provider{'server':} 
 }
 
-class clusters{
+class datasources{
   require managed_servers
+  notify { 'class datasource':} 
+  wlst_yaml_provider{'datasource':} 
+}
+
+class clusters{
+  require datasources
   notify { 'class clusters':} 
   wlst_yaml_provider{'cluster':} 
 }
@@ -337,36 +333,37 @@ class jms_module_topics_objects{
   wlst_yaml_provider{'jms_topic':} 
 }
 
-define wlst_jms_yaml()
-{
-  $type            = $title
-  $apps            = hiera('weblogic_apps')
-  $apps_config_dir = hiera('apps_config_dir')
+# define wlst_jms_yaml()
+# {
+#   $type            = $title
+#   $apps            = hiera('weblogic_apps')
+#   $apps_config_dir = hiera('apps_config_dir')
 
-  $apps.each |$app| { 
-    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
-    if $allHieraEntriesYaml != undef {
-      if $allHieraEntriesYaml["${type}_instances"] != undef {
-          create_resources("${type}",$allHieraEntriesYaml["${type}_instances"])
-      }  
-    }
-  }  
-}
+#   $apps.each |$app| { 
+#     $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
+#     if $allHieraEntriesYaml != undef {
+#       if $allHieraEntriesYaml["${type}_instances"] != undef {
+#           create_resources("${type}",$allHieraEntriesYaml["${type}_instances"])
+#       }  
+#     }
+#   }  
+# }
 
-class jms_module_foreign_server_objects{
-  require jms_module_topics_objects
-  notify { 'class jms_module_foreign_server_objects':} 
-  wlst_jms_yaml{'foreign_servers':} 
-}
+# class jms_module_foreign_server_objects{
+#   require jms_module_topics_objects
+#   notify { 'class jms_module_foreign_server_objects':} 
+#   wlst_jms_yaml{'foreign_servers':} 
+# }
 
-class jms_module_foreign_server_entries_objects{
-  require jms_module_foreign_server_objects
-  notify { 'class jms_module_foreign_server_entries_objects':} 
-  wlst_jms_yaml{'foreign_servers_objects':} 
-}
+# class jms_module_foreign_server_entries_objects{
+#   require jms_module_foreign_server_objects
+#   notify { 'class jms_module_foreign_server_entries_objects':} 
+#   wlst_jms_yaml{'foreign_servers_objects':} 
+# }
 
 class pack_domain{
-  require jms_module_foreign_server_entries_objects
+#  require jms_module_foreign_server_entries_objects
+  require jms_module_topics_objects 
 
   notify { 'class pack_domain':} 
   $default_params = {}

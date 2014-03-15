@@ -1,6 +1,6 @@
 connect('<%= weblogicUser %>','<%= weblogicPassword %>'  ,'<%= weblogicConnectUrl %>')
 
-name                 = '<%= name %>'
+name    = '<%= name %>'
 
 edit()
 startEdit()
@@ -8,6 +8,8 @@ startEdit()
 try:
 
     cd('/')
+    cmo.destroyJDBCSystemResource(getMBean('/SystemResources/'+name))
+
     save()
     activate()          
 
