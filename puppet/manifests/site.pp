@@ -13,6 +13,7 @@ node 'admin.example.com' {
   include machines
   include managed_servers
   include clusters
+  include file_persistence
   include jms_servers
   include jms_saf_agents
   include jms_modules
@@ -285,8 +286,14 @@ class clusters{
   wlst_yaml_provider{'cluster':} 
 }
 
-class jms_servers{
+class file_persistence{
   require clusters
+  notify { 'class file_persistence':} 
+  wlst_yaml_provider{'file_persistence_store':} 
+}
+
+class jms_servers{
+  require file_persistence
   notify { 'class jms_servers':} 
   wlst_yaml_provider{'jmsserver':} 
 }

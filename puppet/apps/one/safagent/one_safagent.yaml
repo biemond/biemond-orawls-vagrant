@@ -2,12 +2,14 @@
 
 safagent_instances:
     'jmsSAFAgent1':
-          ensure:      'present'
-          target:      'wlsServer1'
-          targettype:  'Server'
-          servicetype: 'Sending-only'
+          ensure:              'present'
+          target:              'wlsServer1'
+          targettype:          'Server'
+          servicetype:         'Sending-only'
+          persistentstore:     'jmsFileSAFAgent1'
+          persistentstoretype: 'file'
     'jmsSAFAgent2':
-          ensure:      'present'
-          target:      'wlsServer2'
-          targettype:  'Server'
-          servicetype: 'Both'
+          ensure:              'present'
+          target:              'wlsServer2'
+          targettype:          'Server'
+          servicetype:         'Both'
