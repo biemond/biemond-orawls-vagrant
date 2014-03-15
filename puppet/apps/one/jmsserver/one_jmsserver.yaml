@@ -6,7 +6,7 @@ jmsserver_instances:
      target:              'wlsServer1'
      targettype:          'Server'
      persistentstore:     'jmsFile1'
-     persistentstoretype: 'file'
+     persistentstoretype: 'FileStore'
    jmsServer2:
      ensure:              'present'
      target:              'wlsServer2'
