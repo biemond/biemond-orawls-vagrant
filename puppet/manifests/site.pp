@@ -179,6 +179,7 @@ class java {
       x64                  => true,
       downloadDir          => "/data/install",
       urandomJavaFix       => true,
+      rsakeySizeFix        => true,
       sourcePath           => "/software",
   }
 
