@@ -182,7 +182,17 @@ class java {
       rsakeySizeFix        => true,
       sourcePath           => "/software",
   }
-
+  # jdk7::install7{ 'jdk1.8.0':
+  #     version              => "8" , 
+  #     fullVersion          => "jdk1.8.0",
+  #     javaHomes            => '/opt/java/',
+  #     alternativesPriority => 19000, 
+  #     x64                  => true,
+  #     downloadDir          => "/data/install",
+  #     urandomJavaFix       => true,
+  #     rsakeySizeFix        => false,
+  #     sourcePath           => "/software",
+  # }
 }
 
 

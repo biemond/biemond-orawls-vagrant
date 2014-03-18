@@ -1,14 +1,15 @@
 jdk7 JAVA SE 7 puppet module
 ============================== 
 
-Works with Puppet 2.7 & 3.0 
+Works with Puppet 2.7 & 3.0
 
 Should work for RedHat, CentOS, Ubuntu, Debian, Suse SLES or OracleLinux 
 
 Version updates
 ---------------
 
-- 0.3.7 rsakeySizeFix parameter set true for weblogic 12.1.1 and jdk 1.7 >= version 40
+- 0.3.9 JDK8 support option to change the java homes folder ( default = /usr/java ) 
+- 0.3.8 rsakeySizeFix parameter set true for weblogic 12.1.1 and jdk 1.7 >= version 40
 - 0.3.6 performance fix
 - 0.3.5 ruby escaped char warnings resolved
 - 0.3.4 bugfix on install folder, conflicts with others modules
