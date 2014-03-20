@@ -34,26 +34,32 @@ module EasyType
 		# @param [Hash] options parsing options. You can specify all options of CSV.parse here
 		# @return [Array] of [InstancesResults] a special Hash 
 		#
-		HEADER_LINE_REGEX = /^(\s*\-+\s*)*$/
-
+		HEADER_LINE_REGEX = /^(\s*\-+\s*)*/
 
 		def convert_csv_data_to_hash(csv_data, headers = [], options = {})
 			options = check_options(options)
-			data = []
+			default_options = {
+				:header_converters=> lambda {|f| f ? f.strip : nil}
+   			# :converters=> lambda {|f| f ? f.strip : nil}
+   		}
+   		if headers != []
+   			default_options[:headers] = headers
+   		else
+   			default_options[:headers] = true
+   		end
+   		options = default_options.merge(options)
 			skip_lines = options.delete(:skip_lines) {HEADER_LINE_REGEX }
+			data = []
 			CSV.parse(csv_data, options) do |row|
-				if headers.empty?
-					headers = row.collect(&:strip)
-				elsif row.join() =~ skip_lines
-					#do nothing
-				else
-					values = headers.zip(row)
-					data << InstancesResults[values]
-				end
+				data << InstancesResults[row.to_a] unless row_contains_skip_line(row,skip_lines)
 			end
 			data
 		end
 private
+
+		def row_contains_skip_line(row, skip_lines)
+			skip_lines.match(row.to_s)[1]
+		end
 
 		def check_options(options)
 			deprecated_option(options,:column_delimeter, :col_sep)

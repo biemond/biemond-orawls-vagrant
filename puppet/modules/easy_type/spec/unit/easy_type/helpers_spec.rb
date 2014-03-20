@@ -26,11 +26,20 @@ describe "convert_csv_data_to_hash" do
 		end
 
 		context "with spaces in the header and values" do
-			subject { "col1   ,col2   ,col3   \nvalue1,value2,value3"}
+			subject { "col1   ,col2   ,col3   \nvalue1   ,value2   ,value3   "}
 
-			it "returns an Array of hashes with trimmed values" do
+			it "returns an Array of hashes with trimmed headers, but values with spaces" do
 				expect(convert_csv_data_to_hash(subject)).to \
-						eq [{'col1' => 'value1', 'col2' => 'value2', 'col3' => 'value3'}]
+						eq [{'col1' => 'value1   ', 'col2' => 'value2   ', 'col3' => 'value3   '}]
+			end
+		end
+
+		context "with null columns in the header and values" do
+			subject { "col1,,col3\nvalue1,value2,"}
+
+			it "returns an Array of hashes with nil key and nil value" do
+				expect(convert_csv_data_to_hash(subject)).to \
+						eq [{'col1' => 'value1', nil => 'value2', 'col3' => nil}]
 			end
 		end
 
