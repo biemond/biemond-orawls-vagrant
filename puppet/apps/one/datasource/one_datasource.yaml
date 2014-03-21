@@ -15,6 +15,7 @@ datasource_instances:
       testtablename:               'SQL SELECT 1 FROM DUAL'
       url:                         "jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com"
       user:                        'hr'
+      password:                    'hr'
       usexa:                       '1'
     'jmsDS':
       ensure:                      'present'
@@ -28,4 +29,5 @@ datasource_instances:
       testtablename:               'SQL SELECT 1'
       url:                         'jdbc:mysql://10.10.10.10:3306/jms'
       user:                        'jms'
+      password:                    'jms'
       usexa:                       '1'
