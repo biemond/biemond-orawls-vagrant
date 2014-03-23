@@ -48,7 +48,8 @@ https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemon
 - creates a standard WebLogic domain
 - pack a WebLogic domain
 - copy a WebLogic domain to a other node with SSH, unpack and enroll to a nodemanager
-- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters ) 
+- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters )
+- ADF/JRF support, Assign JRF libraries to a Server or Cluster target
 - startup the nodemanager
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
@@ -276,6 +277,24 @@ use fmw_infra_121200.jar as filename and set fmw_infra parameter to true
       source               => "/vagrant",                 # puppet:///modules/orawls/ | /mnt |
       log_output           => true,                      
     }
+
+or with a bin file located on a share
+
+    class{'orawls::weblogic':                             
+        version              => 1036,
+        filename             => "oepe-wls-indigo-installer-11.1.1.8.0.201110211138-10.3.6-linux32.bin",
+        oracle_base_home_dir => "/opt/weblogic",
+        middleware_home_dir  => "/opt/weblogic/Middleware",
+        fmw_infra            => false,
+        jdk_home_dir         => "/usr/java/latest",
+        os_user              => "weblogic",
+        os_group             => "bea",
+        download_dir         => "/data/tmp",
+        source               => "/misc/tact/products/oracle/11g/fmw/wls/11.1.1.8",
+        remote_file          => false,
+        log_output           => true,
+        temp_directory       => "/data/tmp",
+     }
 
 
 Same configuration but then with Hiera ( need to have puppet > 3.0 )    

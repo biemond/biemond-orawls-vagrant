@@ -1,21 +1,21 @@
 module Puppet::Parser::Functions
-  newfunction(:osb_cluster_configured, :type => :rvalue) do |args|
+  newfunction(:jrf_cluster_configured, :type => :rvalue) do |args|
 
-    osb_exists = false
+    jrf_exists = false
 
     if args[0].nil?
-      return osb_exists
+      return jrf_exists
     else
       fullDomainPath = args[0].strip.downcase
     end
-    Puppet.debug  "osb_cluster_configured fullDomainPath is #{fullDomainPath}"
+    Puppet.debug  "jrf_cluster_configured fullDomainPath is #{fullDomainPath}"
 
     if args[1].nil?
-      return osb_exists
+      return jrf_exists
     else
       target = args[1].strip.downcase
     end
-    Puppet.debug  "osb_cluster_configured target is #{target}"
+    Puppet.debug  "jrf_cluster_configured target is #{target}"
 
     prefix = "ora_mdw_domain"
 
@@ -29,18 +29,18 @@ module Puppet::Parser::Functions
 
         # lookup up domain
         domain = lookupWlsVar(prefix+'_'+n.to_s)
-        Puppet.debug  "osb_cluster_configured found domain is #{domain}"
+        Puppet.debug  "jrf_cluster_configured found domain is #{domain}"
         unless domain == "empty"
           domain = domain.strip.downcase
           # do we found the right domain
-          Puppet.debug  "osb_cluster_configured compare domain #{domain} with #{fullDomainPath}"
+          Puppet.debug  "jrf_cluster_configured compare domain #{domain} with #{fullDomainPath}"
           if domain == fullDomainPath
-            osb =  lookupWlsVar(prefix+'_'+n.to_s+'_osb')
-            Puppet.debug  "osb_cluster_configured osb target is #{osb}"
-            unless osb == "empty"
-              osb = osb.strip.downcase   
-              if osb.include? target
-                Puppet.debug  "osb_cluster_configured return true"
+            jrf =  lookupWlsVar(prefix+'_'+n.to_s+'_jrf')
+            Puppet.debug  "jrf_cluster_configured jrf target is #{jrf}"
+            unless jrf == "empty"
+              jrf = jrf.strip.downcase   
+              if jrf.include? target
+                Puppet.debug  "jrf_cluster_configured return true"
                 return true
               end
             end
@@ -50,7 +50,7 @@ module Puppet::Parser::Functions
       end
     end
 
-    return osb_exists
+    return jrf_exists
   end
 end
 

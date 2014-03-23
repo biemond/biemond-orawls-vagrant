@@ -42,8 +42,6 @@ define orawls::fmw (
     }
   }
 
-
-
   if      ( $fmw_product == "adf" ) {
      $fmw_silent_response_file = "orawls/fmw_silent_adf.rsp.erb"
      $oracleHome               = "${middleware_home_dir}/oracle_common"
@@ -144,8 +142,9 @@ define orawls::fmw (
         path      => $exec_path,
         user      => $os_user,
         group     => $os_group,
-        logoutput => $log_output,
-        require   => File["${download_dir}/${fmw_file1}"],
+        logoutput => false,
+        require   => [File["${download_dir}/${fmw_file1}"],
+                      Orawls::Utils::Orainst["create oraInst for ${fmw_product}"]],
       }
     } else {
       exec { "extract ${fmw_file1}":
@@ -154,7 +153,8 @@ define orawls::fmw (
         path      => $exec_path,
         user      => $os_user,
         group     => $os_group,
-        logoutput => $log_output,
+        logoutput => false,
+        require   => Orawls::Utils::Orainst["create oraInst for ${fmw_product}"],
       }
     }
 
@@ -179,7 +179,7 @@ define orawls::fmw (
           path      => $exec_path,
           user      => $os_user,
           group     => $os_group,
-          logoutput => $log_output,
+          logoutput => false,
           require   => [File["${download_dir}/${fmw_file2}"],
                         Exec["extract ${fmw_file1}"]
                        ],
@@ -190,12 +190,10 @@ define orawls::fmw (
           path      => $exec_path,
           user      => $os_user,
           group     => $os_group,
-          logoutput => $log_output,
+          logoutput => false,
         }
       }
     }
-
-    $command = "-silent -response ${download_dir}/${title}_silent_${fmw_product}.rsp -waitforcompletion "
 
     if $::kernel == "SunOS" {
 
@@ -226,6 +224,7 @@ define orawls::fmw (
       }
     }
 
+    $command = "-silent -response ${download_dir}/${title}_silent_${fmw_product}.rsp -waitforcompletion "
 
     exec { "install ${fmw_product} ${title}":
       command   => "${download_dir}/${fmw_product}/Disk1/install/${installDir}/runInstaller ${command} -invPtrLoc ${oraInstPath}/oraInst.loc -ignoreSysPrereqs -jreLoc ${jdk_home_dir}",
@@ -237,6 +236,7 @@ define orawls::fmw (
       logoutput => $log_output,
       require   => [File["${download_dir}/${title}_silent_${fmw_product}.rsp"],
                     Orawls::Utils::Orainst["create oraInst for ${fmw_product}"],
+                    Exec["extract ${fmw_file1}"],
                     Exec[$last_extract_check]
                    ],
     }
