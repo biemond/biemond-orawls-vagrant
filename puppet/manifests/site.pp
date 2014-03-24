@@ -9,7 +9,8 @@ node 'admin.example.com' {
   include os, ssh, java
   include orawls::weblogic, orautils
   include bsu
-  include domains, nodemanager, startwls, userconfig
+  include domains
+  include nodemanager, startwls, userconfig
   include machines
   include managed_servers
   include clusters
@@ -32,10 +33,8 @@ node 'admin.example.com' {
 # operating settings for Middleware
 class os {
 
-  notice "class os ${operatingsystem}"
-
   $default_params = {}
-  $host_instances = hiera('hosts', [])
+  $host_instances = hiera('hosts', {})
   create_resources('host',$host_instances, $default_params)
 
   exec { "create swap file":
@@ -121,7 +120,6 @@ class os {
 class ssh {
   require os
 
-  notice 'class ssh'
 
   file { "/home/wls/.ssh/":
     owner  => "wls",
@@ -162,8 +160,6 @@ class ssh {
 class java {
   require os
 
-  notice 'class java'
-
   $remove = [ "java-1.7.0-openjdk.x86_64", "java-1.6.0-openjdk.x86_64" ]
 
   package { $remove:
@@ -198,19 +194,16 @@ class java {
 
 class bsu{
   require orawls::weblogic
-
-  notice 'class bsu'
   $default_params = {}
-  $bsu_instances = hiera('bsu_instances', [])
+  $bsu_instances = hiera('bsu_instances', {})
   create_resources('orawls::bsu',$bsu_instances, $default_params)
 }
 
 class domains{
   require orawls::weblogic, bsu
 
-  notice 'class domains'
   $default_params = {}
-  $domain_instances = hiera('domain_instances', [])
+  $domain_instances = hiera('domain_instances', {})
   create_resources('orawls::domain',$domain_instances, $default_params)
 
   $domain_address = hiera('domain_adminserver_address')
@@ -229,38 +222,31 @@ class domains{
 class nodemanager {
   require orawls::weblogic, domains
 
-  notify { 'class nodemanager':} 
   $default_params = {}
-  $nodemanager_instances = hiera('nodemanager_instances', [])
+  $nodemanager_instances = hiera('nodemanager_instances', {})
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
 }
 
 class startwls {
   require orawls::weblogic, domains,nodemanager
 
-  notify { 'class startwls':} 
   $default_params = {}
-  $control_instances = hiera('control_instances', [])
+  $control_instances = hiera('control_instances', {})
   create_resources('orawls::control',$control_instances, $default_params)
 }
 
 class userconfig{
   require orawls::weblogic, domains, nodemanager, startwls 
-
-  notify { 'class userconfig':} 
   $default_params = {}
-  $userconfig_instances = hiera('userconfig_instances', [])
+  $userconfig_instances = hiera('userconfig_instances', {})
   create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
 } 
 
 class machines{
   require userconfig
-
-  notify { 'class machines':} 
   $default_params = {}
-  $machines_instances = hiera('machines_instances', [])
+  $machines_instances = hiera('machines_instances', {})
   create_resources('wls_machine',$machines_instances, $default_params)
-
 }
 
 define wlst_yaml_provider()
@@ -281,73 +267,61 @@ define wlst_yaml_provider()
 
 class managed_servers{
   require machines
-  notify { 'class managed_servers':} 
   wlst_yaml_provider{'server':} 
 }
 
 
 class clusters{
   require managed_servers
-  notify { 'class clusters':} 
   wlst_yaml_provider{'cluster':} 
 }
 
 class datasources{
   require clusters
-  notify { 'class datasource':} 
   wlst_yaml_provider{'datasource':} 
 }
 class file_persistence{
   require datasources
-  notify { 'class file_persistence':} 
   wlst_yaml_provider{'file_persistence_store':} 
 }
 
 class jms_servers{
   require file_persistence
-  notify { 'class jms_servers':} 
   wlst_yaml_provider{'jmsserver':} 
 }
 
 class jms_saf_agents{
   require jms_servers
-  notify { 'class jms_saf_agents':} 
   wlst_yaml_provider{'safagent':} 
 }
 
 class jms_modules{
   require jms_saf_agents
-  notify { 'class jms_modules':} 
   wlst_yaml_provider{'jms_module':} 
 }
 
 class jms_module_subdeployments{
   require jms_modules
-  notify { 'class jms_module_subdeployments':} 
   wlst_yaml_provider{'jms_subdeployment':} 
 }
 
 class jms_module_quotas{
   require jms_module_subdeployments
-  notify { 'class jms_module_quotas':} 
   wlst_yaml_provider{'jms_quota':} 
 }
 
 class jms_module_cfs{
   require jms_module_quotas
-  notify { 'class jms_module_cfs':} 
   wlst_yaml_provider{'jms_connection_factory':} 
 }
 
 class jms_module_queues_objects{
   require jms_module_cfs
-  notify { 'class jms_module_queues_objects':} 
   wlst_yaml_provider{'jms_queue':} 
 }
 
 class jms_module_topics_objects{
   require jms_module_queues_objects
-  notify { 'class jms_module_topics_objects':} 
   wlst_yaml_provider{'jms_topic':} 
 }
 
@@ -369,21 +343,17 @@ class jms_module_topics_objects{
 
 # class jms_module_foreign_server_objects{
 #   require jms_module_topics_objects
-#   notify { 'class jms_module_foreign_server_objects':} 
 #   wlst_jms_yaml{'foreign_servers':} 
 # }
 
 # class jms_module_foreign_server_entries_objects{
 #   require jms_module_foreign_server_objects
-#   notify { 'class jms_module_foreign_server_entries_objects':} 
 #   wlst_jms_yaml{'foreign_servers_objects':} 
 # }
 
 class pack_domain{
 #  require jms_module_foreign_server_entries_objects
   require jms_module_topics_objects 
-
-  notify { 'class pack_domain':} 
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)

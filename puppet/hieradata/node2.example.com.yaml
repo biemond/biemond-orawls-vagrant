@@ -14,8 +14,8 @@ domain_adminserver_address: "10.10.10.10"
 domain_adminserver_port:    7001
 domain_nodemanager_port:    5556
 domain_wls_password:        "weblogic1"
-domain_user_config_file:    "/home/oracle/oracle-Wls1036-WebLogicConfig.properties"
-domain_user_key_file:       "/home/oracle/oracle-Wls1036-WebLogicKey.properties"
+domain_user_config_file:    "/home/wls/wls-Wls1036-WebLogicConfig.properties"
+domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 
 
 # create a standard domain

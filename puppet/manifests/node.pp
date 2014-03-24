@@ -7,7 +7,7 @@
 
 node 'node1.example.com', 'node2.example.com' {
   
-  include os, ssh, java, orawls::weblogic, bsu, orautils, copydomain, nodemanager
+  include os, ssh, java, orawls::weblogic, bsu, copydomain, nodemanager
 
   Class['java'] -> Class['orawls::weblogic'] 
 }
@@ -15,10 +15,8 @@ node 'node1.example.com', 'node2.example.com' {
 # operating settings for Middleware
 class os {
 
-  notify { "class os ${operatingsystem}":} 
-
   $default_params = {}
-  $host_instances = hiera('hosts', [])
+  $host_instances = hiera('hosts', {})
   create_resources('host',$host_instances, $default_params)
 
   exec { "create swap file":
@@ -141,8 +139,6 @@ class ssh {
 class java {
   require os
 
-  notify { 'class java':} 
-
   $remove = [ "java-1.7.0-openjdk.x86_64", "java-1.6.0-openjdk.x86_64" ]
 
   package { $remove:
@@ -165,30 +161,22 @@ class java {
 
 class bsu {
   require orawls::weblogic
-
-  notify { 'class bsu':} 
   $default_params = {}
-  $bsu_instances = hiera('bsu_instances', [])
+  $bsu_instances = hiera('bsu_instances', {})
   create_resources('orawls::bsu',$bsu_instances, $default_params)
 }
 
 class copydomain {
   require orawls::weblogic, bsu
-
-
-  notify { 'class copydomain':} 
   $default_params = {}
-  $copy_instances = hiera('copy_instances', [])
+  $copy_instances = hiera('copy_instances', {})
   create_resources('orawls::copydomain',$copy_instances, $default_params)
 
 }
 
-
 class nodemanager {
   require orawls::weblogic, bsu, copydomain
-
-  notify { 'class nodemanager':} 
   $default_params = {}
-  $nodemanager_instances = hiera('nodemanager_instances', [])
+  $nodemanager_instances = hiera('nodemanager_instances', {})
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
 }

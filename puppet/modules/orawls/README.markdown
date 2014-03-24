@@ -1,4 +1,5 @@
 #Oracle WebLogic / Fusion Middleware puppet module V2
+[![Build Status](https://travis-ci.org/biemond/biemond-orawls.png)](https://travis-ci.org/biemond/biemond-orawls)
 
 created by Edwin Biemond email biemond at gmail dot com   
 [biemond.blogspot.com](http://biemond.blogspot.com)    
@@ -12,7 +13,7 @@ Got the same options as the wls module but with
 
 Many thanks to Bert Hajee (hajee) for his contributions, help and the his easy_type module  
 
-Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10 sparc or x86  
+Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10 sparc / x86  
 
 Dependency with hajee/easy_type >= 0.6.2
 
