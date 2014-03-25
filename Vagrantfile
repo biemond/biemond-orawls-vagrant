@@ -36,7 +36,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "environment"                     => "development",
         "vm_type"                         => "vagrant",
         "override_weblogic_user"          => "wls",
-        "override_weblogic_domain_folder" => "/opt/oracle/wlsdomains/domains",
       }
       
     end
@@ -71,7 +70,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "environment"                     => "development",
         "vm_type"                         => "vagrant",
         "override_weblogic_user"          => "wls",
-        "override_weblogic_domain_folder" => "/opt/oracle/wlsdomains/domains",
       }
       
     end
@@ -106,7 +104,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "environment"                     => "development",
         "vm_type"                         => "vagrant",
         "override_weblogic_user"          => "wls",
-        "override_weblogic_domain_folder" => "/opt/oracle/wlsdomains/domains",
       }
       
     end

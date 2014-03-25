@@ -9,6 +9,7 @@ orawls::weblogic::log_output:   true
 
 orautils::osDomainParam:          "Wls1036"
 orautils::osDomainPathParam:      "/opt/oracle/wlsdomains/domains/Wls1036"
+#orautils::osDomainPathParam:      "/opt/oracle/middleware11g/user_projects/domains/Wls1036"
 
 orautils::nodeMgrAddressParam:    '10.10.10.10'
 
@@ -30,12 +31,18 @@ domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 
 # create a standard domain
 domain_instances:
-  'wlsDomain':
+  'Wls1036':
      domain_template:          "standard"
      development_mode:         false
      log_output:               *logoutput
-#     java_arguments:      
-#         ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
+  # 'Wls1036_2':
+  #    domain_template:          "standard"
+  #    development_mode:         false
+  #    log_output:               *logoutput
+  #    domain_name:              'Wls1036_2'
+  #    adminserver_port:         7011
+  #    java_arguments:      
+  #      ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
 
 # pack domains
 pack_domain_instances:
