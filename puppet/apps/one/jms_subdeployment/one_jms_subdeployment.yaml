@@ -9,3 +9,7 @@ jms_subdeployment_instances:
       ensure:     'present'
       target:     'WebCluster'
       targettype: 'Cluster'
+   'jmsClusterModule:safServers':
+      ensure:     'present'
+      target:     'jmsSAFAgent1,jmsSAFAgent2'
+      targettype: 'SAFAgent,SAFAgent'
