@@ -1,0 +1,11 @@
+---
+
+saf_remote_context_instances:
+  'jmsClusterModule:RemoteSAFContext-0':
+     ensure:            'present'
+     connect_url:       't3://10.10.10.10:7001'
+     weblogic_user:     'weblogic'
+     weblogic_password: 'weblogic1'
+  'jmsClusterModule:RemoteSAFContext-1':
+     ensure:            'present'
+     connect_url:       't3://10.10.10.10:7001'

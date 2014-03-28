@@ -24,6 +24,7 @@ node 'admin.example.com' {
   include jms_module_queues_objects
   include jms_module_topics_objects
   #include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
+  include saf_remote_context_objects
   include pack_domain
 
 
@@ -325,6 +326,11 @@ class jms_module_topics_objects{
   wlst_yaml_provider{'jms_topic':} 
 }
 
+class saf_remote_context_objects {
+  require jms_module_topics_objects
+  wlst_yaml_provider{'saf_remote_context':} 
+}
+
 # define wlst_jms_yaml()
 # {
 #   $type            = $title
@@ -353,7 +359,7 @@ class jms_module_topics_objects{
 
 class pack_domain{
 #  require jms_module_foreign_server_entries_objects
-  require jms_module_topics_objects 
+  require saf_remote_context_objects 
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)
