@@ -4,7 +4,7 @@
 # set the default java links
 # set this java as default
 #
-define javaexec (
+define jdk7::javaexec (
   $path                 = undef,
   $fullVersion          = undef,
   $javaHomes            = undef,
@@ -58,14 +58,14 @@ define javaexec (
     require => Exec["extract java ${fullVersion}"],
   }
 
-	# java link to latest
+  # java link to latest
   file { '/usr/java/latest':
     ensure  => link,
     target  => "${javaHomes}/${fullVersion}",
     require => Exec["extract java ${fullVersion}"],
   }
 
-	# java link to default
+  # java link to default
   file { '/usr/java/default':
     ensure  => link,
     target  => "/usr/java/latest",
@@ -74,7 +74,7 @@ define javaexec (
 
   case $osfamily {
     RedHat: {
-			# set the java default
+      # set the java default
       exec { "default java alternatives ${fullVersion}":
         command => "alternatives --install /usr/bin/java java ${javaHomes}/${fullVersion}/bin/java ${alternativesPriority}",
         require => File['/usr/java/default'],
@@ -82,7 +82,7 @@ define javaexec (
       }
     }
     Debian, Suse:{
-			# set the java default
+      # set the java default
       exec { "default java alternatives ${fullVersion}":
         command => "update-alternatives --install /usr/bin/java java ${javaHomes}/${fullVersion}/bin/java ${alternativesPriority}",
         require => File['/usr/java/default'],

@@ -1,5 +1,7 @@
 Oracle WebLogic orautils puppet module
 =======================================================
+[![Build Status](https://travis-ci.org/biemond/biemond-orautils.png)](https://travis-ci.org/biemond/biemond-orautils)
+
 
 changes
 
@@ -65,7 +67,7 @@ or with hiera  ( include orautils )
     orautils::nodeMgrPathParam:       "/opt/oracle/middleware11g/wlserver_10.3/server/bin"
     
     orautils::nodeMgrPortParam:       5556
-    orautils::nodeMgrAddressParam     'localhost'
+    orautils::nodeMgrAddressParam:    'localhost'
     orautils::wlsUserParam:           "weblogic"
     orautils::wlsPasswordParam:       "weblogic1"
     orautils::wlsAdminServerParam:    "AdminServer"

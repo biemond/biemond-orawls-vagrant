@@ -20,29 +20,7 @@ for token in m.split("dr--"):
         for token2 in n.split("dr--"):
             token2=token2.strip().lstrip().rstrip()
             if not token2 == '':
-                cd('/JMSSystemResources/'+token+'/JMSResource/'+token+'/SAFImportedDestinations/'+token2)
-                safRemoteMbean = cmo.getSAFRemoteContext()
-                if safRemoteMbean:
-                   path = getPath(safRemoteMbean)
-                   cd("/"+path) 
-                   safRemoteContext = get('Name')
-                   cd('/JMSSystemResources/'+token+'/JMSResource/'+token+'/SAFImportedDestinations/'+token2)
-                else:
-                   safRemoteContext = ''
-
-                jndiPrefix = cmo.getJNDIPrefix()
-                safErrorHandlingMbean = cmo.getSAFErrorHandling()
-                if safErrorHandlingMbean:
-                   path2 = getPath(safErrorHandlingMbean)
-                   cd("/"+path2) 
-                   safErrorHandling = get('Name')
-                   cd('/JMSSystemResources/'+token+'/JMSResource/'+token+'/SAFImportedDestinations/'+token2)
-                else:
-                   safErrorHandling = ''
-
-                timeToLiveDefault       = cmo.getTimeToLiveDefault()
-                #useSAFTimeToLiveDefault = cmo.getUseSAFTimeToLiveDefault()
-
+                #cd('/JMSSystemResources/'+token+'/JMSResource/'+token+'/SAFImportedDestinations/'+token2+'/SAFLoginContext/'+token2)
                 print >>f, ";".join(map(quote, [token+":"+token2,token]))
  
 f.close()
