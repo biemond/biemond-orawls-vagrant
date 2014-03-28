@@ -1,1 +1,26 @@
 ---
+
+jms_queue_instances:
+   'jmsClusterModule2:ErrorQueue':
+     ensure:                   'present'
+     distributed:              '1'
+     expirationpolicy:         'Discard'
+     jndiname:                 'jms/ErrorQueue'
+     redeliverydelay:          '-1'
+     redeliverylimit:          '-1'
+     subdeployment:            'jmsServers'
+     defaulttargeting:         '0'
+     timetodeliver:            '-1'
+     timetolive:               '-1'
+   'jmsClusterModule2:Queue1':
+     ensure:                   'present'
+     distributed:              '1'
+     errordestination:         'ErrorQueue'
+     expirationpolicy:         'Redirect'
+     jndiname:                 'jms/Queue1'
+     redeliverydelay:          '2000'
+     redeliverylimit:          '3'
+     subdeployment:            'jmsServers'
+     defaulttargeting:         '0'
+     timetodeliver:            '-1'
+     timetolive:               '300000'

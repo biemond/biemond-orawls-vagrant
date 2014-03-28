@@ -1,1 +1,7 @@
 ---
+
+jms_module_instances:
+   'jmsClusterModule2':
+     ensure:      'present'
+     target:      'WebCluster2'
+     targettype:  'Cluster'
