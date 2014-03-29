@@ -89,6 +89,9 @@ https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemon
 - wls_jms_queue
 - wls_jms_topic
 - wls_jms_connection_factory
+- wls_saf_remote_context
+- wls_saf_error_handler
+- wls_saf_imported_destination
 
 
 ##Domain creation options (Dev or Prod mode)
@@ -1529,11 +1532,40 @@ in hiera
          ensure:            'present'
          connect_url:       't3://10.10.10.10:7001'
 
-###wls_saf_remote_context
+
+
+###wls_saf_error_handler
 
 needs wls_setting, title must also contain the jms module name  
 
-or use puppet resource wls_saf_remote_context
+or use puppet resource wls_saf_error_handler
+
+    wls_saf_error_handler { 'jmsClusterModule:ErrorHandling-0':
+      ensure => 'present',
+      policy => 'Discard',
+    }
+    wls_saf_error_handler { 'jmsClusterModule:ErrorHandling-1':
+      ensure    => 'present',
+      logformat => '%header%%properties%',
+      policy    => 'Log',
+    }
+
+in hiera
+
+    saf_error_handler_instances:
+      'jmsClusterModule:ErrorHandling-0':
+         ensure:           'present'
+         policy:           'Discard'
+      'jmsClusterModule:ErrorHandling-1':
+         ensure:           'present'
+         policy:           'Log'
+         logformat:        '%header%%properties%'
+
+###wls_saf_imported_destination
+
+needs wls_setting, title must also contain the jms module name  
+
+or use puppet resource wls_saf_imported_destination
 
     wls_saf_imported_destination { 'jmsClusterModule:SAFImportedDestinations-0':
       ensure               => 'present',
