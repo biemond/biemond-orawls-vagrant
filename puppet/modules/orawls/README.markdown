@@ -1529,6 +1529,36 @@ in hiera
          ensure:            'present'
          connect_url:       't3://10.10.10.10:7001'
 
+###wls_saf_remote_context
+
+needs wls_setting, title must also contain the jms module name  
+
+or use puppet resource wls_saf_remote_context
+
+    wls_saf_imported_destination { 'jmsClusterModule:SAFImportedDestinations-0':
+      ensure               => 'present',
+      defaulttargeting     => '1',
+      errorhandling        => 'ErrorHandling-0',
+      jndiprefix           => 'saf_',
+      remotecontext        => 'RemoteSAFContext-0',
+      subdeployment        => 'SAFImportedDestinations-0',
+      timetolivedefault    => '100',
+      usetimetolivedefault => '1',
+    }
+    wls_saf_imported_destination { 'jmsClusterModule:SAFImportedDestinations-1':
+      ensure               => 'present',
+      defaulttargeting     => '0',
+      jndiprefix           => 'saf2_',
+      remotecontext        => 'RemoteSAFContext-1',
+      subdeployment        => 'safServers',
+      usetimetolivedefault => '0',
+    }
+
+in hiera
+
+
+
+
 ## WLST execution
 
 ###orawls::wlstexec
