@@ -1,7 +1,7 @@
 connect('<%= weblogicUser %>','<%= weblogicPassword %>'  ,'<%= weblogicConnectUrl %>')
 
-name               = '<%= remote_context_name %>'
-jmsmodule          = '<%= jmsmodule %>'
+name                   = '<%= imported_destination_name %>'
+jmsmodule              = '<%= jmsmodule %>'
 
 edit()
 startEdit()
@@ -11,7 +11,7 @@ try:
     cd('/')
 
     cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule)
-
+    cmo.destroySAFImportedDestinations(getMBean('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+'/SAFImportedDestinations/'+name'))
     save()
     activate()          
 

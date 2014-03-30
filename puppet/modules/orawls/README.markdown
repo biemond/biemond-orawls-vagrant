@@ -1573,8 +1573,7 @@ or use puppet resource wls_saf_imported_destination
       errorhandling        => 'ErrorHandling-0',
       jndiprefix           => 'saf_',
       remotecontext        => 'RemoteSAFContext-0',
-      subdeployment        => 'SAFImportedDestinations-0',
-      timetolivedefault    => '100',
+      timetolivedefault    => '1000000000',
       usetimetolivedefault => '1',
     }
     wls_saf_imported_destination { 'jmsClusterModule:SAFImportedDestinations-1':
@@ -1588,6 +1587,20 @@ or use puppet resource wls_saf_imported_destination
 
 in hiera
 
+    'jmsClusterModule:SAFImportedDestinations-1':
+      ensure:               'present'
+      defaulttargeting:     '1'
+      jndiprefix:           'saf2_'
+      remotecontext:        'RemoteSAFContext-1'
+    'jmsClusterModule:SAFImportedDestinations-0':
+      ensure:               'present'
+      defaulttargeting:     '0'
+      subdeployment:        'safServers'
+      errorhandling:        'ErrorHandling-1'
+      jndiprefix:           'saf_'
+      remotecontext:        'RemoteSAFContext-0'
+      timetolivedefault:    '100000000'
+      usetimetolivedefault: '1'
 
 
 
