@@ -2,12 +2,12 @@
 
 saf_imported_destination_instances:
     'jmsClusterModule:SAFImportedDestinations-1':
-      ensure:               'absent'
+      ensure:               'present'
       defaulttargeting:     '1'
       jndiprefix:           'saf2_'
       remotecontext:        'RemoteSAFContext-1'
     'jmsClusterModule:SAFImportedDestinations-0':
-      ensure:               'absent'
+      ensure:               'present'
       defaulttargeting:     '0'
       subdeployment:        'safServers'
       errorhandling:        'ErrorHandling-1'
