@@ -85,3 +85,27 @@ machines_instances:
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
+
+file_persistence_folders:
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistence2':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+

@@ -285,6 +285,11 @@ class datasources{
 }
 class file_persistence{
   require datasources
+
+  $default_params = {}
+  $file_persistence_folders = hiera('file_persistence_folders', {})
+  create_resources('file',$file_persistence_folders, $default_params)
+
   wlst_yaml_provider{'file_persistence_store':} 
 }
 
