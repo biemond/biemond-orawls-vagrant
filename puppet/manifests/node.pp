@@ -147,15 +147,18 @@ class java {
 
   include jdk7
 
-  jdk7::install7{ 'jdk1.7.0_45':
-      version              => "7u45" , 
-      fullVersion          => "jdk1.7.0_45",
-      alternativesPriority => 18000, 
-      x64                  => true,
-      downloadDir          => "/data/install",
-      urandomJavaFix       => true,
-      sourcePath           => "/software",
+  jdk7::install7{ 'jdk1.7.0_51':
+      version                   => "7u51" , 
+      fullVersion               => "jdk1.7.0_51",
+      alternativesPriority      => 18000, 
+      x64                       => true,
+      downloadDir               => "/data/install",
+      urandomJavaFix            => true,
+      rsakeySizeFix             => true,
+      cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
+      sourcePath                => "/software",
   }
+
 
 }
 

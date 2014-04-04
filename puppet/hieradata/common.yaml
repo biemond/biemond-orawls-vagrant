@@ -38,6 +38,8 @@ wls_log_dir:              &wls_log_dir              "/var/log/weblogic"
 wls_domains_dir:          &wls_domains_dir          '/opt/oracle/wlsdomains/domains'
 wls_apps_dir:             &wls_apps_dir             '/opt/oracle/wlsdomains/applications'
 
+wls_jsse_enabled:         true
+
 #WebLogic installation variables 
 orawls::weblogic::version:              *wls_version
 orawls::weblogic::filename:             "wls1036_generic.jar"
