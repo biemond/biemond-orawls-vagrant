@@ -23,7 +23,7 @@ class orautils(
   include orautils::params
 
   case $operatingsystem {
-    CentOS, RedHat, OracleLinux, Ubuntu, Debian, SLES, Solaris: {
+    'CentOS', 'RedHat', 'OracleLinux', 'Ubuntu', 'Debian', 'SLES', 'Solaris': {
 
     # fixed
 

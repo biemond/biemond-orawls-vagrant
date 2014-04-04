@@ -15,7 +15,7 @@
 define jdk7::install7 (
   $version                   = '7u51',
   $fullVersion               = 'jdk1.7.0_51',
-  $javaHomes                 = '/usr/java/',
+  $javaHomes                 = '/usr/java',
   $x64                       = true,
   $alternativesPriority      = 17065,
   $downloadDir               = '/install',
@@ -32,15 +32,15 @@ define jdk7::install7 (
   }
 
   case $::kernel {
-    Linux   : {
-      $installVersion = 'linux'
+    'Linux': {
+      $installVersion   = 'linux'
       $installExtension = '.tar.gz'
-      $path = '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:'
-      $user = 'root'
-      $group = 'root'
+      $path             = '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:'
+      $user             = 'root'
+      $group            = 'root'
     }
-    default : {
-      fail('Unrecognized operating system, please use it on a Linux host')
+    default: {
+      fail("Unrecognized operating system ${::kernel}, please use it on a Linux host")
     }
   }
   

@@ -6,7 +6,9 @@
 
 node 'admin.example.com' {
   
-  include os, ssh, java
+  include os
+  include ssh
+  include java
   include orawls::weblogic, orautils
   include bsu
   include domains
