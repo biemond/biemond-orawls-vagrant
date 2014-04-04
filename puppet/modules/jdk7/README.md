@@ -9,7 +9,7 @@ Should work for RedHat, CentOS, Ubuntu, Debian, Suse SLES or OracleLinux
 
 Version updates
 ---------------
-
+- 0.4.0 cryptography Extension (US export policy)
 - 0.3.9 JDK8 support and option to change the default java homes folder ( default = /usr/java ) 
 - 0.3.8 rsakeySizeFix parameter set true for weblogic 12.1.1 and jdk 1.7 >= version 40
 - 0.3.6 performance fix
