@@ -53,7 +53,7 @@ example usage
 	    sourcePath           => "puppet:///modules/jdk7/"
 	  }
 
-or
+or Java 8 and with rsa keySize Fix
 
       jdk7::install7{ 'jdk1.8.0':
         version              => "8" , 
@@ -65,6 +65,21 @@ or
         rsakeySizeFix        => false,
         sourcePath           => "/software",
       }
+
+or with cryptography Extension File US export
+
+	  jdk7::install7{ 'jdk1.7.0_51':
+	      version                   => "7u51" , 
+	      fullVersion               => "jdk1.7.0_51",
+	      alternativesPriority      => 18000, 
+	      x64                       => true,
+	      downloadDir               => "/data/install",
+	      urandomJavaFix            => true,
+	      rsakeySizeFix             => true,
+	      cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
+	      sourcePath                => "/software",
+	  }
+
 
 	  
 	  class { 'jdk7::urandomfix' :}

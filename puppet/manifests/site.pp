@@ -27,6 +27,7 @@ node 'admin.example.com' {
   include saf_remote_context_objects
   include saf_error_handlers
   include saf_imported_destination
+  include saf_imported_destination_objects
   include pack_domain
 
 
@@ -171,26 +172,28 @@ class java {
 
   include jdk7
 
-  jdk7::install7{ 'jdk1.7.0_45':
-      version              => "7u45" , 
-      fullVersion          => "jdk1.7.0_45",
-      alternativesPriority => 18000, 
-      x64                  => true,
-      downloadDir          => "/data/install",
-      urandomJavaFix       => true,
-      rsakeySizeFix        => true,
-      sourcePath           => "/software",
+  jdk7::install7{ 'jdk1.7.0_51':
+      version                   => "7u51" , 
+      fullVersion               => "jdk1.7.0_51",
+      alternativesPriority      => 18000, 
+      x64                       => true,
+      downloadDir               => "/data/install",
+      urandomJavaFix            => true,
+      rsakeySizeFix             => true,
+      cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
+      sourcePath                => "/software",
   }
   # jdk7::install7{ 'jdk1.8.0':
-  #     version              => "8" , 
-  #     fullVersion          => "jdk1.8.0",
-  #     javaHomes            => '/opt/java/',
-  #     alternativesPriority => 19000, 
-  #     x64                  => true,
-  #     downloadDir          => "/data/install",
-  #     urandomJavaFix       => true,
-  #     rsakeySizeFix        => false,
-  #     sourcePath           => "/software",
+  #     version                   => "8" , 
+  #     fullVersion               => "jdk1.8.0",
+  #     javaHomes                 => '/opt/java/',
+  #     alternativesPriority      => 19000, 
+  #     x64                       => true,
+  #     downloadDir               => "/data/install",
+  #     urandomJavaFix            => true,
+  #     rsakeySizeFix             => false,
+  #     cryptographyExtensionFile => "jce_policy-8.zip",
+  #     sourcePath                => "/software",
   # }
 }
 
@@ -348,6 +351,11 @@ class saf_imported_destination {
   wlst_yaml_provider{'saf_imported_destination':} 
 }
 
+class saf_imported_destination_objects {
+  require saf_imported_destination
+  wlst_yaml_provider{'saf_imported_destination_object':} 
+}
+
 # define wlst_jms_yaml()
 # {
 #   $type            = $title
@@ -376,7 +384,7 @@ class saf_imported_destination {
 
 class pack_domain{
 #  require jms_module_foreign_server_entries_objects
-  require saf_imported_destination 
+  require saf_imported_destination_objects 
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)
