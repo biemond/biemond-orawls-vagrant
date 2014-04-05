@@ -217,6 +217,13 @@ class domains{
   $domain_address = hiera('domain_adminserver_address')
   $domain_port    = hiera('domain_adminserver_port')
 
+  orautils::nodemanagerautostart{"autostart weblogic 11g":
+    version     => hiera('wls_version'),
+    wlHome      => hiera('wls_weblogic_home_dir'),
+    user        => hiera('wls_os_user'),
+    jsseEnabled => true,
+  }
+
   wls_setting { 'default':
     user               => hiera('wls_os_user'),
     weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
