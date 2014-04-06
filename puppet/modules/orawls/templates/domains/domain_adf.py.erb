@@ -98,6 +98,7 @@ create(ADMIN_SERVER,'SSL')
 cd('SSL/'+ADMIN_SERVER)
 set('Enabled', 'False')
 set('HostNameVerificationIgnored', 'True')
+
 if JSSE_ENABLED == true:
   set('JSSEEnabled','True')
 else:
@@ -111,8 +112,6 @@ set('FileCount',10)
 set('FileMinSize',5000)
 set('RotationType','byTime')
 set('FileTimeSpan',24)
-
-
 
 
 print('Set password...')
