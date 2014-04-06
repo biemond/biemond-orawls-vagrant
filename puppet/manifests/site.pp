@@ -13,6 +13,8 @@ node 'admin.example.com' {
   include bsu
   include domains
   include nodemanager, startwls, userconfig
+  include users
+  include groups
   include machines
   include managed_servers
   include clusters
@@ -257,8 +259,22 @@ class userconfig{
   create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
 } 
 
-class machines{
+class users{
   require userconfig
+  $default_params = {}
+  $user_instances = hiera('user_instances', {})
+  create_resources('wls_user',$user_instances, $default_params)
+}
+
+class groups{
+  require users
+  $default_params = {}
+  $group_instances = hiera('group_instances', {})
+#  create_resources('wls_group',$group_instances, $default_params)
+}
+
+class machines{
+  require groups
   $default_params = {}
   $machines_instances = hiera('machines_instances', {})
   create_resources('wls_machine',$machines_instances, $default_params)

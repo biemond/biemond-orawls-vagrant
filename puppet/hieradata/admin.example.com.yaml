@@ -44,6 +44,23 @@ domain_instances:
   #    java_arguments:      
   #      ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
 
+user_instances:
+  'testuser1':
+    ensure:                 'present'
+    password:               'weblogic1'
+    authenticationprovider: 'DefaultAuthenticator'
+    realm:                  'myrealm'
+    description:            'my test user'
+  'testuser2':
+    ensure:                 'present'
+    password:               'weblogic1'
+    authenticationprovider: 'DefaultAuthenticator'
+    realm:                  'myrealm'
+    description:            'my test user'
+
+group_instances:
+
+
 # pack domains
 pack_domain_instances:
   'wlsDomain':
