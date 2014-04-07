@@ -270,7 +270,7 @@ class groups{
   require users
   $default_params = {}
   $group_instances = hiera('group_instances', {})
-#  create_resources('wls_group',$group_instances, $default_params)
+  create_resources('wls_group',$group_instances, $default_params)
 }
 
 class machines{

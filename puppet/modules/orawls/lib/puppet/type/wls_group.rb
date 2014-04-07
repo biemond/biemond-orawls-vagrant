@@ -40,8 +40,13 @@ module Puppet
     property  :realm
     property  :authenticationprovider
     property  :users
+    property  :description
 
   private 
+
+    def description
+      self[:description]
+    end
 
     def users
       self[:users]

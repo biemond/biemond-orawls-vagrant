@@ -1051,6 +1051,11 @@ or use puppet resource wls_user
 
 in hiera
 
+    $default_params = {}
+    $user_instances = hiera('user_instances', {})
+    create_resources('wls_user',$user_instances, $default_params)
+
+
     user_instances:
       'testuser1':
         ensure:                 'present'
@@ -1064,6 +1069,47 @@ in hiera
         authenticationprovider: 'DefaultAuthenticator'
         realm:                  'myrealm'
         description:            'my test user'
+
+###wls_group
+
+it needs wls_setting  
+
+or use puppet resource wls_group
+
+    wls_group { 'SuperUsers':
+      ensure                 => 'present',
+      authenticationprovider => 'DefaultAuthenticator',
+      description            => 'SuperUsers',
+      realm                  => 'myrealm',
+      users                  => 'testuser2',
+    }
+    wls_group { 'TestGroup':
+      ensure                 => 'present',
+      authenticationprovider => 'DefaultAuthenticator',
+      description            => 'TestGroup',
+      realm                  => 'myrealm',
+      users                  => 'testuser1,testuser2',
+    }
+
+in hiera
+
+    $default_params = {}
+    $group_instances = hiera('group_instances', {})
+    create_resources('wls_group',$group_instances, $default_params)
+
+    group_instances:
+      'TestGroup':
+        ensure:                 'present'
+        authenticationprovider: 'DefaultAuthenticator'
+        description:            'TestGroup'
+        realm:                  'myrealm'
+        users:                  'testuser1,testuser2'
+      'SuperUsers':
+        ensure:                 'present'
+        authenticationprovider: 'DefaultAuthenticator'
+        description:            'SuperUsers'
+        realm:                  'myrealm'
+        users:                  'testuser2'
 
 
 ###wls_machine
