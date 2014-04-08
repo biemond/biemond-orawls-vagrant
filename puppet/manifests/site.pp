@@ -27,7 +27,8 @@ node 'admin.example.com' {
   include jms_module_cfs
   include jms_module_queues_objects
   include jms_module_topics_objects
-  #include jms_module_foreign_server_objects,jms_module_foreign_server_entries_objects
+  include foreign_server_objects
+  include foreign_server_entries_objects
   include saf_remote_context_objects
   include saf_error_handlers
   include saf_imported_destination
@@ -187,20 +188,7 @@ class java {
       cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
       sourcePath                => "/software",
   }
-  # jdk7::install7{ 'jdk1.8.0':
-  #     version                   => "8" , 
-  #     fullVersion               => "jdk1.8.0",
-  #     javaHomes                 => '/opt/java/',
-  #     alternativesPriority      => 19000, 
-  #     x64                       => true,
-  #     downloadDir               => "/data/install",
-  #     urandomJavaFix            => true,
-  #     rsakeySizeFix             => false,
-  #     cryptographyExtensionFile => "jce_policy-8.zip",
-  #     sourcePath                => "/software",
-  # }
 }
-
 
 class bsu{
   require orawls::weblogic
@@ -311,6 +299,7 @@ class datasources{
   require clusters
   wlst_yaml_provider{'datasource':} 
 }
+
 class file_persistence{
   require datasources
 
@@ -381,35 +370,18 @@ class saf_imported_destination_objects {
   wlst_yaml_provider{'saf_imported_destination_object':} 
 }
 
-# define wlst_jms_yaml()
-# {
-#   $type            = $title
-#   $apps            = hiera('weblogic_apps')
-#   $apps_config_dir = hiera('apps_config_dir')
+class foreign_server_objects{
+  require saf_imported_destination_objects
+  wlst_yaml_provider{'foreign_server':} 
+}
 
-#   $apps.each |$app| { 
-#     $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/jms/${type}/${app}_${type}.yaml")
-#     if $allHieraEntriesYaml != undef {
-#       if $allHieraEntriesYaml["${type}_instances"] != undef {
-#           create_resources("${type}",$allHieraEntriesYaml["${type}_instances"])
-#       }  
-#     }
-#   }  
-# }
-
-# class jms_module_foreign_server_objects{
-#   require jms_module_topics_objects
-#   wlst_jms_yaml{'foreign_servers':} 
-# }
-
-# class jms_module_foreign_server_entries_objects{
-#   require jms_module_foreign_server_objects
-#   wlst_jms_yaml{'foreign_servers_objects':} 
-# }
+class foreign_server_entries_objects{
+  require foreign_server_objects
+  wlst_yaml_provider{'foreign_server_object':} 
+}
 
 class pack_domain{
-#  require jms_module_foreign_server_entries_objects
-  require saf_imported_destination_objects 
+  require foreign_server_entries_objects
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)

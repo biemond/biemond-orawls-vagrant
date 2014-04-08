@@ -1,0 +1,23 @@
+---
+
+foreign_server_object_instances:
+  'jmsClusterModule:Jboss:CF':
+      ensure:         'present'
+      localjndiname:  'jms/jboss/CF'
+      object_type:    'connectionfactory'
+      remotejndiname: 'jms/Remote/CF'
+  'jmsClusterModule:Jboss:JBossQ':
+      ensure:         'present'
+      localjndiname:  'jms/jboss/Queue'
+      object_type:    'destination'
+      remotejndiname: 'jms/Remote/Queue'
+  'jmsClusterModule:AQForeignServer:XAQueueCF':
+      ensure:         'present'
+      localjndiname:  'jms/XAQueueCF'
+      object_type:    'connectionfactory'
+      remotejndiname: 'XAQueueConnectionFactory'
+  'jmsClusterModule:AQForeignServer:TestQueue':
+      ensure:         'present'
+      localjndiname:  'jms/aq/TestQueue'
+      object_type:    'destination'
+      remotejndiname: 'Queues/TestQueue'
