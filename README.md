@@ -1,3 +1,18 @@
+javaexec_log branch
+===================
+
+this javaexec_log branch logs all java executions.
+see an example log at https://gist.github.com/dportabella/10372181
+
+      $git clone https://github.com/biemond/biemond-orawls-vagrant
+      $cd biemond-orawls-vagrant
+      $git checkout javaexec_log
+      $mkdir log_puppet_weblogic
+      $chmod a+rwx log_puppet_weblogic
+      $vagrant up admin
+      $cat log_puppet_weblogic/log.txt 
+
+
 biemond-orawls-vagrant
 =======================
 
