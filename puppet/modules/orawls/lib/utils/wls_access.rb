@@ -23,13 +23,26 @@ module Utils
     def wlst( content, parameters = {})
            
       script = "wlstScript"
-      Puppet.info "Executing: #{script}"
+      Puppet.info "Executing: #{script} with parameters #{parameters}"
             
       tmpFile = Tempfile.new([ script, '.py' ])
       tmpFile.write(content)
       tmpFile.close
       FileUtils.chmod(0555, tmpFile.path)
-      csv_string = execute_wlst( script , tmpFile , parameters)
+      
+      csv_string = ""
+      domains = configuration()
+
+      # if index do all domains
+      domains.each { |key, values|
+        Puppet.info "domain found #{key}"
+        csv_string += execute_wlst( script , tmpFile , parameters,key,values)
+      }  
+      # else { 
+      #  Puppet.info "domain found #{domain}"
+      #  csv_string = execute_wlst( script , tmpFile , parameters,domain,domains[domain])
+      #}  
+
       convert_csv_data_to_hash(csv_string, [], :col_sep => ";")
     end
 
@@ -40,32 +53,15 @@ module Utils
         Pathname.new(DEFAULT_FILE).expand_path
       end
 
-      def environment
-        'default'  || 'default'
-      end
+      def execute_wlst(script, tmpFile, parameters, domain , domainValues)
+        
+        operatingSystemUser = domainValues['user']              || "oracle"
+        weblogicHomeDir     = domainValues['weblogic_home_dir']
+        weblogicUser        = domainValues['weblogic_user']     || "weblogic"
+        weblogicConnectUrl  = domainValues['connect_url']       || "t3://localhost:7001"
+        weblogicPassword    = domainValues['weblogic_password'] || "weblogic1"
 
-      def operatingSystemUser
-        setting_for('user') || "oracle"
-      end
-
-      def weblogicHomeDir
-        setting_for('weblogic_home_dir')
-      end
-
-      def weblogicUser
-        setting_for('weblogic_user') || "weblogic"
-      end
-
-      def weblogicConnectUrl
-        setting_for('connect_url') || "t3://localhost:7001"
-      end
-
-      def weblogicPassword
-        setting_for('weblogic_password') || "weblogic1"
-      end
-
-      def execute_wlst(script, tmpFile, parameters)
-        output = `su - #{operatingSystemUser} -c '. #{weblogicHomeDir}/server/bin/setWLSEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path}'`
+        output = `su - #{operatingSystemUser} -c '. #{weblogicHomeDir}/server/bin/setWLSEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path} #{weblogicUser} #{weblogicPassword} #{weblogicConnectUrl} #{domain}'`
         #Puppet.info "wlst output #{output}"
         raise ArgumentError, "Error executing puppet code, #{output}" if $? != 0
         File.read("/tmp/"+script+".out")

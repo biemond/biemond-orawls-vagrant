@@ -35,23 +35,27 @@ domain_instances:
      domain_template:          "standard"
      development_mode:         false
      log_output:               *logoutput
-  # 'Wls1036_2':
-  #    domain_template:          "standard"
-  #    development_mode:         false
-  #    log_output:               *logoutput
-  #    domain_name:              'Wls1036_2'
-  #    adminserver_port:         7011
-  #    java_arguments:      
-  #      ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
+  'Wls1036_2':
+     domain_template:          "standard"
+     development_mode:         false
+     log_output:               *logoutput
+     domain_name:              'Wls1036_2'
+     adminserver_port:         7011
 
 user_instances:
-  'testuser1':
+  'default/testuser1':
     ensure:                 'present'
     password:               'weblogic1'
     authenticationprovider: 'DefaultAuthenticator'
     realm:                  'myrealm'
     description:            'my test user'
-  'testuser2':
+  'default/testuser2':
+    ensure:                 'present'
+    password:               'weblogic1'
+    authenticationprovider: 'DefaultAuthenticator'
+    realm:                  'myrealm'
+    description:            'my test user'
+  'domain2/testuser3':
     ensure:                 'present'
     password:               'weblogic1'
     authenticationprovider: 'DefaultAuthenticator'
@@ -91,6 +95,14 @@ control_instances:
      target:               'Server'
      server:               'AdminServer'
      action:               'start'
+     log_output:           *logoutput
+  'startWLSAdminServer2':
+     domain_name:          "Wls1036_2"
+     server_type:          'admin'
+     target:               'Server'
+     server:               'AdminServer'
+     action:               'start'
+     adminserver_port:     7011
      log_output:           *logoutput
 
 # create password file for WLST utility

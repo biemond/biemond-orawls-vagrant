@@ -36,13 +36,43 @@ module Puppet
       template('puppet:///modules/orawls/providers/wls_user/destroy.py.erb', binding)
     end
 
+    def self.title_patterns
+      identity = lambda {|x| x}
+      [
+        [
+          /^((.*)\/(.*))$/,
+          [
+            [ :name, identity ],
+            [ :domain, identity ],
+            [ :user_name, identity ]
+          ]
+        ],
+        [
+          /^([^=]+)$/,
+          [
+            [ :name, identity ]
+          ]
+        ]
+      ]
+    end
+
+    parameter :domain
     parameter :name
+    parameter :user_name
     parameter :password
     property  :realm
     property  :authenticationprovider
     property  :description
 
   private 
+
+    def domain
+      self[:domain]
+    end
+
+    def user_name
+       self[:user_name]
+    end
 
     def description
       self[:description]
