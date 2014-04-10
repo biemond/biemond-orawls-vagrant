@@ -48,48 +48,10 @@ puppet resource wls_machine --verbose  ( as root or use sudo )
         nmtype        => 'SSL',
       }
 
-      wls_server { 'wlsServer3':
-        ensure                         => 'present',
-        arguments                      => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out',
-        listenaddress                  => '10.10.10.100',
-        listenport                     => '8002',
-        logfilename                    => '/data/logs/wlsServer3.log',
-        machine                        => 'Node1',
-        sslenabled                     => '0',
-        sslhostnameverificationignored => '1',
-        ssllistenport                  => '7002',
-      }
-
-      wls_cluster { 'WebCluster':
-        ensure         => 'present',
-        messagingmode  => 'unicast',
-        migrationbasis => 'consensus',
-        servers        => 'wlsServer3,wlsServer4',
-      }
-
-      wls_safagent { 'jmsSAFAgent1':
-        ensure      => 'present',
-        servicetype => 'Sending-only',
-        target      => 'wlsServer1',
-        targettype  => 'Server',
-      }
-
-      wls_jmsserver { 'jmsServer1':
-        ensure     => 'present',
-        target     => 'wlsServer1',
-        targettype => 'Server',
-      }
-
-      wls_file_persistence_store { 'FileStore':
-        ensure     => 'present',
-        directory  => '/tmp/aa',
-        target     => 'wlsServer1',
-        targettype => 'Server',
-      }
 
 Details
 - CentOS 6.5 vagrant box
-- Puppet 3.4.2 with Future Parser
+- Puppet 3.5.0 with Future Parser
 - Vagrant >= 1.41
 - Oracle Virtualbox >= 4.3.6 
 
@@ -126,7 +88,6 @@ Using the following facts ( VagrantFile )
 
 When to override the default oracle OS user or don't want to use the user_projects domain folder use the following facts
 - override_weblogic_user          => "wls"
-- override_weblogic_domain_folder => "/opt/oracle/wlsdomains"
 
 
 Startup the images

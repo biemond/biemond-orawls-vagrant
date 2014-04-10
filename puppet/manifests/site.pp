@@ -177,8 +177,8 @@ class java {
 
   include jdk7
 
-  $javas = ["/usr/java/jdk1.7.0_51/jre/bin/java", "/usr/java/jdk1.7.0_51/bin/java"]
-  $LOG_DIR='/tmp/log_puppet_weblogic'
+  # $javas = ["/usr/java/jdk1.7.0_51/jre/bin/java", "/usr/java/jdk1.7.0_51/bin/java"]
+  # $LOG_DIR='/tmp/log_puppet_weblogic'
 
   jdk7::install7{ 'jdk1.7.0_51':
       version                   => "7u51" , 
@@ -191,22 +191,22 @@ class java {
       cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
       sourcePath                => "/software",
   }
-  ->
-  file { $LOG_DIR:
-    ensure  => directory,
-    mode    => '0777',
-  }
-  ->
-  file { "$LOG_DIR/log.txt":
-    ensure  => file,
-    mode    => '0666'
-  }
-  ->
-  javaexec_debug {$javas: }
-  ->
-  exec { 'java_debug start provisioning':
-    command => "${javas[0]} -version '+++ start provisioning +++'"
-  }
+  # ->
+  # file { $LOG_DIR:
+  #   ensure  => directory,
+  #   mode    => '0777',
+  # }
+  # ->
+  # file { "$LOG_DIR/log.txt":
+  #   ensure  => file,
+  #   mode    => '0666'
+  # }
+  # ->
+  # javaexec_debug {$javas: }
+  # ->
+  # exec { 'java_debug start provisioning':
+  #   command => "${javas[0]} -version '+++ start provisioning +++'"
+  # }
 }
 
 # log all java executions:
