@@ -25,12 +25,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   
     admin.vm.provision :shell, :inline => "ln -sf /vagrant/puppet/hiera.yaml /etc/puppet/hiera.yaml;rm -rf /etc/puppet/modules;ln -sf /vagrant/puppet/modules /etc/puppet/modules"
+
+    # in order to enable this shared folder, execute first the following in the host machine: mkdir log_puppet_weblogic && chmod a+rwx log_puppet_weblogic
+    admin.vm.synced_folder "./log_puppet_weblogic", "/tmp/log_puppet_weblogic", :mount_options => ["dmode=777","fmode=777"]
     
     admin.vm.provision :puppet do |puppet|
       puppet.manifests_path    = "puppet/manifests"
       puppet.module_path       = "puppet/modules"
       puppet.manifest_file     = "site.pp"
-      puppet.options           = "--verbose --parser future --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
+#      puppet.options           = "--verbose --parser future --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
+      puppet.options           = "--verbose --parser future --hiera_config /vagrant/puppet/hiera.yaml"
   
       puppet.facter = {
         "environment"                     => "development",
