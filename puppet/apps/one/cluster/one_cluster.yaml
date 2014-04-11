@@ -1,8 +1,9 @@
 ---
 
 cluster_instances:
-      'WebCluster':
-        ensure:         'present'
-        messagingmode:  'unicast'
-        migrationbasis: 'consensus'
-        servers:        'wlsServer1,wlsServer2'
+  'WebCluster':
+    ensure:                     'present'
+    messagingmode:              'unicast'
+    migrationbasis:             'consensus'
+    servers:                    'wlsServer1,wlsServer2'
+    datasourceforjobscheduler:  'hrDS'

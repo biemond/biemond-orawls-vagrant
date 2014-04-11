@@ -317,16 +317,16 @@ class managed_servers{
   wlst_yaml_provider{'server':} 
 }
 
+class datasources{
+  require managed_servers
+  wlst_yaml_provider{'datasource':} 
+}
 
 class clusters{
-  require managed_servers
+  require datasources
   wlst_yaml_provider{'cluster':} 
 }
 
-class datasources{
-  require clusters
-  wlst_yaml_provider{'datasource':} 
-}
 
 class file_persistence{
   require datasources
