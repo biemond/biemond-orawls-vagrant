@@ -1,10 +1,9 @@
+# encoding: UTF-8
+
 newproperty(:first_in_group) do
-	include EasyType
+  include EasyType
 
   on_apply do | builder|
-    "first in group"
+    'first in group'
   end
-
 end
-
-

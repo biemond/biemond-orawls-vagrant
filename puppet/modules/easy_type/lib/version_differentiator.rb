@@ -1,4 +1,5 @@
-if RUBY_VERSION < "1.9"
+# encoding: UTF-8
+if RUBY_VERSION < '1.9'
   def ruby_18
     yield
   end

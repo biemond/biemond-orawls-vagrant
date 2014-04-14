@@ -1,26 +1,26 @@
+# encoding: UTF-8
 require 'easy_type'
 
+# @nodoc
 module Puppet
   newtype(:example_type) do
     include EasyType
 
     ensurable
     #
-    # Use set_command to set the base command given on creating, destroying and modifying 
-    # the resource. This can either be an existing class method on the example_type, or if 
+    # Use set_command to set the base command given on creating, destroying and modifying
+    # the resource. This can either be an existing class method on the example_type, or if
     # a method doesn't exist, it will translate to an os command given.
-    # 
-    # Example: 
+    #
+    # Example:
     #   def self.an_existing_class_method(commmand_string)
     #     # DO some important stuff
     #   end
     #
     # set_command(:an_existing_class_method)
-    # 
+    #
     #
     set_command(:just_a_method)
-
-
 
     to_get_raw_resources do
       #
@@ -39,8 +39,8 @@ module Puppet
       #   convert_csv_data_to_hash(packages_string,[:name, :version])
       # end
       #
-      # The convert_csv_data_to_hash, is a helper. Like the name says, it converts a comma separated string 
-      # to a Hash, The second argument is an Array that contains the elements of the hash. If your string 
+      # The convert_csv_data_to_hash, is a helper. Like the name says, it converts a comma separated string
+      # to a Hash, The second argument is an Array that contains the elements of the hash. If your string
       # a header as the first line, you can pass nil for the header Array.
       #
     end
@@ -49,12 +49,12 @@ module Puppet
       #
       # on_create
       # =========
-      # When Puppet signals it needs to create the resource, it will call this method. The return value of 
+      # When Puppet signals it needs to create the resource, it will call this method. The return value of
       # this method is appended to the command given in set_command
       #
       # Example:
       # --------
-      # 
+      #
       # do_command(:sql)
       #
       # on_create do
@@ -66,10 +66,10 @@ module Puppet
       # When Puppet needs to create the resource, the sql method is called with parameter "create user username"
       # The `on_create` method will be called in the context of a `provider`. This means you can reference the current
       # resource through `self`.
-      # 
+      #
       # Property information
       # ------------------------------
-      # If you have defined an `on_apply` method in any property or parameter, it's return value will be 
+      # If you have defined an `on_apply` method in any property or parameter, it's return value will be
       # appended to the base `on_create` command. See the description of `on_apply` at the type or the property
       #
       #
@@ -79,12 +79,12 @@ module Puppet
       #
       # on_modify
       # =========
-      # When Puppet signals it needs to modify the resource, it will call this method. The return value of 
+      # When Puppet signals it needs to modify the resource, it will call this method. The return value of
       # this method is appended to the command given in set_command
       #
       # Example:
       # --------
-      # 
+      #
       # do_command(:sql)
       #
       # on_modify do
@@ -99,7 +99,7 @@ module Puppet
       #
       # Property information
       # ---------------------
-      # If you have defined an `on_apply` method in any property or parameter, it's return value will be 
+      # If you have defined an `on_apply` method in any property or parameter, it's return value will be
       # appended to the base `on_modify` command. See the description of `on_apply` at the type or the property
       #
       #
@@ -109,12 +109,12 @@ module Puppet
       #
       # on_destroy
       # ==========
-      # When Puppet signals it needs to destroy the resource, it will call this method. The return value of 
+      # When Puppet signals it needs to destroy the resource, it will call this method. The return value of
       # this method is appended to the command given in set_command
       #
       # Example:
       # --------
-      # 
+      #
       # do_command(:sql)
       #
       # on_destroy do
@@ -139,18 +139,18 @@ module Puppet
       #
       # newparam
       # ==========
-      # To define a parameter, use the regular newparam(:parameter_name). 
+      # To define a parameter, use the regular newparam(:parameter_name).
       #
       # Mungers
       # =======
-      # If your parameter needs munging, you can include the necessary mungers. Check the documentation 
+      # If your parameter needs munging, you can include the necessary mungers. Check the documentation
       # of the Mungers to see which mungers are available
       #
       # Example:
       # --------
       #
       # include EasyType::Mungers::Upcase   # Check easy_type/validators for available mungers
-      # 
+      #
       # Explanation
       # -----------
       # This will include the Upcase munger. This will change any input in the Puppet Manifest
@@ -158,33 +158,32 @@ module Puppet
       #
       # Validators
       # ==========
-      # If your parameter needs validation, you can include the necessary validator. Check the documentation 
+      # If your parameter needs validation, you can include the necessary validator. Check the documentation
       # of the Validators to see which validators are available
       #
       # Example:
       # --------
       #
       # include EasyType::Validators::Name  # Check easy_type/validators for available validators
-      # 
+      #
       # Explanation
       # -----------
       # This will check if the content of the parameter is a valid name.
 
-
-      desc "Give you desciption of the parameter"
+      desc 'Give you desciption of the parameter'
 
       isnamevar
 
       to_translate_to_resource do | raw_resource|
-        #raw_resource.column_data('FILL_YOUR_PARAMETER_KEY_HERE')
+        # raw_resource.column_data('FILL_YOUR_PARAMETER_KEY_HERE')
       end
 
       #
       # to_translate_to_resource
       # ========================
       # Use this method to pick a part for the raw_resource hash. and translate it to the real resource hash
-      # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the 
-      # `column_data` method to pick the right element from the Hash. `column_data` will show an error 
+      # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the
+      # `column_data` method to pick the right element from the Hash. `column_data` will show an error
       # when the data is not available in the Hash.
       #
       # Example:
@@ -197,19 +196,17 @@ module Puppet
       # Explanation:
       # ------------
       #
-      # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase 
-      # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the 
+      # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase
+      # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the
       # following Puppet Resource
       #
       # example_type{micky_mouse: ensure => present,}
       #
       # Tricky stuff
       # ------------
-      # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key 
+      # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key
       #
     end
-
-
     #
     # parameter
     # ==========
@@ -221,7 +218,7 @@ module Puppet
     #
     # Explanation
     # -----------
-    # In this case, easy_type looks for a file 
+    # In this case, easy_type looks for a file
     # `module_name\lib\puppet\type\type_name\parameter_name.rb`
     # This file *MUST* contain the full parameter definition
     #
@@ -232,19 +229,19 @@ module Puppet
       #
       # newproperty
       # ==========
-      # To define a property, use the regular newproperty(:property_name). 
+      # To define a property, use the regular newproperty(:property_name).
       #
       #
       # Mungers
       # =======
-      # If your property needs munging, you can include the necessary mungers. Check the documentation 
+      # If your property needs munging, you can include the necessary mungers. Check the documentation
       # of the Mungers to see which mungers are available
       #
       # Example:
       # --------
       #
       # include EasyType::Mungers::Upcase   # Check easy_type/validators for available mungers
-      # 
+      #
       # Explanation
       # -----------
       # This will include the Upcase munger. This will change any input in the Puppet Manifest
@@ -252,26 +249,26 @@ module Puppet
       #
       # Validators
       # ==========
-      # If your property needs validation, you can include the necessary validator. Check the documentation 
+      # If your property needs validation, you can include the necessary validator. Check the documentation
       # of the Validators to see which validators are available
       #
       # Example:
       # --------
       #
       # include EasyType::Validators::Name  # Check easy_type/validators for available validators
-      # 
+      #
       # Explanation
       # -----------
       # This will check if the content of the property is a valid name.
 
-      desc "Give your desciption of the property"
+      desc 'Give your desciption of the property'
 
       #
       # to_translate_to_resource
       # ========================
       # Use this method to pick a part for the raw_resource hash. and translate it to the real resource hash
-      # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the 
-      # `column_data` method to pick the right element from the Hash. `column_data` will show an error 
+      # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the
+      # `column_data` method to pick the right element from the Hash. `column_data` will show an error
       # when the data is not available in the Hash.
       #
       # Example:
@@ -284,20 +281,19 @@ module Puppet
       # Explanation:
       # ------------
       #
-      # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase 
-      # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the 
+      # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase
+      # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the
       # follwoing Puppet Resource
       #
       # example_type{micky_mouse: ensure => present,}
       #
       # Tricky stuff
       # ------------
-      # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key 
+      # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key
       #
       to_translate_to_resource do | raw_resource|
-        #raw_resource.column_data('FILL_YOUR_PROPERTY_KEY_HERE')
+        # raw_resource.column_data('FILL_YOUR_PROPERTY_KEY_HERE')
       end
-
 
       #
       # on_apply
@@ -308,14 +304,14 @@ module Puppet
       # Example:
       # --------
       # in the type
-      # 
+      #
       #  on_command(:data_source)
       #
       #  on_modify do
       #    "alter #{self[:name]}"
       #  end
-      #    
-      # 
+      #
+      #
       #  in the property
       #
       #  on_apply do | command_builder |
@@ -331,9 +327,8 @@ module Puppet
       # provider, the `on_apply` method is called in the context of the property.
       #
       on_apply do
-        "add_your_on_apply_information_for_this_property"
+        'add_your_on_apply_information_for_this_property'
       end
-
     end
 
     property :just_an_other_property
@@ -347,7 +342,7 @@ module Puppet
     #
     # Explanation
     # -----------
-    # In this case, easy_type looks for a file 
+    # In this case, easy_type looks for a file
     # `module_name\lib\puppet\type\type_name\property_name.rb`
     # This file *MUST* contain the full property definition
     #
@@ -373,13 +368,14 @@ module Puppet
     #
     # Explanation:
     # ------------
-    # if Puppet signals property `first_in_group` is modified, the command will include the return values of 
-    # the `on_apply` for both properties. 
+    # if Puppet signals property `first_in_group` is modified, the command will include the return values of
+    # the `on_apply` for both properties.
     #
     # Tricky stuff
     # ------------
-    # When you want to use a group, you **CANNOT** use inline (e.g. newproperty do), but you **MUST** 
-    # use the property definition in the fiCheck what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key 
+    # When you want to use a group, you **CANNOT** use inline (e.g. newproperty do), but you **MUST**
+    # use the property definition in the fiCheck what the keys of the Hash are. There **is**
+    # a difference between 'key', 'KEY', :KEY and :key
     #
     #
   end

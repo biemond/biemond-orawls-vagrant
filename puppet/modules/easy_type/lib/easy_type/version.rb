@@ -1,3 +1,5 @@
+# encoding: UTF-8
+# @nodoc
 module EasyType
-	VERSION = "0.5.1"
+  VERSION = '0.7.0'
 end
