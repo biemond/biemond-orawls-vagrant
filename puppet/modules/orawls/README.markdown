@@ -1185,10 +1185,22 @@ needs wls_setting
 or use puppet resource wls_cluster
 
       wls_cluster { 'WebCluster':
-        ensure         => 'present',
-        messagingmode  => 'unicast',
-        migrationbasis => 'consensus',
-        servers        => 'wlsServer3,wlsServer4',
+        ensure           => 'present',
+        messagingmode    => 'unicast',
+        migrationbasis   => 'consensus',
+        servers          => 'wlsServer3,wlsServer4',
+        multicastaddress => '239.192.0.0',
+        multicastport    => '7001',
+      }
+
+      wls_cluster { 'WebCluster2':
+        ensure                  => 'present',
+        messagingmode           => 'unicast',
+        migrationbasis          => 'consensus',
+        servers                 => 'wlsServer3,wlsServer4',
+        unicastbroadcastchannel => 'channel',
+        multicastaddress        => '239.192.0.0',
+        multicastport           => '7001',
       }
 
 in hiera
