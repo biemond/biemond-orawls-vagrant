@@ -113,11 +113,6 @@ machines_instances:
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
-  'Node3':
-    ensure:         'present'
-    listenport:     '5556'
-    machinetype:    'UnixMachine'
-    nmtype:         'SSL'
 
 file_persistence_folders:
    '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':

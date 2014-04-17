@@ -185,7 +185,7 @@ class java {
       fullVersion               => "jdk1.7.0_51",
       alternativesPriority      => 18000, 
       x64                       => true,
-      downloadDir               => "/data/install",
+      downloadDir               => "/var/tmp/install",
       urandomJavaFix            => true,
       rsakeySizeFix             => true,
       cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",
