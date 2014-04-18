@@ -17,6 +17,7 @@ node 'admin.example.com' {
   include groups
   include machines
   include managed_servers
+  include managed_servers_channels
   include clusters
   include file_persistence
   include jms_servers
@@ -34,7 +35,6 @@ node 'admin.example.com' {
   include saf_imported_destination
   include saf_imported_destination_objects
   include pack_domain
-
 
   Class[java] -> Class[orawls::weblogic]
 }  
@@ -317,8 +317,13 @@ class managed_servers{
   wlst_yaml_provider{'server':} 
 }
 
-class datasources{
+class managed_servers_channels{
   require managed_servers
+  wlst_yaml_provider{'server_channel':} 
+}
+
+class datasources{
+  require managed_servers_channels
   wlst_yaml_provider{'datasource':} 
 }
 
@@ -326,7 +331,6 @@ class clusters{
   require datasources
   wlst_yaml_provider{'cluster':} 
 }
-
 
 class file_persistence{
   require datasources

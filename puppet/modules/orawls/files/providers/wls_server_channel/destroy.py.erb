@@ -9,8 +9,7 @@ startEdit()
 try:
 
     cd('/Servers/'+server)
-    cmo.destroyNetworkAccessPoint(name)
-
+    cmo.destroyNetworkAccessPoint(getMBean('/Servers/'+server+'/NetworkAccessPoints/'+name))
     save()
     activate()
 

@@ -2,7 +2,6 @@ connect('<%= weblogicUser %>','<%= weblogicPassword %>'  ,'<%= weblogicConnectUr
 
 name             = '<%= channel_name %>'
 server           = '<%= server %>'
-
 protocol         = '<%= protocol %>'
 enabled          = '<%= enabled %>'
 listenaddress    = '<%= listenaddress %>'
@@ -23,9 +22,9 @@ try:
 
     cd('/Servers/'+server+'/NetworkAccessPoints/'+name)
     cmo.setProtocol(protocol)
-    cmo.setListenPort(int(listenport)
+    cmo.setListenPort(int(listenport))
 
-    if enabled == '1':    
+    if enabled == '1':
       cmo.setEnabled(true)
     else:
       cmo.setEnabled(false)
