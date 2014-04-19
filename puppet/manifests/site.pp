@@ -11,6 +11,9 @@ node 'admin.example.com' {
   include java
   include orawls::weblogic, orautils
   include bsu
+  include fmw
+  include opatch
+
   include domains
   include nodemanager, startwls, userconfig
   include users
@@ -223,12 +226,24 @@ class bsu{
   $default_params = {}
   $bsu_instances = hiera('bsu_instances', {})
   create_resources('orawls::bsu',$bsu_instances, $default_params)
+}
 
+class fmw{
+  require bsu
+  $default_params = {}
+  $fmw_installations = hiera('fmw_installations', {})
+  create_resources('orawls::fmw',$fmw_installations, $default_params)
+}
 
+class opatch{
+  require fmw,bsu,orawls::weblogic
+  $default_params = {}
+  $opatch_instances = hiera('opatch_instances', {})
+  create_resources('orawls::opatch',$opatch_instances, $default_params)
 }
 
 class domains{
-  require orawls::weblogic, bsu
+  require orawls::weblogic, opatch
 
   $default_params = {}
   $domain_instances = hiera('domain_instances', {})
