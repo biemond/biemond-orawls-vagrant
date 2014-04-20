@@ -13,14 +13,13 @@ node 'admin.example.com' {
   include bsu
   include fmw
   include opatch
-
   include domains
   include nodemanager, startwls, userconfig
   include users
-<<<<<<< HEAD
   # include groups
   # include machines
   # include managed_servers
+  # include managed_servers_channels
   # include clusters
   # include file_persistence
   # include jms_servers
@@ -38,29 +37,6 @@ node 'admin.example.com' {
   # include saf_imported_destination
   # include saf_imported_destination_objects
   # include pack_domain
-=======
-  include groups
-  include machines
-  include managed_servers
-  include managed_servers_channels
-  include clusters
-  include file_persistence
-  include jms_servers
-  include jms_saf_agents
-  include jms_modules
-  include jms_module_subdeployments
-  include jms_module_quotas
-  include jms_module_cfs
-  include jms_module_queues_objects
-  include jms_module_topics_objects
-  include foreign_server_objects
-  include foreign_server_entries_objects
-  include saf_remote_context_objects
-  include saf_error_handlers
-  include saf_imported_destination
-  include saf_imported_destination_objects
-  include pack_domain
->>>>>>> master
 
   Class[java] -> Class[orawls::weblogic]
 }  
