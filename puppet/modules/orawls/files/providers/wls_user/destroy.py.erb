@@ -3,14 +3,8 @@ weblogicPassword     = sys.argv[2]
 weblogicConnectUrl   = sys.argv[3] 
 domain               = sys.argv[4] 
 
-# still required cause of easy_type module
-f = open("/tmp/wlstScript.out", "w")
-f.close()
-
-# check the domain
-real_domain          = '<%= domain %>'
-if real_domain != domain:
-  exit()	
+# check the domain else we need to skip this (done in wls_access.rb)
+real_domain='<%= domain %>'
 
 connect(weblogicUser,weblogicPassword,weblogicConnectUrl)
 

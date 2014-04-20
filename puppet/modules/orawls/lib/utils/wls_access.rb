@@ -1,13 +1,6 @@
 require 'tempfile'
 require 'fileutils'
 require 'utils/settings'
-#begin
-#  require 'ruby-debug'
-#  require 'pry'
-#rescue LoadError
-#  # do nothing 
-#end
-
 
 module Utils
   module WlsAccess
@@ -41,20 +34,31 @@ module Utils
 
       if action == "index"
         # if index do all domains
+        i = 1
         domains.each { |key, values|
           Puppet.info "domain found #{key}"
-          csv_string += execute_wlst( script , tmpFile , parameters,key,values, action)
+          csv_domain_string = execute_wlst( script , tmpFile , parameters,key,values, action)
+          if i > 1 
+            # with multi domain, remove first line if it is a header
+            csv_domain_string = csv_domain_string.to_a[1..-1].join
+          end  
+          csv_string += csv_domain_string
+          i += 1
         }  
         convert_csv_data_to_hash(csv_string, [], :col_sep => ";")
       else
         #  Puppet.info "domain found #{domain}"
         domains.each { |key, values|
-          Puppet.info "domain found #{key}"
-          execute_wlst( script , tmpFile , parameters,key,values, action)
+          # check content if we do this for the right domain
+          if content.include? "real_domain='"+key
+            Puppet.info "Got the right domain #{key} script, now execute WLST"
+            execute_wlst( script , tmpFile , parameters,key,values, action)
+          else 
+            Puppet.info "Skip WLST for domain #{key}"
+          end
         }  
       end 
     end
-
 
     private
 
