@@ -16,7 +16,7 @@ node 'admin.example.com' {
   include domains
   include nodemanager, startwls, userconfig
   include users
-  # include groups
+  include groups
   # include machines
   # include managed_servers
   # include managed_servers_channels

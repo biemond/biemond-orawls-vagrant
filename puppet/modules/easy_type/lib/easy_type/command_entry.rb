@@ -17,7 +17,7 @@ class CommandEntry
   end
 
   def execute
-    Puppet.info "CommandEntry execute"
+    #Puppet.info "CommandEntry execute"
     normalized_command = ''
     ruby_18 { normalized_command = command.to_s }
     ruby_19 { normalized_command = command.to_sym }
