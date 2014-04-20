@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_saf_imported_destination/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_saf_imported_destination"}
+      wlst template('puppet:///modules/orawls/providers/wls_saf_imported_destination/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -66,43 +67,5 @@ module Puppet
     property  :defaulttargeting
     property  :subdeployment
 
-  private 
-
-    def imported_destination_name
-       self[:imported_destination_name]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def errorhandling
-       self[:errorhandling]
-    end
-
-    def remotecontext
-       self[:remotecontext]
-    end
-
-    def jndiprefix
-       self[:jndiprefix]
-    end
-
-    def timetolivedefault
-       self[:timetolivedefault]
-    end
-
-    def usetimetolivedefault
-       self[:usetimetolivedefault]
-    end
-
-    def subdeployment
-       self[:subdeployment]
-    end
-
-    def defaulttargeting
-      self[:defaulttargeting]
-    end
-
-  end
+   end
 end

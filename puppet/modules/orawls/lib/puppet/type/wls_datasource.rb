@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_datasource/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_datasource"}
+      wlst template('puppet:///modules/orawls/providers/wls_datasource/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -50,64 +51,5 @@ module Puppet
     property  :extrapropertiesvalues
     property  :maxcapacity
     property  :initialcapacity
-
-  private 
-
-    def target
-      self[:target]
-    end
-
-    def password
-      self[:password]
-    end
-
-    def targettype
-      self[:targettype]
-    end
-
-    def jndinames
-      self[:jndinames]
-    end
-
-    def drivername
-      self[:drivername]
-    end
-
-    def url
-      self[:url]
-    end
-
-    def usexa
-      self[:usexa]
-    end
-
-    def user
-      self[:user]
-    end
-
-    def testtablename
-      self[:testtablename]
-    end
-
-    def globaltransactionsprotocol
-      self[:globaltransactionsprotocol]
-    end 
-
-    def extraproperties
-       self[:extraproperties]
-    end 
-
-    def extrapropertiesvalues
-       self[:extrapropertiesvalues]
-    end  
-
-    def maxcapacity
-       self[:maxcapacity]
-    end 
-
-    def initialcapacity
-       self[:initialcapacity]
-    end  
-
   end
 end

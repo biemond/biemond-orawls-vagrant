@@ -20,7 +20,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name} "
-      wlst template('puppet:///modules/orawls/providers/wls_machine/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_machine"}
+      wlst template('puppet:///modules/orawls/providers/wls_machine/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -45,24 +46,5 @@ module Puppet
     property  :nmtype
     property  :listenaddress
     property  :listenport
-
-  private 
-
-    def listenaddress
-      self[:listenaddress]
-    end
-
-    def listenport
-      self[:listenport]
-    end
-
-    def machinetype
-      self[:machinetype]
-    end
-
-    def nmtype
-      self[:nmtype]
-    end
-
   end
 end

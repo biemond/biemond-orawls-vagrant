@@ -22,7 +22,6 @@ description            = '<%= description %>'
 
 try:
     cd('/')
-
     atnr=cmo.getSecurityConfiguration().getDefaultRealm().lookupAuthenticationProvider(authenticationprovider)
 
     print 'modify user: ',name

@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_cluster/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_cluster"}
+      wlst template('puppet:///modules/orawls/providers/wls_cluster/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -39,20 +40,9 @@ module Puppet
     property  :servers
     property  :migrationbasis
     property  :messagingmode
-
-  private 
-
-    def servers
-      self[:servers]
-    end
-
-    def migrationbasis
-      self[:migrationbasis]
-    end
-
-    def messagingmode
-      self[:messagingmode]
-    end
-
+    property  :datasourceforjobscheduler
+    property  :unicastbroadcastchannel
+    property  :multicastaddress
+    property  :multicastport
   end
 end

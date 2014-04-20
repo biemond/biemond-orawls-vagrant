@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_jms_quota/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_jms_quota"}
+      wlst template('puppet:///modules/orawls/providers/wls_jms_quota/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -62,32 +63,6 @@ module Puppet
     property  :messagesmaximum
     property  :policy
     property  :shared
-
-  private 
-
-    def quota_name
-       self[:quota_name]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def bytesmaximum
-      self[:bytesmaximum]
-    end
-
-    def messagesmaximum
-      self[:messagesmaximum]
-    end
-
-    def policy
-      self[:policy]
-    end
-
-    def shared
-      self[:shared]
-    end
 
   end
 end

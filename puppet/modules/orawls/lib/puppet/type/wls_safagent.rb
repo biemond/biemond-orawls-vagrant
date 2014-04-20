@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_safagent/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_safagent"}
+      wlst template('puppet:///modules/orawls/providers/wls_safagent/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -41,29 +42,6 @@ module Puppet
     property  :persistentstoretype
     property  :target
     property  :targettype
-
-
-  private 
-
-    def servicetype
-      self[:servicetype]
-    end
-
-    def persistentstore
-      self[:persistentstore]
-    end
-
-    def persistentstoretype
-      self[:persistentstoretype]
-    end
-
-    def target
-      self[:target]
-    end
-
-    def targettype
-      self[:targettype]
-    end
 
   end
 end

@@ -7,7 +7,7 @@
 
 node 'node1.example.com', 'node2.example.com' {
   
-  include os, ssh, java, orawls::weblogic, bsu, copydomain, nodemanager
+  include os, ssh, java, orawls::weblogic, orautils, bsu, copydomain, nodemanager
 
   Class['java'] -> Class['orawls::weblogic'] 
 }
@@ -152,7 +152,7 @@ class java {
       fullVersion               => "jdk1.7.0_51",
       alternativesPriority      => 18000, 
       x64                       => true,
-      downloadDir               => "/data/install",
+      downloadDir               => "/var/tmp/install",
       urandomJavaFix            => true,
       rsakeySizeFix             => true,
       cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",

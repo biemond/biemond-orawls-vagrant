@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_saf_imported_destination_object/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_saf_imported_destination_object"}
+      wlst template('puppet:///modules/orawls/providers/wls_saf_imported_destination_object/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -67,48 +68,6 @@ module Puppet
     property  :remotejndiname
     property  :localjndiname
     property  :nonpersistentqos
-
-  private 
-
-    def nonpersistentqos
-       self[:nonpersistentqos]
-    end
-
-    def remotejndiname
-       self[:remotejndiname]
-    end
-
-    def localjndiname
-       self[:localjndiname]
-    end
-
-    def imported_destination
-       self[:imported_destination]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def object_name
-       self[:object_name]
-    end
-
-    def object_type
-       self[:object_type]
-    end
-
-    def timetolivedefault
-       self[:timetolivedefault]
-    end
-
-    def usetimetolivedefault
-       self[:usetimetolivedefault]
-    end
-
-    def unitoforderrouting
-       self[:unitoforderrouting]
-    end	
 
   end
 end

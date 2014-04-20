@@ -42,6 +42,28 @@ domain_instances:
      domain_name:              'Wls1036_2'
      adminserver_port:         7011
 
+# FMW installation on top of WebLogic 10.3.6
+# fmw_installations:
+#   'soaPS6':
+#     fmw_product:             "soa"
+#     fmw_file1:               "ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip"
+#     fmw_file2:               "ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip"
+#     log_output:              true
+#     remote_file:             false
+#   'osbPS6':
+#     fmw_product:             "osb"
+#     fmw_file1:               "ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip"
+#     log_output:              true
+#     remote_file:             false
+
+# opatch_instances:
+#   '17584181':
+#      oracle_product_home_dir:  "/opt/oracle/middleware11g/Oracle_SOA1"
+#      patch_id:                 "17584181"
+#      patch_file:               "p17584181_111170_Generic.zip"
+#      remote_file:              false
+
+
 user_instances:
   'default/testuser1':
     ensure:                 'present'
@@ -122,11 +144,6 @@ machines_instances:
   'Node2':
     ensure:         'present'
     listenaddress:  '10.10.10.200'
-    listenport:     '5556'
-    machinetype:    'UnixMachine'
-    nmtype:         'SSL'
-  'Node3':
-    ensure:         'present'
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'

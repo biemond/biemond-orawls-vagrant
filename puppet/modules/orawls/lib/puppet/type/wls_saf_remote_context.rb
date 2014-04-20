@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_saf_remote_context/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_saf_remote_context"}
+      wlst template('puppet:///modules/orawls/providers/wls_saf_remote_context/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -61,28 +62,5 @@ module Puppet
     parameter :weblogic_password
     property  :weblogic_user
     property  :connect_url
-
-  private 
-
-    def remote_context_name
-       self[:remote_context_name]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def weblogic_password
-       self[:weblogic_password]
-    end
-
-    def weblogic_user
-       self[:weblogic_user]
-    end
-
-    def connect_url
-       self[:connect_url]
-    end
-
   end
 end

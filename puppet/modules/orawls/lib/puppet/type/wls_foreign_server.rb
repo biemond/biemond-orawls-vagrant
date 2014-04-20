@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_foreign_server/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_foreign_server"}
+      wlst template('puppet:///modules/orawls/providers/wls_foreign_server/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -65,45 +66,6 @@ module Puppet
     property  :extrapropertiesvalues
     property  :initialcontextfactory
     property  :connectionurl
-
-  private 
-
-    def password
-       self[:password]
-    end
-
-    def initialcontextfactory
-       self[:initialcontextfactory]
-    end
-
-    def connectionurl
-       self[:connectionurl]
-    end
-
-    def extraproperties
-       self[:extraproperties]
-    end
-
-    def extrapropertiesvalues
-       self[:extrapropertiesvalues]
-    end
-
-    def foreign_server_name
-       self[:foreign_server_name]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def subdeployment
-       self[:subdeployment]
-    end
-
-    def defaulttargeting
-       self[:defaulttargeting]
-    end
-
 
   end
 end

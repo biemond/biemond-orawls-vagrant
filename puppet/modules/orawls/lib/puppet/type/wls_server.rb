@@ -20,7 +20,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name} "
-      wlst template('puppet:///modules/orawls/providers/wls_server/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_server"}
+      wlst template('puppet:///modules/orawls/providers/wls_server/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -49,48 +50,6 @@ module Puppet
     property  :logfilename
     property  :sslhostnameverificationignored
     property  :jsseenabled
-
-  private 
-
-    def jsseenabled
-      self[:jsseenabled]
-    end
-
-    def ssllistenport
-      self[:ssllistenport]
-    end
-
-    def sslenabled
-      self[:sslenabled]
-    end
-
-    def listenaddress
-      self[:listenaddress]
-    end
-
-    def listenport
-      self[:listenport]
-    end
-
-    def machine
-      self[:machine]
-    end
-
-    def classpath
-      self[:classpath]
-    end
-
-    def arguments
-      self[:arguments]
-    end
-
-    def logfilename
-      self[:logfilename]
-    end
-
-    def sslhostnameverificationignored
-      self[:sslhostnameverificationignored]
-    end
 
   end
 end

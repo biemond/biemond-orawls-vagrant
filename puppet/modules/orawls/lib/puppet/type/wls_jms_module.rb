@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_jms_module/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_jms_module"}
+      wlst template('puppet:///modules/orawls/providers/wls_jms_module/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -38,16 +39,5 @@ module Puppet
     parameter :name
     property  :target
     property  :targettype
-
-  private 
-
-    def target
-      self[:target]
-    end
-
-    def targettype
-      self[:targettype]
-    end
-
   end
 end

@@ -1,20 +1,22 @@
+# encoding: UTF-8
+
 newproperty(:your_property) do
   include EasyType
   #
   # newproperty
   # ==========
-  # To define a property, use the regular newproperty(:property_name). 
+  # To define a property, use the regular newproperty(:property_name).
   #
   # Mungers
   # =======
-  # If your property needs munging, you can include the necessary mungers. Check the documentation 
+  # If your property needs munging, you can include the necessary mungers. Check the documentation
   # of the Mungers to see which mungers are available
   #
   # Example:
   # --------
   #
   # include EasyType::Mungers::Upcase   # Check easy_type/validators for available mungers
-  # 
+  #
   # Explanation
   # -----------
   # This will include the Upcase munger. This will change any input in the Puppet Manifest
@@ -22,26 +24,26 @@ newproperty(:your_property) do
   #
   # Validators
   # ==========
-  # If your property needs validation, you can include the necessary validator. Check the documentation 
+  # If your property needs validation, you can include the necessary validator. Check the documentation
   # of the Validators to see which validators are available
   #
   # Example:
   # --------
   #
   # include EasyType::Validators::Name  # Check easy_type/validators for available validators
-  # 
+  #
   # Explanation
   # -----------
   # This will check if the content of the property is a valid name.
 
-  desc "Give your desciption of the property"
+  desc 'Give your desciption of the property'
 
   #
   # to_translate_to_resource
   # ========================
   # Use this method to pick a part for the raw_resource hash. and translate it to the real resource hash
-  # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the 
-  # `column_data` method to pick the right element from the Hash. `column_data` will show an error 
+  # If you have used the `convert_csv_data_to_hash` method to create the Hash, you can use the
+  # `column_data` method to pick the right element from the Hash. `column_data` will show an error
   # when the data is not available in the Hash.
   #
   # Example:
@@ -54,20 +56,19 @@ newproperty(:your_property) do
   # Explanation:
   # ------------
   #
-  # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase 
-  # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the 
+  # This will extract the `USERNAME` from the `raw_resource` Hash and translate it to an uppercase
+  # value. let's say, the Hash contains {'USERNAME` => 'micky_mouse`}. This would lead to the
   # following Puppet Resource
   #
   # example_type{micky_mouse: ensure => present,}
   #
   # Tricky stuff
   # ------------
-  # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key 
+  # Check what the keys of the Hash are. There **is** a difference between 'key', 'KEY', :KEY and :key
   #
   to_translate_to_resource do | raw_resource|
-    #raw_resource.column_data('FILL_YOUR_PROPERTY_KEY_HERE')
+    # raw_resource.column_data('FILL_YOUR_PROPERTY_KEY_HERE')
   end
-
 
   #
   # on_apply
@@ -78,14 +79,14 @@ newproperty(:your_property) do
   # Example:
   # --------
   # in the type
-  # 
+  #
   #  on_command(:data_source)
   #
   #  on_modify do
   #    "alter #{self[:name]}"
   #  end
-  #    
-  # 
+  #
+  #
   #  in the property
   #
   #  on_apply do | command_builder |
@@ -100,6 +101,6 @@ newproperty(:your_property) do
   # While the `on_create`, `on_destroy` and `on_modify` methods are called in the context of the
   # provider, the `on_apply` method is called in the context of the property.
   on_apply do
-    "add_your_on_apply_information_for_this_property"
+    'add_your_on_apply_information_for_this_property'
   end
 end

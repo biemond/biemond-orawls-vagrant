@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_foreign_server_object/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_foreign_server_object"}
+      wlst template('puppet:///modules/orawls/providers/wls_foreign_server_object/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -63,32 +64,5 @@ module Puppet
     property  :object_type
     property  :remotejndiname
     property  :localjndiname
-
-  private 
-
-    def remotejndiname
-       self[:remotejndiname]
-    end
-
-    def localjndiname
-       self[:localjndiname]
-    end
-
-    def foreign_server
-       self[:foreign_server]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def object_name
-       self[:object_name]
-    end
-
-    def object_type
-       self[:object_type]
-    end
-
   end
 end

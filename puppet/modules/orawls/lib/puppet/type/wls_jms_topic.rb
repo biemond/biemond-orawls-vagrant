@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_jms_topic/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_jms_topic"}
+      wlst template('puppet:///modules/orawls/providers/wls_jms_topic/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -71,69 +72,5 @@ module Puppet
     property  :redeliverydelay
     property  :timetodeliver
     property  :timetolive
-
-  private 
-
-    def topic_name
-       self[:topic_name]
-    end
-
-    def jmsmodule
-       self[:jmsmodule]
-    end
-
-    def distributed
-       self[:distributed]
-    end
-
-    def jndiname
-       self[:jndiname]
-    end
-
-    def subdeployment
-       self[:subdeployment]
-    end
-
-    def defaulttargeting
-       self[:defaulttargeting]
-    end
-
-    def balancingpolicy
-       self[:balancingpolicy]
-    end
-
-    def quota
-       self[:quota]
-    end
-
-    def errordestination
-       self[:errordestination]
-    end
-
-    def expirationloggingpolicy
-       self[:expirationloggingpolicy]
-    end
-
-    def redeliverylimit
-       self[:redeliverylimit]
-    end
-
-    def expirationpolicy
-       self[:expirationpolicy]
-    end
-
-    def redeliverydelay
-       self[:redeliverydelay]
-    end
-
-    def timetodeliver
-       self[:timetodeliver]
-    end
-
-    def timetolive
-       self[:timetolive]
-    end
-
-
   end
 end

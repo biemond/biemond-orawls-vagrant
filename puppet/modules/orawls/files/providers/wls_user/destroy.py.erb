@@ -20,7 +20,6 @@ authenticationprovider = '<%= authenticationprovider %>'
 
 try:
     cd('/')
-
     atnr=cmo.getSecurityConfiguration().getDefaultRealm().lookupAuthenticationProvider(authenticationprovider)
 
     print 'drop user: ',name

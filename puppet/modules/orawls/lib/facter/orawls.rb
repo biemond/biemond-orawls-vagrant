@@ -84,51 +84,6 @@ def get_middleware_1212_Home(name)
     return elements
 end 
 
-def get_bsu_patches(name)
-  os = Facter.value(:kernel)
-
-  if ["Linux","SunOS"].include?os
-   if FileTest.exists?(name+'/utils/bsu/patch-client.jar')
-    output2 = Facter::Util::Resolution.exec(get_suCommand()+ get_weblogicUser() + " -c \""+get_javaCommand()+" -Xms256m -Xmx512m -jar "+ name+"/utils/bsu/patch-client.jar -report -bea_home="+name+" -output_format=xml\"")
-    if output2.nil?
-      return "empty"
-    end
-   else
-    return nil
-   end 
-  else
-    return nil 
-  end
-  doc = REXML::Document.new output2
-
-  root = doc.root
-  patches = ""
-  root.elements.each("//patchDesc") do |patch|
-    patches += patch.elements['patchId'].text + ";"
-  end
-  return patches
-
-end
-
-
-def get_opatch_patches(name)
-    Puppet.debug "orawls.rb get_opatch_patches with path: #{name}"
-    #Puppet.debug "orawls.rb opatch command: "+get_suCommand()+get_weblogicUser()+" -c '"+name+"/OPatch/opatch lsinventory -patch_id -oh "+name+" -invPtrLoc "+get_oraInvPath()+"/oraInst.loc'"
-    output3 = Facter::Util::Resolution.exec(get_suCommand()+get_weblogicUser()+" -c '"+name+"/OPatch/opatch lsinventory -patch_id -oh "+name+" -invPtrLoc "+get_oraInvPath()+"/oraInst.loc'")
-
-    opatches = "Patches;"
-    if output3.nil?
-      opatches = "Error;"
-    else 
-      output3.each_line do |li|
-        opatches += li[5, li.index(':')-5 ].strip + ";" if (li['Patch'] and li[': applied on'] )
-      end
-    end
-   
-    return opatches
-end  
-
-
 def get_orainst_loc()
   #puts "get_orainst_loc: "+get_oraInvPath()+"/oraInst.loc"
   if FileTest.exists?(get_oraInvPath()+"/oraInst.loc")
@@ -156,21 +111,6 @@ def get_orainst_products(path)
         str = element.attributes["LOC"]
         unless str.nil? 
           software += str + ";"
-          if str.include? "plugins"
-            #skip EM agent
-          elsif str.include? "agent"
-            #skip EM agent 
-          elsif str.include? "OraPlaceHolderDummyHome"
-            #skip EM agent
-          else
-            home = str.gsub("/","_").gsub("\\","_").gsub("c:","_c").gsub("d:","_d").gsub("e:","_e")
-            output = get_opatch_patches(str)
-            Facter.add("ora_inst_patches#{home}") do
-              setcode do
-                output
-              end
-            end
-          end
         end    
       end
       return software
@@ -778,12 +718,6 @@ count = -1
 unless mdw11gHomes.nil?
   mdw11gHomes.each_with_index do |mdw, i|
     count += 1
-    # get bsu patches
-    Facter.add("ora_mdw_#{count}_bsu") do
-      setcode do
-        get_bsu_patches(mdw)
-      end
-    end
     Facter.add("ora_mdw_#{count}") do
       setcode do
         mdw

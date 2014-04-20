@@ -17,7 +17,8 @@ module Puppet
   
     to_get_raw_resources do
       Puppet.info "index #{name}"
-      wlst template('puppet:///modules/orawls/providers/wls_file_persistence_store/index.py.erb', binding)
+      environment = { "action"=>"index","type"=>"wls_file_persistence_store"}
+      wlst template('puppet:///modules/orawls/providers/wls_file_persistence_store/index.py.erb', binding), environment
     end
 
     on_create  do | command_builder |
@@ -39,20 +40,5 @@ module Puppet
     property  :directory
     property  :target
     property  :targettype
-
-  private 
-
-    def directory
-      self[:directory]
-    end
-
-    def target
-      self[:target]
-    end
-
-    def targettype
-      self[:targettype]
-    end
-
   end
 end
