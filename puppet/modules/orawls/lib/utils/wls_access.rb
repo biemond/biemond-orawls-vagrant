@@ -74,7 +74,7 @@ module Utils
         weblogicConnectUrl  = domainValues['connect_url']       || "t3://localhost:7001"
         weblogicPassword    = domainValues['weblogic_password'] || "weblogic1"
 
-        command = ". #{weblogicHomeDir}/server/bin/setWLSEnv.sh;rm -f /tmp/#{script}.out;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path} #{weblogicUser} #{weblogicPassword} #{weblogicConnectUrl} #{domain}"
+        command = ". #{weblogicHomeDir}/server/bin/setWLSEnv.sh;java -Dweblogic.security.SSL.ignoreHostnameVerification=true weblogic.WLST -skipWLSModuleScanning #{tmpFile.path} #{weblogicUser} #{weblogicPassword} #{weblogicConnectUrl} #{domain}"
         output = Puppet::Util::Execution.execute command, :failonfail => true ,:uid => operatingSystemUser
         if action == "index"
           File.read("/tmp/"+script+".out")

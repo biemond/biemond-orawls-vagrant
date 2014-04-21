@@ -17,10 +17,11 @@ node 'admin.example.com' {
   include nodemanager, startwls, userconfig
   include users
   include groups
-  # include machines
-  # include managed_servers
-  # include managed_servers_channels
-  # include clusters
+  include machines
+  include managed_servers
+  include managed_servers_channels
+  include datasources
+  include clusters
   # include file_persistence
   # include jms_servers
   # include jms_saf_agents
