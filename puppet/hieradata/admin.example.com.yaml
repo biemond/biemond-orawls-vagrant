@@ -19,13 +19,19 @@ orautils::wlsAdminServerParam:    "AdminServer"
 
 logoutput:                     &logoutput                     true
 
+wls_os_user:              &wls_os_user              "wls"
+wls_weblogic_user:        &wls_weblogic_user        "weblogic"
+wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
+wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
+
+
 # when you have just one domain on a server
 domain_name:                "Wls1036"
 domain_adminserver:         "AdminServer"
 domain_adminserver_address: "10.10.10.10"
 domain_adminserver_port:    7001
 domain_nodemanager_port:    5556
-domain_wls_password:        "weblogic1"
+domain_wls_password:        &domain_wls_password      "weblogic1"
 domain_user_config_file:    "/home/wls/wls-Wls1036-WebLogicConfig.properties"
 domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 
@@ -41,6 +47,20 @@ domain_instances:
      log_output:               *logoutput
      domain_name:              'Wls1036_2'
      adminserver_port:         7011
+
+wls_setting_instances:
+  'default':
+    user:               *wls_os_user
+    weblogic_home_dir:  *wls_weblogic_home_dir
+    connect_url:        "t3://10.10.10.10:7001"
+    weblogic_user:      *wls_weblogic_user
+    weblogic_password:  *domain_wls_password
+  'domain2':
+    user:               *wls_os_user
+    weblogic_home_dir:  *wls_weblogic_home_dir
+    connect_url:        "t3://10.10.10.10:7011"
+    weblogic_user:      *wls_weblogic_user
+    weblogic_password:  *domain_wls_password
 
 # FMW installation on top of WebLogic 10.3.6
 # fmw_installations:
@@ -119,7 +139,7 @@ pack_domain_instances:
 nodemanager_instances:
   'nodemanager':
      log_output:           *logoutput
-     nodemanager_address:  "10.10.10.10"
+     # nodemanager_address:  "10.10.10.10"
 
 # startup adminserver for extra configuration
 control_instances:

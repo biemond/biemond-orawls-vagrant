@@ -249,31 +249,8 @@ class domains{
   $domain_instances = hiera('domain_instances', {})
   create_resources('orawls::domain',$domain_instances, $default_params)
 
-  $domain_address = hiera('domain_adminserver_address')
-  $domain_port    = hiera('domain_adminserver_port')
-
-  orautils::nodemanagerautostart{"autostart weblogic 11g":
-    version     => hiera('wls_version'),
-    wlHome      => hiera('wls_weblogic_home_dir'),
-    user        => hiera('wls_os_user'),
-    jsseEnabled => true,
-  }
-
-  wls_setting { 'default':
-    user               => hiera('wls_os_user'),
-    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
-    connect_url        => "t3://${domain_address}:${domain_port}",
-    weblogic_user      => hiera('wls_weblogic_user'),
-    weblogic_password  => hiera('domain_wls_password'),
-  }
-  wls_setting { 'domain2':
-    user               => hiera('wls_os_user'),
-    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
-    connect_url        => "t3://${domain_address}:7011",
-    weblogic_user      => hiera('wls_weblogic_user'),
-    weblogic_password  => hiera('domain_wls_password'),
-  }
-
+  $wls_setting_instances = hiera('wls_setting_instances', {})
+  create_resources('wls_setting',$wls_setting_instances, $default_params)
 
 }
 
@@ -283,6 +260,14 @@ class nodemanager {
   $default_params = {}
   $nodemanager_instances = hiera('nodemanager_instances', {})
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
+
+  orautils::nodemanagerautostart{"autostart weblogic 11g":
+    version     => hiera('wls_version'),
+    wlHome      => hiera('wls_weblogic_home_dir'),
+    user        => hiera('wls_os_user'),
+    jsseEnabled => true,
+  }
+
 }
 
 class startwls {
