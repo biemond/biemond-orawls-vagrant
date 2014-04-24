@@ -11,6 +11,9 @@ name                      = '<%= cluster_name %>'
 clusterNodesTargets       = String('<%= servers %>').split(",")
 messagingmode             = '<%= messagingmode %>'
 migrationbasis            = '<%= migrationbasis %>'
+migration_table_name      = '<%= migration_table_name %>'
+migration_datasource      = '<%= migration_datasource %>'
+
 datasourceforjobscheduler = '<%= datasourceforjobscheduler %>'
 
 unicastbroadcastchannel = '<%= unicastbroadcastchannel %>'
@@ -28,7 +31,13 @@ try:
 
     cd('/Clusters/'+name)
     cmo.setClusterMessagingMode(messagingmode)
+
     cmo.setMigrationBasis(migrationbasis)
+    if migrationbasis == 'database':
+      cmo.setDataSourceForAutomaticMigration(migration_datasource)
+
+      if migration_table_name:
+         cmo.setAutoMigrationTableName(migration_table_name)
 
     if unicastbroadcastchannel:
        cmo.setClusterBroadcastChannel(unicastbroadcastchannel)

@@ -80,6 +80,8 @@ module Puppet
     parameter :cluster_name
     property  :servers
     property  :migrationbasis
+    property  :migration_datasource
+    property  :migration_table_name
     property  :messagingmode
     property  :datasourceforjobscheduler
     property  :unicastbroadcastchannel

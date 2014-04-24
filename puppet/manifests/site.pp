@@ -22,8 +22,8 @@ node 'admin.example.com' {
   include managed_servers_channels
   include datasources
   include clusters
-  # include file_persistence
-  # include jms_servers
+  include file_persistence
+  include jms_servers
   # include jms_saf_agents
   # include jms_modules
   # include jms_module_subdeployments
