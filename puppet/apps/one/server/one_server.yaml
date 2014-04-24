@@ -12,7 +12,7 @@ server_instances:
          sslenabled:                     '1'
          ssllistenport:                  '8201'
          sslhostnameverificationignored: '1'
-         jsseenabled:                    '1' 
+         jsseenabled:                    '0' 
       'wlsServer2':
          ensure:                         'present'
          arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
