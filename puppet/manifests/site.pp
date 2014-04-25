@@ -24,20 +24,20 @@ node 'admin.example.com' {
   include clusters
   include file_persistence
   include jms_servers
-  # include jms_saf_agents
-  # include jms_modules
-  # include jms_module_subdeployments
-  # include jms_module_quotas
-  # include jms_module_cfs
-  # include jms_module_queues_objects
-  # include jms_module_topics_objects
-  # include foreign_server_objects
-  # include foreign_server_entries_objects
-  # include saf_remote_context_objects
-  # include saf_error_handlers
-  # include saf_imported_destination
-  # include saf_imported_destination_objects
-  # include pack_domain
+  include jms_saf_agents
+  include jms_modules
+  include jms_module_subdeployments
+  include jms_module_quotas
+  include jms_module_cfs
+  include jms_module_queues_objects
+  include jms_module_topics_objects
+  include foreign_server_objects
+  include foreign_server_entries_objects
+  include saf_remote_context_objects
+  include saf_error_handlers
+  include saf_imported_destination
+  include saf_imported_destination_objects
+  include pack_domain
 
   Class[java] -> Class[orawls::weblogic]
 }  
@@ -392,8 +392,18 @@ class jms_module_topics_objects{
   wlst_yaml_provider{'jms_topic':} 
 }
 
-class saf_remote_context_objects {
+class foreign_server_objects{
   require jms_module_topics_objects
+  wlst_yaml_provider{'foreign_server':} 
+}
+
+class foreign_server_entries_objects{
+  require foreign_server_objects
+  wlst_yaml_provider{'foreign_server_object':} 
+}
+
+class saf_remote_context_objects {
+  require foreign_server_entries_objects
   wlst_yaml_provider{'saf_remote_context':} 
 }
 
@@ -412,18 +422,10 @@ class saf_imported_destination_objects {
   wlst_yaml_provider{'saf_imported_destination_object':} 
 }
 
-class foreign_server_objects{
-  require saf_imported_destination_objects
-  wlst_yaml_provider{'foreign_server':} 
-}
 
-class foreign_server_entries_objects{
-  require foreign_server_objects
-  wlst_yaml_provider{'foreign_server_object':} 
-}
 
 class pack_domain{
-  require foreign_server_entries_objects
+  require saf_imported_destination_objects
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)

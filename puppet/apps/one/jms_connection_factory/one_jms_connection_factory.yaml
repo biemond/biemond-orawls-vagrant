@@ -16,3 +16,10 @@ jms_connection_factory_instances:
       jndiname:           'jms/cf2'
       transactiontimeout: '3600'
       xaenabled:          '1'
+  'domain2/jmsClusterModule:cf2':
+      ensure:             'present'
+      jmsmodule:          'jmsClusterModule'
+      defaulttargeting:   '1'
+      jndiname:           'jms/cf2'
+      transactiontimeout: '3600'
+      xaenabled:          '1'

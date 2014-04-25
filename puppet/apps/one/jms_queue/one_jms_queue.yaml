@@ -12,6 +12,17 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '-1'
+   'domain2/jmsClusterModule:ErrorQueue':
+     ensure:                   'present'
+     distributed:              '1'
+     expirationpolicy:         'Discard'
+     jndiname:                 'jms/ErrorQueue'
+     redeliverydelay:          '-1'
+     redeliverylimit:          '-1'
+     subdeployment:            'jmsServers'
+     defaulttargeting:         '0'
+     timetodeliver:            '-1'
+     timetolive:               '-1'
    'jmsClusterModule:Queue1':
      ensure:                   'present'
      distributed:              '1'

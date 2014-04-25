@@ -1,13 +1,23 @@
 ---
 
 jmsserver_instances:
-   jmsServer1:
+   'jmsServer1':
      ensure:              'present'
      target:              'wlsServer1'
      targettype:          'Server'
      persistentstore:     'jmsFile1'
      persistentstoretype: 'FileStore'
-   jmsServer2:
+   'jmsServer2':
+     ensure:              'present'
+     target:              'wlsServer2'
+     targettype:          'Server'
+   'domain2/jmsServer1':
+     ensure:              'present'
+     target:              'wlsServer1'
+     targettype:          'Server'
+     persistentstore:     'jmsFile1'
+     persistentstoretype: 'FileStore'
+   'domain2/jmsServer2':
      ensure:              'present'
      target:              'wlsServer2'
      targettype:          'Server'

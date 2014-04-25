@@ -34,7 +34,7 @@ for i in authProvider:
       for user in usergroup: 
         users.append(user)
 
-      print >>f, ";".join(map(quote, [domain+'/'+group, realmName.getName(), authName,','.join(users),description]))
+      print >>f, ";".join(map(quote, [domain+'/'+group, realmName.getName(), authName,','.join(users),description,domain]))
       groupReader.advance(cursor)
     
     groupReader.close(cursor)
