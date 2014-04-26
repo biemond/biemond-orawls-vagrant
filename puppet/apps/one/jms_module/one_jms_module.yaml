@@ -5,3 +5,7 @@ jms_module_instances:
      ensure:      'present'
      target:      'WebCluster'
      targettype:  'Cluster'
+   'domain2/jmsClusterModule':
+     ensure:      'present'
+     target:      'WebCluster'
+     targettype:  'Cluster'

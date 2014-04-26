@@ -16,3 +16,13 @@ file_persistence_store_instances:
     directory:      'persistenceSaf1'
     target:         'wlsServer1'
     targettype:     'Server'
+  'domain2/jmsFile1':
+    ensure:         'present'
+    directory:      'persistence1'
+    target:         'wlsServer1'
+    targettype:     'Server'
+  'domain2/jmsFile2':
+    ensure:         'present'
+    directory:      'persistence2'
+    target:         'wlsServer2'
+    targettype:     'Server'

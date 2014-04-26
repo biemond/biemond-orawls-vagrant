@@ -62,19 +62,22 @@ https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemon
 ##Orawls WebLogic Features
 
 - installs WebLogic 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
-- installs FMW add-on to a middleware home like OSB,SOA Suite, Oracle Identity Management, Web Center + Content
 - apply a BSU patch on a Middleware home ( < 12.1.2 )
 - apply an OPatch on a Middleware home or a Oracle product home
 - creates a WebLogic domain
 - pack a WebLogic domain
 - copy a WebLogic domain to a other node with SSH, unpack and enroll to a nodemanager
-- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
-- ADF/JRF support, Assign JRF libraries to a Server or Cluster target
-- Change FMW log location of a managed server
 - Java Secure Socket Extension (JSSE) support
 - startup the nodemanager
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
+
+###Fusion Middleware
+- installs FMW add-on to a middleware home like OSB,SOA Suite, Oracle Identity Management, Web Center + Content
+- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
+- ADF/JRF support, Assign JRF libraries to a Server or Cluster target
+- Change FMW log location of a managed server
+- Resource Adapter plan and entries for AQ, DB and JMS
 
 ##Wls types and providers ( ensurable, create,modify,destroy ) + puppet resource
 
@@ -995,6 +998,45 @@ or when you set the defaults hiera variables
          server:          'AdminServer'
 
 
+
+###orawls::resourceadapter 
+Add a Resource adapter plan for Aq ,DB or JMS with some entries  
+when you set the defaults hiera variables
+ 
+    $default_params = {}
+    $resource_adapter_instances = hiera('resource_adapter_instances', {})
+    create_resources('orawls::resourceadapter',$resource_adapter_instances, $default_params)
+ 
+vagrantcentos64.example.com.yaml
+or when you set the defaults hiera variables
+
+    resource_adapter_instances:
+      'JmsAdapter_hr':
+        adapter_name:              'JmsAdapter'
+        adapter_path:              "/opt/oracle/middleware11g/Oracle_SOA1/soa/connectors/JmsAdapter.rar"
+        adapter_plan_dir:          "/opt/oracle/wlsdomains"
+        adapter_plan:              'Plan_JMS.xml'
+        adapter_entry:             'eis/JMS/cf'
+        adapter_entry_property:    'ConnectionFactoryLocation'
+        adapter_entry_value:       'jms/cf'
+      'AqAdapter_hr':
+        adapter_name:              'AqAdapter'
+        adapter_path:              "/opt/oracle/middleware11g/Oracle_SOA1/soa/connectors/AqAdapter.rar"
+        adapter_plan_dir:          "/opt/oracle/wlsdomains"
+        adapter_plan:              'Plan_AQ.xml'
+        adapter_entry:             'eis/AQ/hr'
+        adapter_entry_property:    'xADataSourceName'
+        adapter_entry_value:       'jdbc/hrDS'
+      'DbAdapter_hr':
+        adapter_name:              'DbAdapter'
+        adapter_path:              "/opt/oracle/middleware11g/Oracle_SOA1/soa/connectors/DbAdapter.rar"
+        adapter_plan_dir:          "/opt/oracle/wlsdomains"
+        adapter_plan:              'Plan_DB.xml'
+        adapter_entry:             'eis/DB/hr'
+        adapter_entry_property:    'xADataSourceName'
+        adapter_entry_value:       'jdbc/hrDS'
+
+
 ### orawls::utils::fmwcluster
 convert existing cluster to a osb or soa suite cluster (BPM is optional) and also convert BAM to a BAM cluster  
 see this for an example https://github.com/biemond/biemond-orawls-vagrant-solaris-soa  
@@ -1023,7 +1065,11 @@ hiera configuration
 
 ##Types and providers
 
-###wls_setting, required for wls type/providers
+It needs wls_setting and you need to create one for every domain. When domain is not provided on the type it will use the default entry.
+
+###wls_setting, required for all the weblogic type/providers
+
+
 
       wls_setting { 'default':
         user               => 'oracle',
@@ -1033,9 +1079,17 @@ hiera configuration
         weblogic_password  => 'weblogic1',
       }
 
+      wls_setting { 'domain2':
+        user               => 'oracle',
+        weblogic_home_dir  => '/opt/oracle/middleware11g/wlserver_10.3',
+        connect_url        => "t3://localhost:7011",
+        weblogic_user      => 'weblogic',
+        weblogic_password  => 'weblogic1',
+      }
+
 ###wls_user
 
-it needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_user
 
@@ -1045,12 +1099,20 @@ or use puppet resource wls_user
       description            => 'Oracle application software system user.',
       realm                  => 'myrealm',
     }
-    wls_user { 'testuser1':
+    wls_user { 'default/testuser1':
       ensure                 => 'present',
       authenticationprovider => 'DefaultAuthenticator',
       description            => 'testuser1',
       realm                  => 'myrealm',
     }
+
+    wls_user { 'domain2/testuser1':
+      ensure                 => 'present',
+      authenticationprovider => 'DefaultAuthenticator',
+      description            => 'testuser1',
+      realm                  => 'myrealm',
+    }
+
 
 in hiera
 
@@ -1066,7 +1128,7 @@ in hiera
         authenticationprovider: 'DefaultAuthenticator'
         realm:                  'myrealm'
         description:            'my test user'
-      'testuser2':
+      'domain2/testuser2':
         ensure:                 'present'
         password:               'weblogic1'
         authenticationprovider: 'DefaultAuthenticator'
@@ -1075,7 +1137,7 @@ in hiera
 
 ###wls_group
 
-it needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_group
 
@@ -1117,7 +1179,7 @@ in hiera
 
 ###wls_machine
 
-it needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_machine
 
@@ -1129,6 +1191,15 @@ or use puppet resource wls_machine
         nmtype        => 'SSL',
       }
 
+      wls_machine { 'domain2/test2':
+        ensure        => 'present',
+        listenaddress => '10.10.10.10',
+        listenport    => '5556',
+        machinetype   => 'UnixMachine',
+        nmtype        => 'SSL',
+      }
+
+
 in hiera
 
     machines_instances:
@@ -1138,7 +1209,7 @@ in hiera
         listenport:     '5556'
         machinetype:    'UnixMachine'
         nmtype:         'SSL'
-      'Node2':
+      'domain2/Node2':
         ensure:         'present'
         listenaddress:  '10.10.10.200'
         listenport:     '5556'
@@ -1148,11 +1219,23 @@ in hiera
 
 ###wls_server
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_server
 
       wls_server { 'wlsServer3':
+        ensure                         => 'present',
+        arguments                      => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out',
+        listenaddress                  => '10.10.10.100',
+        listenport                     => '8002',
+        logfilename                    => '/data/logs/wlsServer3.log',
+        machine                        => 'Node1',
+        sslenabled                     => '0',
+        sslhostnameverificationignored => '1',
+        ssllistenport                  => '7002',
+      }
+
+      wls_server { 'domain2/wlsServer3':
         ensure                         => 'present',
         arguments                      => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out',
         listenaddress                  => '10.10.10.100',
@@ -1175,12 +1258,24 @@ in hiera
          logfilename:                    '/data/logs/wlsServer1.log'
          machine:                        'Node1'
          sslenabled:                     '1'
+         jsseenabled:                    '0'
+         ssllistenport:                  '8201'
+         sslhostnameverificationignored: '1'
+      'domain2/wlsServer1':
+         ensure:                         'present'
+         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'
+         listenaddress:                  '10.10.10.100'
+         listenport:                     '8001'
+         logfilename:                    '/data/logs/wlsServer1.log'
+         machine:                        'Node1'
+         jsseenabled:                    '0'
+         sslenabled:                     '1'
          ssllistenport:                  '8201'
          sslhostnameverificationignored: '1'
  
 ###wls_server_channel
 
-needs wls_setting, title must also contain the server name    
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the server name    
 
 or use puppet resource wls_server_channel
 
@@ -1230,7 +1325,7 @@ in hiera
 
 ###wls_cluster
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_cluster
 
@@ -1264,7 +1359,7 @@ in hiera
 
 ###wls_file_persistence_store
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_file_persistence_store
 
@@ -1309,7 +1404,7 @@ in hiera
 
 ###wls_safagent
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_safagent
 
@@ -1349,7 +1444,7 @@ in hiera
 
 ###wls_jmsserver
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_jmsserver
 
@@ -1389,7 +1484,7 @@ in hiera
 
 ###wls_datasource
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_datasource
 
@@ -1459,7 +1554,7 @@ in hiera
 
 ###wls_jms_module
 
-needs wls_setting  
+it needs wls_setting and when domain is not provided it will use the 'default'
 
 or use puppet resource wls_jms_module
 
@@ -1480,7 +1575,7 @@ in hiera
 
 ###wls_connection_factory
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_connection_factory
 
@@ -1522,7 +1617,7 @@ in hiera
 
 ###wls_jms_queue
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_jms_queue
 
@@ -1607,7 +1702,7 @@ in hiera
 
 ###wls_jms_topic
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_jms_topic
 
@@ -1643,7 +1738,7 @@ in hiera
 
 ###wls_jms_quota
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_jms_quota
 
@@ -1682,7 +1777,7 @@ in hiera
 
 ###wls_jms_subdeployment
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_jms_subdeployment
 
@@ -1712,7 +1807,7 @@ in hiera
 
 ###wls_saf_remote_context
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_saf_remote_context
 
@@ -1743,7 +1838,7 @@ in hiera
 
 ###wls_saf_error_handler
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_saf_error_handler
 
@@ -1770,7 +1865,7 @@ in hiera
 
 ###wls_saf_imported_destination
 
-needs wls_setting, title must also contain the jms module name  
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name  
 
 or use puppet resource wls_saf_imported_destination
 
@@ -1811,7 +1906,7 @@ in hiera
 
 ###wls_saf_imported_destination_object
 
-needs wls_setting, title must also contain the jms module name and imported_destination 
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name and imported_destination 
 
 or use puppet resource wls_saf_imported_destination_object
 
@@ -1853,7 +1948,7 @@ in hiera
 
 ###wls_foreign_server
 
-needs wls_setting, title must also contain the jms module name 
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name 
 
 or use puppet resource wls_foreign_server
 
@@ -1895,7 +1990,7 @@ in hiera
 
 ###wls_foreign_server_object
 
-needs wls_setting, title must also contain the jms module name and foreign server 
+it needs wls_setting and when domain is not provided it will use the 'default', title must also contain the jms module name and foreign server 
 
 or use puppet resource wls_foreign_server_object
 
@@ -1935,32 +2030,5 @@ in hiera
         localjndiname:  'jms/aq/TestQueue'
         object_type:    'destination'
         remotejndiname: 'Queues/TestQueue'
-
-
-## WLST execution
-
-###orawls::wlstexec
-execute any WLST script you want 
-
-- create Machines, Managed Servers, Clusters, Server templates, Dynamic Clusters, Coherence clusters ( all 12.1.2 )
-- create Persistence Store
-- create JMS Server, Module, SubDeployment, Quota, Connection Factory, JMS (distributed) Queue or Topic
-- basically can run every WLST script with the flexible WLST define manifest
-- WLST bulk creation
-
-See the vagrant boxes for all the working examples
-
-###orawls::utils::wlstbulk
-execute any WLST script you want( bulk mode )
-
-orawls::utils::wlstbulk is disabled by default so you can also use this in puppet Enterprise > 3.0  
-requirements
-- needs puppet version >= 3.4 ( make use of iteration and lambda expressions )
-- need to set --parser future ( puppet agent )
-- to use this you need uncomment this orawls::utils::wlstbulk define and enable future parser
-
-use hiera_array, this will search for this entry in all hiera data files
-
-See the vagrant boxes for all the working examples
 
 

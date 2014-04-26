@@ -13,7 +13,6 @@ node 'admin.example.com' {
   include bsu
   include fmw
   include opatch
-
   include domains
   include nodemanager, startwls, userconfig
   include users
@@ -21,6 +20,7 @@ node 'admin.example.com' {
   include machines
   include managed_servers
   include managed_servers_channels
+  include datasources
   include clusters
   include file_persistence
   include jms_servers
@@ -249,23 +249,8 @@ class domains{
   $domain_instances = hiera('domain_instances', {})
   create_resources('orawls::domain',$domain_instances, $default_params)
 
-  $domain_address = hiera('domain_adminserver_address')
-  $domain_port    = hiera('domain_adminserver_port')
-
-  orautils::nodemanagerautostart{"autostart weblogic 11g":
-    version     => hiera('wls_version'),
-    wlHome      => hiera('wls_weblogic_home_dir'),
-    user        => hiera('wls_os_user'),
-    jsseEnabled => true,
-  }
-
-  wls_setting { 'default':
-    user               => hiera('wls_os_user'),
-    weblogic_home_dir  => hiera('wls_weblogic_home_dir'),
-    connect_url        => "t3://${domain_address}:${domain_port}",
-    weblogic_user      => hiera('wls_weblogic_user'),
-    weblogic_password  => hiera('domain_wls_password'),
-  }
+  $wls_setting_instances = hiera('wls_setting_instances', {})
+  create_resources('wls_setting',$wls_setting_instances, $default_params)
 
 }
 
@@ -275,6 +260,14 @@ class nodemanager {
   $default_params = {}
   $nodemanager_instances = hiera('nodemanager_instances', {})
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
+
+  orautils::nodemanagerautostart{"autostart weblogic 11g":
+    version     => hiera('wls_version'),
+    wlHome      => hiera('wls_weblogic_home_dir'),
+    user        => hiera('wls_os_user'),
+    jsseEnabled => true,
+  }
+
 }
 
 class startwls {
@@ -399,8 +392,18 @@ class jms_module_topics_objects{
   wlst_yaml_provider{'jms_topic':} 
 }
 
-class saf_remote_context_objects {
+class foreign_server_objects{
   require jms_module_topics_objects
+  wlst_yaml_provider{'foreign_server':} 
+}
+
+class foreign_server_entries_objects{
+  require foreign_server_objects
+  wlst_yaml_provider{'foreign_server_object':} 
+}
+
+class saf_remote_context_objects {
+  require foreign_server_entries_objects
   wlst_yaml_provider{'saf_remote_context':} 
 }
 
@@ -419,18 +422,10 @@ class saf_imported_destination_objects {
   wlst_yaml_provider{'saf_imported_destination_object':} 
 }
 
-class foreign_server_objects{
-  require saf_imported_destination_objects
-  wlst_yaml_provider{'foreign_server':} 
-}
 
-class foreign_server_entries_objects{
-  require foreign_server_objects
-  wlst_yaml_provider{'foreign_server_object':} 
-}
 
 class pack_domain{
-  require foreign_server_entries_objects
+  require saf_imported_destination_objects
   $default_params = {}
   $pack_domain_instances = hiera('pack_domain_instances', $default_params)
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)

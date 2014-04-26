@@ -54,6 +54,7 @@ module EasyType
     #  - The on_apply values of all the specified parameters and properties
     #
     def create
+      #Puppet.info "provider create"
       @property_flush = @resource
       @property_hash[:ensure] = :present
       command = build_from_type(resource.method(:on_create))
@@ -67,6 +68,7 @@ module EasyType
     #  - The on_destroy value of the Type
     #
     def destroy
+      #Puppet.info "provider destroy"
       command = build_from_type(resource.method(:on_destroy))
       command.execute
       @property_hash.clear
@@ -81,6 +83,7 @@ module EasyType
     #  - The on_apply values of all the specified parameters and properties
     #
     def flush
+      #Puppet.info "provider flush"
       if @property_flush && @property_flush != {}
         command = build_from_type(resource.method(:on_modify))
         command.execute
@@ -91,6 +94,8 @@ module EasyType
 
     # @private
     def build_from_type(block)
+      #Puppet.info "provider build_from_type"
+
       command_builder = ScriptBuilder.new(:binding => resource, :acceptable_commands => resource.commands)
       line = block.call(command_builder)
       command_builder.add(line)

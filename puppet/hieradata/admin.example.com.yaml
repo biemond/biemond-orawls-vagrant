@@ -19,13 +19,19 @@ orautils::wlsAdminServerParam:    "AdminServer"
 
 logoutput:                     &logoutput                     true
 
+wls_os_user:              &wls_os_user              "wls"
+wls_weblogic_user:        &wls_weblogic_user        "weblogic"
+wls_weblogic_home_dir:    &wls_weblogic_home_dir    "/opt/oracle/middleware11g/wlserver_10.3"
+wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
+
+
 # when you have just one domain on a server
 domain_name:                "Wls1036"
 domain_adminserver:         "AdminServer"
 domain_adminserver_address: "10.10.10.10"
 domain_adminserver_port:    7001
 domain_nodemanager_port:    5556
-domain_wls_password:        "weblogic1"
+domain_wls_password:        &domain_wls_password      "weblogic1"
 domain_user_config_file:    "/home/wls/wls-Wls1036-WebLogicConfig.properties"
 domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 
@@ -35,14 +41,26 @@ domain_instances:
      domain_template:          "standard"
      development_mode:         false
      log_output:               *logoutput
-  # 'Wls1036_2':
-  #    domain_template:          "standard"
-  #    development_mode:         false
-  #    log_output:               *logoutput
-  #    domain_name:              'Wls1036_2'
-  #    adminserver_port:         7011
-  #    java_arguments:      
-  #      ADM:  "-XX:PermSize=256m -XX:MaxPermSize=512m -Xms1024m -Xmx1024m" 
+  'Wls1036_2':
+     domain_template:          "standard"
+     development_mode:         false
+     log_output:               *logoutput
+     domain_name:              'Wls1036_2'
+     adminserver_port:         7011
+
+wls_setting_instances:
+  'default':
+    user:               *wls_os_user
+    weblogic_home_dir:  *wls_weblogic_home_dir
+    connect_url:        "t3://10.10.10.10:7001"
+    weblogic_user:      *wls_weblogic_user
+    weblogic_password:  *domain_wls_password
+  'domain2':
+    user:               *wls_os_user
+    weblogic_home_dir:  *wls_weblogic_home_dir
+    connect_url:        "t3://10.10.10.10:7011"
+    weblogic_user:      *wls_weblogic_user
+    weblogic_password:  *domain_wls_password
 
 # FMW installation on top of WebLogic 10.3.6
 # fmw_installations:
@@ -79,12 +97,24 @@ user_instances:
     authenticationprovider: 'DefaultAuthenticator'
     realm:                  'myrealm'
     description:            'my test user'
+  'testuser3':
+    ensure:                 'present'
+    password:               'weblogic1'
+    authenticationprovider: 'DefaultAuthenticator'
+    realm:                  'myrealm'
+    description:            'my test user'
+  'domain2/testuser3':
+    ensure:                 'present'
+    password:               'weblogic1'
+    authenticationprovider: 'DefaultAuthenticator'
+    realm:                  'myrealm'
+    description:            'my test user'
 
 group_instances:
   'TestGroup':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
-    description:            'TestGroup'
+    description:            'My TestGroup'
     realm:                  'myrealm'
     users:                  'testuser1,testuser2'
   'SuperUsers':
@@ -93,6 +123,12 @@ group_instances:
     description:            'SuperUsers'
     realm:                  'myrealm'
     users:                  'testuser2'
+  'domain2/TestGroup':
+    ensure:                 'present'
+    authenticationprovider: 'DefaultAuthenticator'
+    description:            'SuperUsers'
+    realm:                  'myrealm'
+    users:                  'testuser3'
 
 # pack domains
 pack_domain_instances:
@@ -103,7 +139,7 @@ pack_domain_instances:
 nodemanager_instances:
   'nodemanager':
      log_output:           *logoutput
-     nodemanager_address:  "10.10.10.10"
+     # nodemanager_address:  "10.10.10.10"
 
 # startup adminserver for extra configuration
 control_instances:
@@ -113,6 +149,14 @@ control_instances:
      target:               'Server'
      server:               'AdminServer'
      action:               'start'
+     log_output:           *logoutput
+  'startWLSAdminServer2':
+     domain_name:          "Wls1036_2"
+     server_type:          'admin'
+     target:               'Server'
+     server:               'AdminServer'
+     action:               'start'
+     adminserver_port:     7011
      log_output:           *logoutput
 
 # create password file for WLST utility
@@ -135,6 +179,18 @@ machines_instances:
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
+  'domain2/Node1':
+    ensure:         'present'
+    listenaddress:  '10.10.10.100'
+    listenport:     '5557'
+    machinetype:    'UnixMachine'
+    nmtype:         'SSL'
+  'domain2/Node2':
+    ensure:         'present'
+    listenaddress:  '10.10.10.200'
+    listenport:     '5557'
+    machinetype:    'UnixMachine'
+    nmtype:         'SSL'
 
 file_persistence_folders:
    '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
@@ -152,6 +208,20 @@ file_persistence_folders:
       owner:      'wls'
       group:      'dba'
    '/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence2':
       ensure:     directory
       recurse:    false
       replace:    false

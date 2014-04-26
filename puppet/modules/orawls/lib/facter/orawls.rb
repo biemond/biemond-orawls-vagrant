@@ -14,16 +14,6 @@ def get_weblogicUser()
   return "oracle"
 end
 
-def get_suCommand()
-  os = Facter.value(:kernel)
-  if "Linux" == os
-    return "su -l "
-  elsif "SunOS" == os
-    return "su - "
-  end
-  return "su -l "
-end
-
 def get_oraInvPath()
   os = Facter.value(:kernel)
   if "Linux" == os
@@ -44,15 +34,6 @@ def get_userHomePath()
   return "/home"
 end
 
-def get_javaCommand()
-  os = Facter.value(:kernel)
-  if "Linux" == os
-    return "java"
-  elsif "SunOS" == os
-    return "/usr/java -d64"
-  end
-  return "java"
-end
 
 # read middleware home in the oracle home folder
 def get_middleware_1036_Home()
@@ -73,8 +54,6 @@ def get_middleware_1036_Home()
 end
 
 def get_middleware_1212_Home(name)
-    #puts "vars: "+ get_suCommand()+" "+get_weblogicUser()+" "+get_oraInvPath()+" "+get_userHomePath()
-
     elements = [] 
     name.split(/;/).each_with_index{ |element, index|  
       if FileTest.exists?(element+"/wlserver")
@@ -244,7 +223,6 @@ def get_domain(domain_path,n)
     bpmTargets  = nil
     soaTargets  = nil
     osbTargets  = nil
-    bamTargets  = nil
 
     deployments = ""
     root.elements.each("app-deployment[module-type = 'ear']") do |apps|
@@ -257,10 +235,7 @@ def get_domain(domain_path,n)
       if earName == "soa-infra" 
          soaTargets = apps.elements['target'].text
       end 
-      if earName == "oracle-bam#11.1.1" 
-         bamTargets = apps.elements['target'].text
-      end         
-      if earName == "ALSB Domain Singleton Marker Application" 
+      if earName == "ALSB Routing" 
          osbTargets = apps.elements['target'].text
       end  
     end
@@ -299,20 +274,6 @@ def get_domain(domain_path,n)
         end
       end
     end
-    unless bamTargets.nil?
-      Facter.add("#{prefix}_domain_#{n}_bam") do
-        setcode do
-          bamTargets
-        end
-      end
-      Puppet.debug "orawls.rb #{prefix}_domain_#{n}_bam #{bamTargets}"
-    else
-      Facter.add("#{prefix}_domain_#{n}_bam") do
-        setcode do
-          "NotFound"
-        end
-      end
-    end
     unless osbTargets.nil?
       Facter.add("#{prefix}_domain_#{n}_osb") do
         setcode do
@@ -331,19 +292,24 @@ def get_domain(domain_path,n)
     fileAdapterPlan = ""
     fileAdapterPlanEntries = ""
     root.elements.each("app-deployment[name = 'FileAdapter']") do |apps|
-      unless apps.elements['plan-dir'].nil?
-        fileAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text
-        subfile = File.read( fileAdapterPlan )
-        subdoc = REXML::Document.new subfile
+      unless apps.elements['plan-path'].nil?
+        unless apps.elements['plan-dir'].attributes['xsi:nil'] == "true"
+          fileAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+        else 
+          fileAdapterPlan += apps.elements['plan-path'].text 
+        end 
+        if FileTest.exists?(fileAdapterPlan)
+          subfile = File.read( fileAdapterPlan )
+          subdoc = REXML::Document.new subfile
 
-        planroot = subdoc.root
-        planroot.elements["variable-definition"].elements.each("variable") do |eis| 
-          entry = eis.elements["value"].text 
-          if entry.include? "eis"
-            fileAdapterPlanEntries +=  eis.elements["value"].text + ";"
-          end  
-        end
-
+          planroot = subdoc.root
+          planroot.elements["variable-definition"].elements.each("variable") do |eis| 
+            entry = eis.elements["value"].text 
+            if entry.include? "eis"
+              fileAdapterPlanEntries +=  eis.elements["value"].text + ";"
+            end  
+          end
+        end 
       end   
     end
 
@@ -363,18 +329,25 @@ def get_domain(domain_path,n)
     dbAdapterPlan = ""
     dbAdapterPlanEntries = ""
     root.elements.each("app-deployment[name = 'DbAdapter']") do |apps|
-      unless apps.elements['plan-dir'].nil?
-        dbAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+      unless apps.elements['plan-path'].nil?
+        unless apps.elements['plan-dir'].attributes['xsi:nil'] == "true"
+          dbAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+        else 
+          dbAdapterPlan += apps.elements['plan-path'].text 
+        end 
+        Puppet.debug "db #{dbAdapterPlan}" 
+        if FileTest.exists?(dbAdapterPlan)
 
-        subfile = File.read( dbAdapterPlan )
-        subdoc = REXML::Document.new subfile
+          subfile = File.read( dbAdapterPlan )
+          subdoc = REXML::Document.new subfile
 
-        planroot = subdoc.root
-        planroot.elements["variable-definition"].elements.each("variable") do |eis| 
-          entry = eis.elements["value"].text 
-          if entry.include? "eis"
-            dbAdapterPlanEntries +=  eis.elements["value"].text + ";"
-          end  
+          planroot = subdoc.root
+          planroot.elements["variable-definition"].elements.each("variable") do |eis| 
+            entry = eis.elements["value"].text 
+            if entry.include? "eis"
+              dbAdapterPlanEntries +=  eis.elements["value"].text + ";"
+            end  
+          end
         end
 
 
@@ -398,18 +371,24 @@ def get_domain(domain_path,n)
     aqAdapterPlan = ""
     aqAdapterPlanEntries = ""
     root.elements.each("app-deployment[name = 'AqAdapter']") do |apps|
-      unless apps.elements['plan-dir'].nil?
-        aqAdapterPlan = apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+      unless apps.elements['plan-path'].nil?
+        unless apps.elements['plan-dir'].attributes['xsi:nil'] == "true"
+          aqAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+        else 
+          aqAdapterPlan += apps.elements['plan-path'].text 
+        end 
+        if FileTest.exists?(aqAdapterPlan)
 
-        subfile = File.read( aqAdapterPlan )
-        subdoc = REXML::Document.new subfile
+          subfile = File.read( aqAdapterPlan )
+          subdoc = REXML::Document.new subfile
 
-        planroot = subdoc.root
-        planroot.elements["variable-definition"].elements.each("variable") do |eis| 
-          entry = eis.elements["value"].text 
-          if entry.include? "eis"
-            aqAdapterPlanEntries +=  eis.elements["value"].text + ";"
-          end  
+          planroot = subdoc.root
+          planroot.elements["variable-definition"].elements.each("variable") do |eis| 
+            entry = eis.elements["value"].text 
+            if entry.include? "eis"
+              aqAdapterPlanEntries +=  eis.elements["value"].text + ";"
+            end  
+          end
         end
       end
     end
@@ -430,20 +409,26 @@ def get_domain(domain_path,n)
     jmsAdapterPlan = ""
     jmsAdapterPlanEntries = ""
     root.elements.each("app-deployment[name = 'JmsAdapter']") do |apps|
-      unless apps.elements['plan-dir'].nil?
-        jmsAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+      unless apps.elements['plan-path'].nil?
+        unless apps.elements['plan-dir'].attributes['xsi:nil'] == "true"
+          jmsAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+        else 
+          jmsAdapterPlan += apps.elements['plan-path'].text 
+        end 
+        if FileTest.exists?(jmsAdapterPlan)
 
-        subfile = File.read( jmsAdapterPlan )
-        subdoc = REXML::Document.new subfile
+          subfile = File.read( jmsAdapterPlan )
+          subdoc = REXML::Document.new subfile
 
-        planroot = subdoc.root
-        planroot.elements["variable-definition"].elements.each("variable") do |eis| 
-          entry = eis.elements["value"].text 
-          if entry.include? "eis"
-            jmsAdapterPlanEntries +=  eis.elements["value"].text + ";"
-          end  
+          planroot = subdoc.root
+          planroot.elements["variable-definition"].elements.each("variable") do |eis| 
+            entry = eis.elements["value"].text 
+            if entry.include? "eis"
+              jmsAdapterPlanEntries +=  eis.elements["value"].text + ";"
+            end  
+          end
+
         end
-
       end
     end
 
@@ -464,20 +449,25 @@ def get_domain(domain_path,n)
     ftpAdapterPlan = ""
     ftpAdapterPlanEntries = ""
     root.elements.each("app-deployment[name = 'FtpAdapter']") do |apps|
-      unless apps.elements['plan-dir'].nil?
-        ftpAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+      unless apps.elements['plan-path'].nil?
+        unless apps.elements['plan-dir'].attributes['xsi:nil'] == "true"
+          ftpAdapterPlan += apps.elements['plan-dir'].text + "/" + apps.elements['plan-path'].text 
+        else 
+          ftpAdapterPlan += apps.elements['plan-path'].text 
+        end 
+        if FileTest.exists?(ftpAdapterPlan)
 
-        subfile = File.read( ftpAdapterPlan )
-        subdoc = REXML::Document.new subfile
+          subfile = File.read( ftpAdapterPlan )
+          subdoc = REXML::Document.new subfile
 
-        planroot = subdoc.root
-        planroot.elements["variable-definition"].elements.each("variable") do |eis| 
-          entry = eis.elements["value"].text 
-          if entry.include? "eis"
-            ftpAdapterPlanEntries +=  eis.elements["value"].text + ";"
-          end  
+          planroot = subdoc.root
+          planroot.elements["variable-definition"].elements.each("variable") do |eis| 
+            entry = eis.elements["value"].text 
+            if entry.include? "eis"
+              ftpAdapterPlanEntries +=  eis.elements["value"].text + ";"
+            end  
+          end
         end
-
 
       end
     end
@@ -496,12 +486,17 @@ def get_domain(domain_path,n)
 
 
     jrfTargets  = nil
+    bamTargets  = nil
     libraries   = ""
     root.elements.each("library") do |libs|
-      libraries += libs.elements['name'].text + ";"
-      if ( libs.elements['name'].text.include? "adf.oracle.domain#1.0" )
+      libName = libs.elements['name'].text
+      libraries += libName + ";"
+      if ( libName.include? "adf.oracle.domain#1.0" )
          jrfTargets = libs.elements['target'].text
       end 
+      if ( libName.include? "oracle.bam.library" )
+         bamTargets = libs.elements['target'].text
+      end         
 
     end
     unless jrfTargets.nil?
@@ -519,6 +514,20 @@ def get_domain(domain_path,n)
       end
       Puppet.debug "orawls.rb #{prefix}_domain_#{n}_jrf NotFound"
     end  
+    unless bamTargets.nil?
+      Facter.add("#{prefix}_domain_#{n}_bam") do
+        setcode do
+          bamTargets
+        end
+      end
+      Puppet.debug "orawls.rb #{prefix}_domain_#{n}_bam #{bamTargets}"
+    else
+      Facter.add("#{prefix}_domain_#{n}_bam") do
+        setcode do
+          "NotFound"
+        end
+      end
+    end
 
     Facter.add("#{prefix}_domain_#{n}_libraries") do
        setcode do
