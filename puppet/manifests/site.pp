@@ -22,6 +22,7 @@ node 'admin.example.com' {
   include managed_servers_channels
   include datasources
   include clusters
+  include virtual_hosts
   include file_persistence
   include jms_servers
   include jms_saf_agents
@@ -342,8 +343,13 @@ class clusters{
   wlst_yaml_provider{'cluster':} 
 }
 
+class virtual_hosts{
+  require clusters
+  wlst_yaml_provider{'virtual_host':} 
+}
+
 class file_persistence{
-  require datasources
+  require virtual_hosts
 
   $default_params = {}
   $file_persistence_folders = hiera('file_persistence_folders', {})
