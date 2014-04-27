@@ -1,0 +1,21 @@
+---
+
+workmanager_constraint_instances:
+  'CapacityConstraint':
+    ensure:          'present'
+    constraintvalue: '20'
+    target:          'WebCluster'
+    targettype:      'Cluster'
+    constrainttype:  'Capacity'
+  'MaxThreadsConstraint':
+    ensure:          'present'
+    constraintvalue: '4'
+    target:          'WebCluster'
+    targettype:      'Cluster'
+    constrainttype:  'MaxThreadsConstraint'
+  'MinThreadsConstraint':
+    ensure:          'present'
+    constraintvalue: '2'
+    target:          'WebCluster'
+    targettype:      'Cluster'
+    constrainttype:  'MinThreadsConstraint'

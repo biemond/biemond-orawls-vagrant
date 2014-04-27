@@ -23,6 +23,8 @@ node 'admin.example.com' {
   include datasources
   include clusters
   include virtual_hosts
+  include workmanager_constraints
+  include workmanagers
   include file_persistence
   include jms_servers
   include jms_saf_agents
@@ -348,8 +350,18 @@ class virtual_hosts{
   wlst_yaml_provider{'virtual_host':} 
 }
 
-class file_persistence{
+class workmanager_constraints{
   require virtual_hosts
+  wlst_yaml_provider{'workmanager_constraint':} 
+}
+
+class workmanagers{
+  require workmanager_constraints
+  #wlst_yaml_provider{'workmanager':} 
+}
+
+class file_persistence{
+  require workmanagers
 
   $default_params = {}
   $file_persistence_folders = hiera('file_persistence_folders', {})
