@@ -357,7 +357,7 @@ class workmanager_constraints{
 
 class workmanagers{
   require workmanager_constraints
-  #wlst_yaml_provider{'workmanager':} 
+  wlst_yaml_provider{'workmanager':} 
 }
 
 class file_persistence{

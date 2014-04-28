@@ -1432,6 +1432,36 @@ in hiera
         targettype:      'Cluster'
         constrainttype:  'MinThreadsConstraint'
 
+###wls_workmanager
+
+it needs wls_setting and when domain is not provided it will use the 'default'
+
+or use puppet resource wls_workmanager
+
+    wls_workmanager { 'WorkManagerConstraints':
+      ensure               => 'present',
+      capacity             => 'CapacityConstraint',
+      maxthreadsconstraint => 'MaxThreadsConstraint',
+      minthreadsconstraint => 'MinThreadsConstraint',
+      stuckthreads         => '0',
+      target               => 'WebCluster',
+      targettype           => 'Cluster',
+    }
+
+in hiera
+
+    workmanager_instances:
+      'WorkManagerConstraints':
+        ensure:                'present'
+        capacity:              'CapacityConstraint'
+        maxthreadsconstraint:  'MaxThreadsConstraint'
+        minthreadsconstraint:  'MinThreadsConstraint'
+        stuckthreads:          '1'
+        target:                'WebCluster'
+        targettype:            'Cluster'
+
+
+
 ###wls_file_persistence_store
 
 it needs wls_setting and when domain is not provided it will use the 'default'
