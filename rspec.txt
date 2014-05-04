@@ -1,0 +1,21 @@
+rspec.txt
+
+su -
+
+gem install rake
+gem install rspec-puppet
+gem install puppetlabs_spec_helper
+gem install puppet-lint
+gem install puppet-syntax
+
+gem install rake rspec-puppet puppetlabs_spec_helper puppet-lint puppet-syntax
+
+
+gem install rspec-system-puppet
+gem install mocha
+
+cd /etc/puppet/modules/orawls
+rspec-puppet-init
+
+
+rake spec
