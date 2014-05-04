@@ -2,6 +2,12 @@ rspec.txt
 
 su -
 
+gem install bundler
+yum -y install gcc ruby-devel rubygems libxml2
+yum install libxslt-devel
+
+bundle install --without development
+
 gem install rake
 gem install rspec-puppet
 gem install puppetlabs_spec_helper
@@ -19,3 +25,5 @@ rspec-puppet-init
 
 
 rake spec
+
+bundle exec rspec spec
