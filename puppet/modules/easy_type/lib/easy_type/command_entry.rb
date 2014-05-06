@@ -17,12 +17,9 @@ class CommandEntry
   end
 
   def execute
-    #Puppet.info "CommandEntry execute"
     normalized_command = ''
     ruby_18 { normalized_command = command.to_s }
     ruby_19 { normalized_command = command.to_sym }
-    #Puppet.info "CommandEntry execute 1 #{normalized_command}"
-    #Puppet.info "CommandEntry execute 2 #{normalized_arguments}"
     if @@binding.methods.include?(normalized_command)
       @@binding.send(normalized_command, *normalized_arguments)
     else

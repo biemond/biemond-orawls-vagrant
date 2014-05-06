@@ -18,3 +18,26 @@ describe EasyType::Validators::Name do
 
 end
 
+
+describe EasyType::Validators::Integer do
+	include EasyType::Validators::Integer
+
+	it "does nothing on a valid integer string" do
+		expect(unsafe_validate('123')).to eql nil
+	end
+
+	it "raises ArgumentError on empty string" do
+		expect{unsafe_validate('')}.to raise_error(Puppet::Error)
+	end
+
+	it "raises ArgumentError on string with characters" do
+		expect{unsafe_validate('xxx')}.to raise_error(Puppet::Error)
+	end
+
+	it "raises ArgumentError on string with flating number" do
+		expect{unsafe_validate('1.1')}.to raise_error(Puppet::Error)
+	end
+
+
+
+end

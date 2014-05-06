@@ -1,12 +1,19 @@
 rspec.txt
 
-su -
 
-gem install bundler
-yum -y install gcc ruby-devel rubygems libxml2
-yum install libxslt-devel
+sudo gem install bundler
+sudo yum -y install gcc ruby-devel rubygems libxml2 libxslt-devel
 
+cd /etc/puppet/modules/orawls/
 bundle install --without development
+
+bundle exec rake spec
+bundle exec rake syntax
+bundle exec rake lint
+
+
+
+-----
 
 gem install rake
 gem install rspec-puppet
@@ -16,7 +23,6 @@ gem install puppet-syntax
 
 gem install rake rspec-puppet puppetlabs_spec_helper puppet-lint puppet-syntax
 
-
 gem install rspec-system-puppet
 gem install mocha
 
@@ -24,6 +30,3 @@ cd /etc/puppet/modules/orawls
 rspec-puppet-init
 
 
-rake spec
-
-bundle exec rspec spec

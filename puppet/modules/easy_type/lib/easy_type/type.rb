@@ -55,12 +55,12 @@ module EasyType
     end
 
     private
+
     # @private
     def known_attribute(attribute)
       all_attributes = self.class.properties.map(&:name) + self.class.parameters
       all_attributes.include?(attribute)
     end
-
 
     # @nodoc
     module ClassMethods
