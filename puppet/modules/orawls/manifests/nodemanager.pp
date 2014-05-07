@@ -90,7 +90,7 @@ define orawls::nodemanager (
   }
 
   # nodemanager is part of the domain creation
-  if (  $version == 1111 or $version == 1036 or $version == 1211 ){
+  if ( $version == 1111 or $version == 1036 or $version == 1211 ){
     file { "nodemanager.properties ux ${title}":
       ensure  => present,
       path    => "${nodeMgrHome}/nodemanager.properties",
@@ -110,7 +110,7 @@ define orawls::nodemanager (
 
   exec { "startNodemanager ${title}":
     command     => "nohup ${startHome}/startNodeManager.sh &",
-    environment => $env,
+    environment => [ $env, "JAVA_HOME=${jdk_home_dir}", "JAVA_VENDOR=Oracle" ],
     unless      => $checkCommand,
     path        => $exec_path,
     user        => $os_user,
