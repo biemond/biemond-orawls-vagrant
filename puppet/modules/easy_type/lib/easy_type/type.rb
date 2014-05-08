@@ -116,7 +116,7 @@ module EasyType
       end
       #
       # include's the parameter declaration. It searches for the parameter file in the directory
-      # `puppet/type/type_name/parameter_name
+      # `puppet/type/type_name/parameter_name, or in the shared directory `puppet/type/shared`
       #
       # @example
       #  parameter(:name)
@@ -124,9 +124,34 @@ module EasyType
       # @param [Symbol] parameter_name the base name of the parameter
       #
       def parameter(parameter_name)
-        include_file "puppet/type/#{name}/#{parameter_name}"
+        if specific_file?(parameter_name)
+          return include_file specific_file(parameter_name)
+        elsif shared_file?(parameter_name)
+          return include_file shared_file(parameter_name)
+        end
+        fail ArgumentError, "file puppet/type/#{name}/#{parameter_name} not found"
       end
       alias_method :property, :parameter
+
+      # @private
+      def specific_file(parameter_name)
+        get_ruby_file("puppet/type/#{name}/#{parameter_name}")
+      end
+
+      # @private
+      def specific_file?(parameter_name)
+        specific_file(parameter_name) != nil
+      end
+
+      # @private
+      def shared_file(parameter_name)
+        get_ruby_file("puppet/type/shared/#{parameter_name}")
+      end
+
+      # @private
+      def shared_file?(parameter_name)
+        shared_file(parameter_name) != nil
+      end
 
       #
       # set's the command to be executed. If the specified argument translate's to an existing
