@@ -84,11 +84,13 @@ define oradb::opatch( $oracleProductHome       = undef,
           command    => "unzip -n ${path}/${patchFile} -d ${path}",
           require    => File ["${path}/${patchFile}"],
           creates    => "${path}/${patchId}",
+          logoutput  => false,
         }
       } else {
         exec { "extract opatch ${patchFile} ${title}":
           command    => "unzip -n ${mountPoint}/${patchFile} -d ${path}",
           creates    => "${path}/${patchId}",
+          logoutput  => false,
         }
       }
       if $ocmrf == true {

@@ -88,6 +88,7 @@ define oradb::opatchupgrade( $oracleHome              = undef,
         exec { "extract opatch ${patchFile}":
           command    => "unzip -n ${downloadDir}/${patchFile} -d ${oracleHome}",
           require    => File ["${downloadDir}/${patchFile}"],
+          logoutput  => false,
         }
         if $csiNumber != undef and supportId != undef {
           exec { "exec emocmrsp ${opversion}":
