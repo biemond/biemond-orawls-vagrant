@@ -9,13 +9,13 @@ define orawls::domain (
   $jdk_home_dir               = hiera('wls_jdk_home_dir'          , undef), # /usr/java/jdk1.7.0_45
   $wls_domains_dir            = hiera('wls_domains_dir'           , undef),
   $wls_apps_dir               = hiera('wls_apps_dir'              , undef),
-  $domain_template            = "standard",                                 # adf|osb|osb_soa_bpm|osb_soa|soa|soa_bpm
+  $domain_template            = hiera('domain_template'           , "standard"), # adf|osb|osb_soa_bpm|osb_soa|soa|soa_bpm|wc|wc_wcc_bpm
   $domain_name                = hiera('domain_name'               , undef),
   $development_mode           = true,
   $adminserver_name           = hiera('domain_adminserver'        , "AdminServer"),
   $adminserver_address        = hiera('domain_adminserver_address', undef),
   $adminserver_port           = hiera('domain_adminserver_port'   , 7001),
-  $java_arguments             = hiera('java_arguments', {}),               # java_arguments = { "ADM" => "...", "OSB" => "...", "SOA" => "...", "BAM" => "..."}
+  $java_arguments             = hiera('domain_java_arguments', {}),         # java_arguments = { "ADM" => "...", "OSB" => "...", "SOA" => "...", "BAM" => "..."}
   $nodemanager_address        = undef,
   $nodemanager_port           = hiera('domain_nodemanager_port'   , 5556),
   $weblogic_user              = hiera('wls_weblogic_user'         , "weblogic"),
@@ -152,13 +152,20 @@ define orawls::domain (
       $templateFile  = "orawls/domains/domain_adf.py.erb"
       $wlstPath      = "${middleware_home_dir}/oracle_common/common/bin"
 
+    } elsif $domain_template == 'wc' {
+      $templateFile  = "orawls/domains/domain_wc.py.erb"
+      $wlstPath      = "${middleware_home_dir}/Oracle_WC1/common/bin"
+
+    } elsif $domain_template == 'wc_wcc_bpm' {
+      $templateFile  = "orawls/domains/domain_wc_wcc_bpm.py.erb"
+      $wlstPath      = "${middleware_home_dir}/Oracle_WCC1/common/bin"
+
     } else {
       $templateFile   = "orawls/domains/domain.py.erb"
       $wlstPath       = "${weblogic_home_dir}/common/bin"
     }
 
     $exec_path        = "${jdk_home_dir}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin"
-    $nodeMgrMachine   = "UnixMachine"
 
     Exec {
       logoutput => $log_output,
@@ -172,6 +179,11 @@ define orawls::domain (
       $soa_nodemanager_log_dir   = "${domain_dir}/servers/soa_server1/logs"
       $bam_nodemanager_log_dir   = "${domain_dir}/servers/bam_server1/logs"
 
+      $wcCollaboration_nodemanager_log_dir   = "${domain_dir}/servers/WC_Collaboration/logs"
+      $wcPortlet_nodemanager_log_dir         = "${domain_dir}/servers/WC_Portlet/logs"
+      $wcSpaces_nodemanager_log_dir          = "${domain_dir}/servers/WC_Spaces/logs"
+      $umc_nodemanager_log_dir               = "${domain_dir}/servers/UCM_server1/logs"
+
 
     } else {
       $admin_nodemanager_log_dir = $log_dir
@@ -180,6 +192,11 @@ define orawls::domain (
       $osb_nodemanager_log_dir   = $log_dir
       $soa_nodemanager_log_dir   = $log_dir
       $bam_nodemanager_log_dir   = $log_dir
+
+      $wcCollaboration_nodemanager_log_dir   = $log_dir
+      $wcPortlet_nodemanager_log_dir         = $log_dir
+      $wcSpaces_nodemanager_log_dir          = $log_dir
+      $umc_nodemanager_log_dir               = $log_dir
 
 
       # create all log folders
@@ -205,6 +222,15 @@ define orawls::domain (
       }
     }
 
+    if !defined(File[$download_dir]) {
+      file { $download_dir:
+          ensure  => directory,
+          mode    => '0775',
+          owner   => $os_user,
+          group   => $os_group,
+      }
+    } 
+    
     # the domain.py used by the wlst
     file { "domain.py ${domain_name} ${title}":
       ensure  => present,
@@ -215,6 +241,7 @@ define orawls::domain (
       mode    => '0775',
       owner   => $os_user,
       group   => $os_group,
+      require => File[$download_dir],
     }
 
     if ( $domains_dir == "${middleware_home_dir}/user_projects/domains"){

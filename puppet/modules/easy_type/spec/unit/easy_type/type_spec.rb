@@ -114,6 +114,7 @@ describe EasyType::Type do
 
             property  :a_test
             parameter :b_test
+            parameter :shared_one
           end
         end
       end
@@ -125,6 +126,10 @@ describe EasyType::Type do
 
     it "defines a parameter" do
       expect( defined?(Puppet::Type::Test::ParameterB_test)).to be_true
+    end
+
+    it "defines a property in the shared directory" do
+      expect( defined?(Puppet::Type::Test::Shared_one)).to be_true
     end
 
     it "adds a conveniance access method" do

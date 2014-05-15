@@ -18,7 +18,7 @@ Many thanks to Bert Hajee (hajee) for his contributions, help and the his easy_t
 Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10 sparc / x86  
 
 Dependency with 
-- hajee/easy_type >= 0.6.2
+- hajee/easy_type (latest)
 - adrien/filemapper >= 1.1.1
 - reidmv/yamlfile >=0.2.0
 
@@ -88,6 +88,9 @@ https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemon
 - wls_server
 - wls_server_channel
 - wls_cluster
+- wls_virtual_host
+- wls_workmanager_constraint
+- wls_workmanager
 - wls_datasource
 - wls_file_persistence_store
 - wls_jmsserver
@@ -117,6 +120,9 @@ all templates creates a WebLogic domain, logs the domain creation output
 - domain 'osb_soa_bpm' -> OSB + SOA Suite + BAM + BPM + JRF + EM + OWSM 
 - domain 'soa'         -> SOA Suite + BAM + JRF + EM + OWSM 
 - domain 'soa_bpm'     -> SOA Suite + BAM + BPM + JRF + EM + OWSM 
+- domain 'wc_wcc_bpm'  -> WC (webcenter) + WCC ( Content ) + BPM + JRF + EM + OWSM 
+- domain 'wc'          -> WC (webcenter) + JRF + EM + OWSM 
+
 
 ## Orawls WebLogic Facter
 
@@ -697,7 +703,7 @@ pack a WebLogic Domain and add this to the download folder
 
 
 ###orawls::copydomain 
-copies a WebLogic domain with SSH, unpack and enroll to a nodemanager
+copies a WebLogic domain with SSH or from a share, unpack and enroll to a nodemanager
 
 
 Configuration with Hiera ( need to have puppet > 3.0 )    
@@ -722,6 +728,10 @@ when you just have one WebLogic domain on a server
     # copy domains to other nodes
     copy_instances:
       'wlsDomain':
+         use_ssh:                 false
+         domain_pack_dir:         /mnt/fmw_share
+         log_output:              *logoutput
+      'wlsDomain2':
          log_output:              *logoutput
     
 
@@ -1356,6 +1366,108 @@ in hiera
         messagingmode:  'unicast'
         migrationbasis: 'consensus'
         servers:        'wlsServer1,wlsServer2'
+
+###wls_virtual_host
+
+it needs wls_setting and when domain is not provided it will use the 'default'
+
+or use puppet resource wls_virtual_host
+
+    wls_virtual_host { 'default/WS':
+      ensure     => 'present',
+      channel    => 'HTTP',
+      target     => 'WebCluster',
+      targettype => 'Cluster',
+    }
+
+in hiera
+
+    virtual_host_instances:
+     'WS':
+       ensure:     'present'
+       channel:    'HTTP'
+       target:     'WebCluster'
+       targettype: 'Cluster'
+
+###wls_workmanager_constaint
+
+it needs wls_setting and when domain is not provided it will use the 'default'
+
+or use puppet resource wls_workmanager_constaint
+
+    wls_workmanager_constraint { 'default/CapacityConstraint':
+      ensure          => 'present',
+      constrainttype  => 'Capacity',
+      constraintvalue => '20',
+      target          => 'WebCluster',
+      targettype      => 'Cluster',
+    }
+    wls_workmanager_constraint { 'default/MaxThreadsConstraint':
+      ensure          => 'present',
+      constrainttype  => 'MaxThreadsConstraint',
+      constraintvalue => '5',
+      target          => 'WebCluster',
+      targettype      => 'Cluster',
+    }
+    wls_workmanager_constraint { 'default/MinThreadsConstraint':
+      ensure          => 'present',
+      constrainttype  => 'MinThreadsConstraint',
+      constraintvalue => '2',
+      target          => 'WebCluster',
+      targettype      => 'Cluster',
+    }
+
+in hiera
+
+    workmanager_constraint_instances:
+      'CapacityConstraint':
+        ensure:          'present'
+        constraintvalue: '20'
+        target:          'WebCluster'
+        targettype:      'Cluster'
+        constrainttype:  'Capacity'
+      'MaxThreadsConstraint':
+        ensure:          'present'
+        constraintvalue: '5'
+        target:          'WebCluster'
+        targettype:      'Cluster'
+        constrainttype:  'MaxThreadsConstraint'
+      'MinThreadsConstraint':
+        ensure:          'present'
+        constraintvalue: '2'
+        target:          'WebCluster'
+        targettype:      'Cluster'
+        constrainttype:  'MinThreadsConstraint'
+
+###wls_workmanager
+
+it needs wls_setting and when domain is not provided it will use the 'default'
+
+or use puppet resource wls_workmanager
+
+    wls_workmanager { 'WorkManagerConstraints':
+      ensure               => 'present',
+      capacity             => 'CapacityConstraint',
+      maxthreadsconstraint => 'MaxThreadsConstraint',
+      minthreadsconstraint => 'MinThreadsConstraint',
+      stuckthreads         => '0',
+      target               => 'WebCluster',
+      targettype           => 'Cluster',
+    }
+
+in hiera
+
+    workmanager_instances:
+      'WorkManagerConstraints':
+        ensure:                'present'
+        capacity:              'CapacityConstraint'
+        maxthreadsconstraint:  'MaxThreadsConstraint'
+        minthreadsconstraint:  'MinThreadsConstraint'
+        stuckthreads:          '1'
+        target:                'WebCluster'
+        targettype:            'Cluster'
+
+
 
 ###wls_file_persistence_store
 

@@ -1,0 +1,11 @@
+---
+
+workmanager_instances:
+  'WorkManagerConstraints':
+    ensure:                'present'
+    capacity:              'CapacityConstraint'
+    maxthreadsconstraint:  'MaxThreadsConstraint'
+    minthreadsconstraint:  'MinThreadsConstraint'
+    stuckthreads:          '0'
+    target:                'WebCluster'
+    targettype:            'Cluster'

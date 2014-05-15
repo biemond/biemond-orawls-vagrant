@@ -8,7 +8,7 @@ node 'admin.example.com' {
   
   include os
   include ssh
-  include java
+  include java, orawls::urandomfix
   include orawls::weblogic, orautils
   include bsu
   include fmw
@@ -22,6 +22,9 @@ node 'admin.example.com' {
   include managed_servers_channels
   include datasources
   include clusters
+  include virtual_hosts
+  include workmanager_constraints
+  include workmanagers
   include file_persistence
   include jms_servers
   include jms_saf_agents
@@ -342,8 +345,23 @@ class clusters{
   wlst_yaml_provider{'cluster':} 
 }
 
+class virtual_hosts{
+  require clusters
+  wlst_yaml_provider{'virtual_host':} 
+}
+
+class workmanager_constraints{
+  require virtual_hosts
+  wlst_yaml_provider{'workmanager_constraint':} 
+}
+
+class workmanagers{
+  require workmanager_constraints
+  wlst_yaml_provider{'workmanager':} 
+}
+
 class file_persistence{
-  require datasources
+  require workmanagers
 
   $default_params = {}
   $file_persistence_folders = hiera('file_persistence_folders', {})

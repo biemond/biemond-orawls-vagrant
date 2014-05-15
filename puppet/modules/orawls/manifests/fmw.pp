@@ -7,6 +7,7 @@ define orawls::fmw (
   $weblogic_home_dir          = hiera('wls_weblogic_home_dir'     , undef), # /opt/oracle/middleware11gR1/wlserver_103
   $middleware_home_dir        = hiera('wls_middleware_home_dir'   , undef), # /opt/oracle/middleware11gR1
   $oracle_base_home_dir       = hiera('wls_oracle_base_home_dir'  , undef), # /opt/oracle
+  $oracle_home_dir            = undef,                                      # /opt/oracle/middleware/Oracle_SOA
   $jdk_home_dir               = hiera('wls_jdk_home_dir'          , undef), # /usr/java/jdk1.7.0_45
   $fmw_product                = undef,                                      # adf|soa|osb
   $fmw_file1                  = undef,
@@ -17,7 +18,7 @@ define orawls::fmw (
   $source                     = hiera('wls_source'                , undef), # puppet:///modules/orawls/ | /mnt | /vagrant
   $remote_file                = true,                                       # true|false
   $log_output                 = false,                                      # true|false
-  $temp_directory             = '/tmp',                                     # /tmp temporay directory for files extractions  
+  $temp_directory             = hiera('wls_temp_dir'              ,'/tmp'), # /tmp directory
 )
 {
 
@@ -37,7 +38,7 @@ define orawls::fmw (
       } 
     }
     'SunOS': {
-      $oraInstPath   = "/var/opt"
+      $oraInstPath   = "/var/opt/oracle"
       case $::architecture {
         'i86pc': {
           $installDir    = "intelsolaris"
@@ -55,34 +56,64 @@ define orawls::fmw (
 
   if      ( $fmw_product == "adf" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_adf.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/oracle_common"
+    if ($oracle_home_dir == undef) {
+      $oracleHome              = "${middleware_home_dir}/oracle_common"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $total_files              = 1
 
   } elsif ( $fmw_product == "soa" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_soa.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/Oracle_SOA1"
+    if ($oracle_home_dir == undef) {
+      $oracleHome               = "${middleware_home_dir}/Oracle_SOA1"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $createFile2              = "${download_dir}/${fmw_product}/Disk4"
     $total_files              = 2
 
   } elsif ( $fmw_product == "osb" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_osb.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/Oracle_OSB1"
+    if ($oracle_home_dir == undef) {
+      $oracleHome               = "${middleware_home_dir}/Oracle_OSB1"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $total_files              = 1
 
   } elsif ( $fmw_product == "oim" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_oim.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/Oracle_IDM1"
+    if ($oracle_home_dir == undef) {
+      $oracleHome               = "${middleware_home_dir}/Oracle_IDM1"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $createFile2              = "${download_dir}/${fmw_product}/Disk4"
     $total_files              = 2
 
   } elsif ( $fmw_product == "wc" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_wc.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/Oracle_WC1"
+    if ($oracle_home_dir == undef) {
+      $oracleHome               = "${middleware_home_dir}/Oracle_WC1"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $total_files              = 1
 
   } elsif ( $fmw_product == "wcc" ) {
     $fmw_silent_response_file = "orawls/fmw_silent_wcc.rsp.erb"
-    $oracleHome               = "${middleware_home_dir}/Oracle_WCC1"
+    if ($oracle_home_dir == undef) {
+      $oracleHome               = "${middleware_home_dir}/Oracle_WCC1"
+    }
+    else {
+      $oracleHome = $oracle_home_dir
+    }
     $createFile2              = "${download_dir}/${fmw_product}/Disk2"
     $total_files              = 2
 
@@ -91,7 +122,7 @@ define orawls::fmw (
   }
 
   # check if the oracle home already exists, this is for performance reasons
-  $found = oracle_exists($oracleHome)
+  $found = orawls_oracle_exists($oracleHome)
 
   if $found == undef {
     $continue = true
@@ -214,19 +245,29 @@ define orawls::fmw (
       }
     }
 
-    $command = "-silent -response ${download_dir}/${title}_silent_${fmw_product}.rsp -waitforcompletion "
+    $command = "-silent -response ${download_dir}/${title}_silent_${fmw_product}.rsp -waitforcompletion"
+
+    #notify { "orawls::fmw ${download_dir}/${fmw_product}/Disk1/install/${installDir}/runInstaller ${command} -invPtrLoc ${oraInstPath}/oraInst.loc -ignoreSysPrereqs -jreLoc ${jdk_home_dir} -Djava.io.tmpdir=${temp_directory}": } 
+
+    file { $oracleHome:
+      ensure => "directory",
+      owner  => $os_user,
+      group  => $os_group,
+      before => Exec["install ${fmw_product} ${title}"],      
+    }
 
     exec { "install ${fmw_product} ${title}":
-      command   => "${download_dir}/${fmw_product}/Disk1/install/${installDir}/runInstaller ${command} -invPtrLoc ${oraInstPath}/oraInst.loc -ignoreSysPrereqs -jreLoc ${jdk_home_dir}  -Djava.io.tmpdir=${temp_directory}",
-      creates   => $oracleHome,
-      timeout   => 0,
-      path      => $exec_path,
-      user      => $os_user,
-      group     => $os_group,
-      logoutput => $log_output,
-      require   => [File["${download_dir}/${title}_silent_${fmw_product}.rsp"],
-                    Orawls::Utils::Orainst["create oraInst for ${fmw_product}"],
-                    Exec["extract ${fmw_file1}"],],
+      command     => "${download_dir}/${fmw_product}/Disk1/install/${installDir}/runInstaller ${command} -invPtrLoc ${oraInstPath}/oraInst.loc -ignoreSysPrereqs -jreLoc ${jdk_home_dir} -Djava.io.tmpdir=${temp_directory}",
+      environment => "TMP=${temp_directory}",
+      timeout     => 0,
+      creates     => "${oracleHome}/OPatch",
+      path        => $exec_path,
+      user        => $os_user,
+      group       => $os_group,
+      logoutput   => $log_output,
+      require     => [File["${download_dir}/${title}_silent_${fmw_product}.rsp"],
+                      Orawls::Utils::Orainst["create oraInst for ${fmw_product}"],
+                      Exec["extract ${fmw_file1}"],],
     }
   }
 }
