@@ -630,9 +630,9 @@ vagrantcentos64.example.com.yaml
     domain_instances:
       'wlsDomain12c':
          version:              1212
-         weblogic_home_dir     "/opt/oracle/middleware12c/wlserver"
-         middleware_home_dir   "/opt/oracle/middleware12c"
-         jdk_home_dir          "/usr/java/jdk1.7.0_45"
+         weblogic_home_dir:    "/opt/oracle/middleware12c/wlserver"
+         middleware_home_dir:  "/opt/oracle/middleware12c"
+         jdk_home_dir:         "/usr/java/jdk1.7.0_45"
          domain_template:      "standard"
          domain_name:          "Wls12c"
          development_mode:     false
@@ -771,8 +771,8 @@ vagrantcentos64.example.com.yaml
     nodemanager_instances:
       'nodemanager12c':
          version:              1212
-         weblogic_home_dir     "/opt/oracle/middleware12c/wlserver"
-         jdk_home_dir          "/usr/java/jdk1.7.0_45"
+         weblogic_home_dir:    "/opt/oracle/middleware12c/wlserver"
+         jdk_home_dir:         "/usr/java/jdk1.7.0_45"
          nodemanager_port:     5556
          domain_name:          "Wls12c"
          os_user:              "oracle"
@@ -860,8 +860,8 @@ vagrantcentos64.example.com.yaml
          target:               'Server'
          server:               'AdminServer'
          action:               'start'
-         weblogic_home_dir     "/opt/oracle/middleware12c/wlserver"
-         jdk_home_dir          "/usr/java/jdk1.7.0_45"
+         weblogic_home_dir:    "/opt/oracle/middleware12c/wlserver"
+         jdk_home_dir:         "/usr/java/jdk1.7.0_45"
          weblogic_user:        "weblogic"
          weblogic_password:    "weblogic1"
          adminserver_address:  'localhost'
@@ -1185,6 +1185,46 @@ in hiera
         description:            'SuperUsers'
         realm:                  'myrealm'
         users:                  'testuser2'
+
+###wls_authentication_provider
+
+it needs wls_setting and when domain is not provided it will use the 'default' and probably needs a reboot
+
+only control_flag is a property, the rest are parameters and only used with a create action
+
+or use puppet resource wls_authentication_provider
+
+    wls_authentication_provider { 'DefaultAuthenticator':
+      ensure       => 'present',
+      control_flag => 'SUFFICIENT',
+    }
+    wls_authentication_provider { 'ldap':
+      ensure            => 'present',
+      control_flag      => 'SUFFICIENT',
+      providerclassname => 'weblogic.security.providers.authentication.LDAPAuthenticator',
+      attributes:       =>  'Principal,Host,Port,CacheTTL,CacheSize,MaxGroupMembershipSearchLevel,SSLEnabled',
+      attributesvalues  =>  'ldapuser,ldapserver,389,60,1024,4,true',
+    }
+
+
+in hiera
+
+    $default_params = {}
+    $authentication_provider_instances = hiera('authentication_provider_instances', {})
+    create_resources('wls_authentication_provider',$authentication_provider_instances, $default_params)
+
+
+    authentication_provider_instances:
+      'DefaultAuthenticator':
+        ensure:             'present'
+        control_flag:       'SUFFICIENT'
+      'ldap':
+        ensure:             'present'
+        control_flag:       'SUFFICIENT'
+        providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+        attributes:         'Principal,Host,Port,CacheTTL,CacheSize,MaxGroupMembershipSearchLevel,SSLEnabled'
+        attributesvalues:   'ldapuser,ldapserver,389,60,1024,4,true'
+
 
 
 ###wls_machine

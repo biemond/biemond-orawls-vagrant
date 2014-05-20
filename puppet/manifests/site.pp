@@ -302,8 +302,15 @@ class groups{
   create_resources('wls_group',$group_instances, $default_params)
 }
 
-class machines{
+class authentication_providers{
   require groups
+  $default_params = {}
+  $authentication_provider_instances = hiera('authentication_provider_instances', {})
+  create_resources('wls_authentication_provider',$authentication_provider_instances, $default_params)
+}
+
+class machines{
+  require authentication_providers
   $default_params = {}
   $machines_instances = hiera('machines_instances', {})
   create_resources('wls_machine',$machines_instances, $default_params)

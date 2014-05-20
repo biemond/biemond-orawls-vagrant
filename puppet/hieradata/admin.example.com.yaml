@@ -130,6 +130,17 @@ group_instances:
     realm:                  'myrealm'
     users:                  'testuser3'
 
+authentication_provider_instances:
+  'DefaultAuthenticator':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+  'ldap':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+    providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+    attributes:         'Principal,Host,Port,CacheTTL,CacheSize,MaxGroupMembershipSearchLevel,SSLEnabled'
+    attributesvalues:   'ldapuser,ldapserver,389,60,1024,4,true'
+
 # pack domains
 pack_domain_instances:
   'wlsDomain':
