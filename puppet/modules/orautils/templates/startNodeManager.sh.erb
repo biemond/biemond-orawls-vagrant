@@ -4,10 +4,12 @@
 echo "Starting the Weblogic NodeManager...."
 echo "Checking if the Weblogic NodeManager is already started...."
 
+TRUST_OPTIONS='<%= @trust_env %>'
+
 <% if @jsseEnabled == true %>
-export JAVA_OPTIONS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true'
+export JAVA_OPTIONS="-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true ${TRUST_OPTIONS}"
 <% else %>
-export JAVA_OPTIONS='-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false'
+export JAVA_OPTIONS="-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false ${TRUST_OPTIONS}"
 <% end %>
 
 

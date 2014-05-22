@@ -8,14 +8,11 @@ hostname=<%= @nodeMgrAddress %>
 user=<%= @wlsUser %>
 password=<%= @wlsPassword %>
 wlsAdminServer=<%= @wlsAdminServer %>
-
 <% if @jsseEnabled == true %>
 export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true'
 <% else %>
 export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false'
 <% end %>
-
-
 echo "Starting Weblogic ${wlsAdminServer} for domain ${osDomain}...."
 echo "Checking if Weblogic ${wlsAdminServer} for domain ${osDomain} is already started...."
 
@@ -26,16 +23,15 @@ else
    checkStmt='/bin/ps -eo pid,cmd'
 fi
 
-
-pid=`${checkStmt} | /bin/grep -i AdminServer | /bin/grep -v grep | awk '{print $1}'`
+pid=`${checkStmt} | /bin/grep -i ${wlsAdminServer} | /bin/grep -i ${osDomain} | /bin/grep -v grep | awk '{print $1}'`
 nodePid=`${checkStmt} | /bin/grep -i nodemanager.javahome | /bin/grep -v grep | awk '{print $1}'`
 
-if [ ${pid} ]
+if [[ ${pid} ]]
 then
   echo "The Weblogic ${wlsAdminServer} for domain ${osDomain} is already running...."
   echo "Server NOT started again...."
 else
-  if [ ${nodePid} ]
+  if [[ ${nodePid} ]]
   then
     echo "The Weblogic ${wlsAdminServer} for domain ${osDomain} is not running...."
     echo "Starting Weblogic ${wlsAdminServer} for domain ${osDomain}...."

@@ -26,7 +26,8 @@ CustomIdentityPrivateKeyPassPhrase=welcome
 ----
 
 # start AdminServer From Nodemanager
-export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true -Dweblogic.security.TrustKeyStore=CustomTrust -Dweblogic.security.CustomTrustKeyStoreFileName=/vagrant/truststore.jks'
+export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true -Dweblogic.security.TrustKeyStore=CustomTrust -Dweblogic.security.CustomTrustKeyStoreFileName=/vagrant/truststore.jks -Dweblogic.security.CustomTrustKeystorePassPhrase=welcome'
+
 
 #check
 cd /vagrant

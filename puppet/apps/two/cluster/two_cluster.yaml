@@ -1,8 +1,0 @@
----
-
-cluster_instances:
-    'WebCluster2':
-        ensure:         'present'
-        messagingmode:  'unicast'
-        migrationbasis: 'consensus'
-        servers:        'wlsServer3,wlsServer4'
