@@ -49,13 +49,13 @@ When to override the default oracle OS user or don't want to use the user_projec
 
 ##Startup the images
 
-# admin server  
+###admin server  
 vagrant up admin
 
-# node1  
+###node1  
 vagrant up node1
 
-# node2  
+###node2  
 vagrant up node2
 
 
