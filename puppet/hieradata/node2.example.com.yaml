@@ -1,11 +1,8 @@
 ---
-messageEnv: 'node2'
 
 orawls::weblogic::log_output:   true
 
-
 logoutput:                     &logoutput                     true
-
 
 # when you have just one domain on a server
 domain_name:                "Wls1036"

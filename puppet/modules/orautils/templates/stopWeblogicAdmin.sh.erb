@@ -1,4 +1,4 @@
-#<%= @shell %>
+#!<%= @shell %>
 # *************************************************************************
 osWlHome=<%= @osWlHome %>
 osDomain=<%= @osDomain %>
@@ -8,14 +8,17 @@ hostname=<%= @nodeMgrAddress %>
 user=<%= @wlsUser %>
 password=<%= @wlsPassword %>
 wlsAdminServer=<%= @wlsAdminServer %>
+
 <% if @jsseEnabled == true %>
-export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true'
+export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true <%= @trust_env %>'
 <% else %>
-export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false'
+export CONFIG_JVM_ARGS='-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false <%= @trust_env %>'
 <% end %>
 
 echo "Stopping Weblogic ${wlsAdminServer} for domain ${osDomain}...."
 echo "Checking if Weblogic ${wlsAdminServer} for domain ${osDomain} is up...."
+echo "CONFIG_JVM_ARGS ${CONFIG_JVM_ARGS}"
+
 
 unamestr=`uname`
 if [[ "$unamestr" == 'SunOS' ]]; then
@@ -37,6 +40,7 @@ nmConnect('${user}','${password}','${hostname}','${nodeMgrPort}','${osDomain}','
 nmKill('${wlsAdminServer}')
 nmDisconnect() 
 EOF
+
 
   else
     echo "NodeManager is not running on this machine ${hostname}" 

@@ -1,8 +1,6 @@
 ---
-messageEnv: 'node1'
 
 orawls::weblogic::log_output:   true
-
 
 logoutput:                     &logoutput                     true
 

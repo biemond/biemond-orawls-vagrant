@@ -146,7 +146,6 @@ class orautils(
     } else {
       $jsseEnabled = $jsseEnabledParam
     }
-
     if $customTrust == true {
       $trust_env = "-Dweblogic.security.TrustKeyStore=CustomTrust -Dweblogic.security.CustomTrustKeyStoreFileName=${trustKeystoreFile} -Dweblogic.security.CustomTrustKeystorePassPhrase=${trustKeystorePassphrase}"
     } else {

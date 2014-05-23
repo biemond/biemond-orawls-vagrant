@@ -1,18 +1,9 @@
 ---
-messageEnv: 'admin'
 
-orawls::weblogic::log_output:   true
+logoutput:                &logoutput                true
 
-orautils::osDomainParam:          "Wls1036"
-orautils::osDomainPathParam:      "/opt/oracle/wlsdomains/domains/Wls1036"
+orawls::weblogic::log_output:   *logoutput
 
-orautils::nodeMgrAddressParam:    '10.10.10.10'
-
-orautils::wlsPasswordParam:       "weblogic1"
-orautils::wlsAdminServerParam:    "AdminServer"
-
-
-logoutput:                     &logoutput                     true
 
 wls_os_user:              &wls_os_user              "wls"
 wls_weblogic_user:        &wls_weblogic_user        "weblogic"
@@ -21,27 +12,49 @@ wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
 
 
 # when you have just one domain on a server
-domain_name:                "Wls1036"
-domain_adminserver:         "AdminServer"
-domain_adminserver_address: "10.10.10.10"
-domain_adminserver_port:    7001
-domain_nodemanager_port:    5556
-domain_wls_password:        &domain_wls_password      "weblogic1"
+domain_name:                &domain_name                "Wls1036"
+domain_adminserver:         &domain_adminserver         "AdminServer"
+domain_adminserver_address: &domain_adminserver_address "10.10.10.10"
+domain_adminserver_port:    &domain_adminserver_port    7001
+domain_nodemanager_port:    &domain_nodemanager_port    5556
+domain_wls_password:        &domain_wls_password        "weblogic1"
 domain_user_config_file:    "/home/wls/wls-Wls1036-WebLogicConfig.properties"
 domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 
-# create a standard domain
+
+orautils::osDomainParam:          *domain_name
+orautils::osDomainPathParam:      "/opt/oracle/wlsdomains/domains/Wls1036"
+orautils::nodeMgrAddressParam:    *domain_adminserver_address
+orautils::wlsPasswordParam:       *domain_wls_password
+orautils::wlsAdminServerParam:    *domain_adminserver
+
+# custom trust
+orautils::customTrust:             true
+orautils::trustKeystoreFile:       '/vagrant/truststore.jks'
+orautils::trustKeystorePassphrase: 'welcome'
+
+# used by nodemanager, control and domain creation
+wls_custom_trust:                  true
+wls_trust_keystore_file:           '/vagrant/truststore.jks'
+wls_trust_keystore_passphrase:     'welcome'
+
+# create a standard domain with custom identity for the adminserver
 domain_instances:
   'Wls1036':
-     domain_template:          "standard"
-     development_mode:         false
-     log_output:               *logoutput
-  'Wls1036_2':
-     domain_template:          "standard"
-     development_mode:         false
-     log_output:               *logoutput
-     domain_name:              'Wls1036_2'
-     adminserver_port:         7011
+    domain_template:                       "standard"
+    development_mode:                      false
+    log_output:                            *logoutput
+    custom_identity:                       true
+    custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+    custom_identity_keystore_passphrase:   'welcome'
+    custom_identity_alias:                 'admin'
+    custom_identity_privatekey_passphrase: 'welcome'
+  # 'Wls1036_2':
+  #    domain_template:          "standard"
+  #    development_mode:         false
+  #    log_output:               *logoutput
+  #    domain_name:              'Wls1036_2'
+  #    adminserver_port:         7011
 
 wls_setting_instances:
   'default':
@@ -50,12 +63,12 @@ wls_setting_instances:
     connect_url:        "t3://10.10.10.10:7001"
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
-  'domain2':
-    user:               *wls_os_user
-    weblogic_home_dir:  *wls_weblogic_home_dir
-    connect_url:        "t3://10.10.10.10:7011"
-    weblogic_user:      *wls_weblogic_user
-    weblogic_password:  *domain_wls_password
+  # 'domain2':
+  #   user:               *wls_os_user
+  #   weblogic_home_dir:  *wls_weblogic_home_dir
+  #   connect_url:        "t3://10.10.10.10:7011"
+  #   weblogic_user:      *wls_weblogic_user
+  #   weblogic_password:  *domain_wls_password
 
 # FMW installation on top of WebLogic 10.3.6
 # fmw_installations:
@@ -78,6 +91,47 @@ wls_setting_instances:
 #      patch_file:               "p17584181_111170_Generic.zip"
 #      remote_file:              false
 
+# pack domains
+pack_domain_instances:
+  'wlsDomain':
+    log_output:           *logoutput
+
+# create and startup the nodemanager
+nodemanager_instances:
+  'nodemanager':
+    log_output:                            *logoutput
+    custom_identity:                       false
+    custom_identity:                       true
+    custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+    custom_identity_keystore_passphrase:   'welcome'
+    custom_identity_alias:                 'admin'
+    custom_identity_privatekey_passphrase: 'welcome'
+    nodemanager_address:                   *domain_adminserver_address
+
+# startup adminserver for extra configuration
+control_instances:
+  'startWLSAdminServer':
+     domain_name:          *domain_name
+     server_type:          'admin'
+     target:               'Server'
+     server:               *domain_adminserver
+     action:               'start'
+     log_output:           *logoutput
+  # 'startWLSAdminServer2':
+  #    domain_name:          "Wls1036_2"
+  #    server_type:          'admin'
+  #    target:               'Server'
+  #    server:               'AdminServer'
+  #    action:               'start'
+  #    adminserver_port:     7011
+  #    log_output:           *logoutput
+
+# create password file for WLST utility
+userconfig_instances:
+  'Wls12c':
+     log_output:           *logoutput
+     user_config_dir:      '/home/wls'
+
 
 user_instances:
   'testuser1':
@@ -98,12 +152,12 @@ user_instances:
     authenticationprovider: 'DefaultAuthenticator'
     realm:                  'myrealm'
     description:            'my test user'
-  'domain2/testuser3':
-    ensure:                 'present'
-    password:               'weblogic1'
-    authenticationprovider: 'DefaultAuthenticator'
-    realm:                  'myrealm'
-    description:            'my test user'
+  # 'domain2/testuser3':
+  #   ensure:                 'present'
+  #   password:               'weblogic1'
+  #   authenticationprovider: 'DefaultAuthenticator'
+  #   realm:                  'myrealm'
+  #   description:            'my test user'
 
 group_instances:
   'TestGroup':
@@ -118,12 +172,12 @@ group_instances:
     description:            'SuperUsers'
     realm:                  'myrealm'
     users:                  'testuser2'
-  'domain2/TestGroup':
-    ensure:                 'present'
-    authenticationprovider: 'DefaultAuthenticator'
-    description:            'SuperUsers'
-    realm:                  'myrealm'
-    users:                  'testuser3'
+  # 'domain2/TestGroup':
+  #   ensure:                 'present'
+  #   authenticationprovider: 'DefaultAuthenticator'
+  #   description:            'SuperUsers'
+  #   realm:                  'myrealm'
+  #   users:                  'testuser3'
 
 authentication_provider_instances:
   # 'ldap':
@@ -136,40 +190,6 @@ authentication_provider_instances:
   #   ensure:             'present'
   #   control_flag:       'SUFFICIENT'
 
-# pack domains
-pack_domain_instances:
-  'wlsDomain':
-     log_output:           *logoutput
-
-# create and startup the nodemanager
-nodemanager_instances:
-  'nodemanager':
-     log_output:           *logoutput
-     # nodemanager_address:  "10.10.10.10"
-
-# startup adminserver for extra configuration
-control_instances:
-  'startWLSAdminServer':
-     domain_name:          "Wls1036"
-     server_type:          'admin'
-     target:               'Server'
-     server:               'AdminServer'
-     action:               'start'
-     log_output:           *logoutput
-  'startWLSAdminServer2':
-     domain_name:          "Wls1036_2"
-     server_type:          'admin'
-     target:               'Server'
-     server:               'AdminServer'
-     action:               'start'
-     adminserver_port:     7011
-     log_output:           *logoutput
-
-# create password file for WLST utility
-userconfig_instances:
-  'Wls12c':
-     log_output:           *logoutput
-     user_config_dir:      '/home/wls'
 
 # create 2 machines
 machines_instances:
@@ -185,18 +205,18 @@ machines_instances:
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
-  'domain2/Node1':
-    ensure:         'present'
-    listenaddress:  '10.10.10.100'
-    listenport:     '5557'
-    machinetype:    'UnixMachine'
-    nmtype:         'SSL'
-  'domain2/Node2':
-    ensure:         'present'
-    listenaddress:  '10.10.10.200'
-    listenport:     '5557'
-    machinetype:    'UnixMachine'
-    nmtype:         'SSL'
+  # 'domain2/Node1':
+  #   ensure:         'present'
+  #   listenaddress:  '10.10.10.100'
+  #   listenport:     '5557'
+  #   machinetype:    'UnixMachine'
+  #   nmtype:         'SSL'
+  # 'domain2/Node2':
+  #   ensure:         'present'
+  #   listenaddress:  '10.10.10.200'
+  #   listenport:     '5557'
+  #   machinetype:    'UnixMachine'
+  #   nmtype:         'SSL'
 
 
 server_instances:
@@ -222,28 +242,28 @@ server_instances:
          sslhostnameverificationignored: '1'
          listenaddress:                  '10.10.10.200'
          jsseenabled:                    '1' 
-      'domain2/wlsServer1':
-         ensure:                         'present'
-         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
-         listenaddress:                  '10.10.10.100'
-         listenport:                     '8005'
-         logfilename:                    '/var/log/weblogic/wlsServer1.log'
-         machine:                        'Node1'
-         sslenabled:                     '1'
-         ssllistenport:                  '8205'
-         sslhostnameverificationignored: '1'
-         jsseenabled:                    '1' 
-      'domain2/wlsServer2':
-         ensure:                         'present'
-         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
-         listenport:                     '8005'
-         logfilename:                    '/var/log/weblogic/wlsServer2.log'
-         machine:                        'Node2'
-         sslenabled:                     '1'
-         ssllistenport:                  '8205'
-         sslhostnameverificationignored: '1'
-         listenaddress:                  '10.10.10.200'
-         jsseenabled:                    '1' 
+      # 'domain2/wlsServer1':
+      #    ensure:                         'present'
+      #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+      #    listenaddress:                  '10.10.10.100'
+      #    listenport:                     '8005'
+      #    logfilename:                    '/var/log/weblogic/wlsServer1.log'
+      #    machine:                        'Node1'
+      #    sslenabled:                     '1'
+      #    ssllistenport:                  '8205'
+      #    sslhostnameverificationignored: '1'
+      #    jsseenabled:                    '1' 
+      # 'domain2/wlsServer2':
+      #    ensure:                         'present'
+      #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
+      #    listenport:                     '8005'
+      #    logfilename:                    '/var/log/weblogic/wlsServer2.log'
+      #    machine:                        'Node2'
+      #    sslenabled:                     '1'
+      #    ssllistenport:                  '8205'
+      #    sslhostnameverificationignored: '1'
+      #    listenaddress:                  '10.10.10.200'
+      #    jsseenabled:                    '1' 
 
 server_channel_instances:
   'wlsServer1:Channel-Cluster':
@@ -304,20 +324,20 @@ file_persistence_folders:
       mode:       '0775'
       owner:      'wls'
       group:      'dba'
-   '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence1':
-      ensure:     directory
-      recurse:    false
-      replace:    false
-      mode:       '0775'
-      owner:      'wls'
-      group:      'dba'
-   '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence2':
-      ensure:     directory
-      recurse:    false
-      replace:    false
-      mode:       '0775'
-      owner:      'wls'
-      group:      'dba'
+   # '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence1':
+   #    ensure:     directory
+   #    recurse:    false
+   #    replace:    false
+   #    mode:       '0775'
+   #    owner:      'wls'
+   #    group:      'dba'
+   # '/opt/oracle/wlsdomains/domains/Wls1036_2/persistence2':
+   #    ensure:     directory
+   #    recurse:    false
+   #    replace:    false
+   #    mode:       '0775'
+   #    owner:      'wls'
+   #    group:      'dba'
 
 cluster_instances:
   'WebCluster':
@@ -329,11 +349,11 @@ cluster_instances:
     datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
-  'domain2/WebCluster':
-    ensure:                     'present'
-    migrationbasis:             'consensus'
-    servers:                    'wlsServer1,wlsServer2'
-    messagingmode:              'unicast'
+  # 'domain2/WebCluster':
+  #   ensure:                     'present'
+  #   migrationbasis:             'consensus'
+  #   servers:                    'wlsServer1,wlsServer2'
+  #   messagingmode:              'unicast'
 
 virtual_host_instances:
  'WS':
@@ -375,20 +395,20 @@ datasource_instances:
       user:                        'jms'
       password:                    'jms'
       usexa:                       '1'
-    'domain2/jmsDS':
-      ensure:                      'present'
-      drivername:                  'com.mysql.jdbc.Driver'
-      globaltransactionsprotocol:  'None'
-      initialcapacity:             '0'
-      jndinames:                   'jmsDS'
-      maxcapacity:                 '15'
-      target:                      'wlsServer1,wlsServer2'
-      targettype:                  'Server,Server'
-      testtablename:               'SQL SELECT 1'
-      url:                         'jdbc:mysql://10.10.10.10:3306/jms'
-      user:                        'jms'
-      password:                    'jms'
-      usexa:                       '1'      
+    # 'domain2/jmsDS':
+    #   ensure:                      'present'
+    #   drivername:                  'com.mysql.jdbc.Driver'
+    #   globaltransactionsprotocol:  'None'
+    #   initialcapacity:             '0'
+    #   jndinames:                   'jmsDS'
+    #   maxcapacity:                 '15'
+    #   target:                      'wlsServer1,wlsServer2'
+    #   targettype:                  'Server,Server'
+    #   testtablename:               'SQL SELECT 1'
+    #   url:                         'jdbc:mysql://10.10.10.10:3306/jms'
+    #   user:                        'jms'
+    #   password:                    'jms'
+    #   usexa:                       '1'      
 
 file_persistence_store_instances:
   'jmsFile1':
@@ -406,16 +426,16 @@ file_persistence_store_instances:
     directory:      'persistenceSaf1'
     target:         'wlsServer1'
     targettype:     'Server'
-  'domain2/jmsFile1':
-    ensure:         'present'
-    directory:      'persistence1'
-    target:         'wlsServer1'
-    targettype:     'Server'
-  'domain2/jmsFile2':
-    ensure:         'present'
-    directory:      'persistence2'
-    target:         'wlsServer2'
-    targettype:     'Server'
+  # 'domain2/jmsFile1':
+  #   ensure:         'present'
+  #   directory:      'persistence1'
+  #   target:         'wlsServer1'
+  #   targettype:     'Server'
+  # 'domain2/jmsFile2':
+  #   ensure:         'present'
+  #   directory:      'persistence2'
+  #   target:         'wlsServer2'
+  #   targettype:     'Server'
 
 jmsserver_instances:
    'jmsServer1':
@@ -428,16 +448,16 @@ jmsserver_instances:
      ensure:              'present'
      target:              'wlsServer2'
      targettype:          'Server'
-   'domain2/jmsServer1':
-     ensure:              'present'
-     target:              'wlsServer1'
-     targettype:          'Server'
-     persistentstore:     'jmsFile1'
-     persistentstoretype: 'FileStore'
-   'domain2/jmsServer2':
-     ensure:              'present'
-     target:              'wlsServer2'
-     targettype:          'Server'
+   # 'domain2/jmsServer1':
+   #   ensure:              'present'
+   #   target:              'wlsServer1'
+   #   targettype:          'Server'
+   #   persistentstore:     'jmsFile1'
+   #   persistentstoretype: 'FileStore'
+   # 'domain2/jmsServer2':
+   #   ensure:              'present'
+   #   target:              'wlsServer2'
+   #   targettype:          'Server'
 
 
 jms_module_instances:
@@ -445,10 +465,10 @@ jms_module_instances:
      ensure:      'present'
      target:      'WebCluster'
      targettype:  'Cluster'
-   'domain2/jmsClusterModule':
-     ensure:      'present'
-     target:      'WebCluster'
-     targettype:  'Cluster'
+   # 'domain2/jmsClusterModule':
+   #   ensure:      'present'
+   #   target:      'WebCluster'
+   #   targettype:  'Cluster'
 
 
 foreign_server_instances:
@@ -508,28 +528,17 @@ jms_connection_factory_instances:
       jndiname:           'jms/cf2'
       transactiontimeout: '3600'
       xaenabled:          '1'
-  'domain2/jmsClusterModule:cf2':
-      ensure:             'present'
-      jmsmodule:          'jmsClusterModule'
-      defaulttargeting:   '1'
-      jndiname:           'jms/cf2'
-      transactiontimeout: '3600'
-      xaenabled:          '1'
+  # 'domain2/jmsClusterModule:cf2':
+  #     ensure:             'present'
+  #     jmsmodule:          'jmsClusterModule'
+  #     defaulttargeting:   '1'
+  #     jndiname:           'jms/cf2'
+  #     transactiontimeout: '3600'
+  #     xaenabled:          '1'
 
 
 jms_queue_instances:
    'jmsClusterModule:ErrorQueue':
-     ensure:                   'present'
-     distributed:              '1'
-     expirationpolicy:         'Discard'
-     jndiname:                 'jms/ErrorQueue'
-     redeliverydelay:          '-1'
-     redeliverylimit:          '-1'
-     subdeployment:            'jmsServers'
-     defaulttargeting:         '0'
-     timetodeliver:            '-1'
-     timetolive:               '-1'
-   'domain2/jmsClusterModule:ErrorQueue':
      ensure:                   'present'
      distributed:              '1'
      expirationpolicy:         'Discard'
@@ -564,6 +573,17 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '300000'
+   # 'domain2/jmsClusterModule:ErrorQueue':
+   #   ensure:                   'present'
+   #   distributed:              '1'
+   #   expirationpolicy:         'Discard'
+   #   jndiname:                 'jms/ErrorQueue'
+   #   redeliverydelay:          '-1'
+   #   redeliverylimit:          '-1'
+   #   subdeployment:            'jmsServers'
+   #   defaulttargeting:         '0'
+   #   timetodeliver:            '-1'
+   #   timetolive:               '-1'
 
 # create jms quotas for the jms module 
 jms_quota_instances:
@@ -585,10 +605,6 @@ jms_subdeployment_instances:
       ensure:     'present'
       target:     'jmsServer1,jmsServer2'
       targettype: 'JMSServer,JMSServer'
-   'domain2/jmsClusterModule:jmsServers':
-      ensure:     'present'
-      target:     'jmsServer1,jmsServer2'
-      targettype: 'JMSServer,JMSServer'
    'jmsClusterModule:wlsServers':
       ensure:     'present'
       target:     'WebCluster'
@@ -597,6 +613,10 @@ jms_subdeployment_instances:
       ensure:     'present'
       target:     'jmsSAFAgent1,jmsSAFAgent2'
       targettype: 'SAFAgent,SAFAgent'
+   # 'domain2/jmsClusterModule:jmsServers':
+   #    ensure:     'present'
+   #    target:     'jmsServer1,jmsServer2'
+   #    targettype: 'JMSServer,JMSServer'
 
 jms_topic_instances:
    'jmsClusterModule:Topic1':
@@ -691,8 +711,6 @@ workmanager_instances:
     stuckthreads:          '0'
     target:                'WebCluster'
     targettype:            'Cluster'
-
-
 
 workmanager_constraint_instances:
   'CapacityConstraint':
