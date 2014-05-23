@@ -1,9 +1,7 @@
 ---
 
 logoutput:                &logoutput                true
-
 orawls::weblogic::log_output:   *logoutput
-
 
 wls_os_user:              &wls_os_user              "wls"
 wls_weblogic_user:        &wls_weblogic_user        "weblogic"
@@ -34,9 +32,9 @@ orautils::trustKeystoreFile:       '/vagrant/truststore.jks'
 orautils::trustKeystorePassphrase: 'welcome'
 
 # used by nodemanager, control and domain creation
-wls_custom_trust:                  true
-wls_trust_keystore_file:           '/vagrant/truststore.jks'
-wls_trust_keystore_passphrase:     'welcome'
+wls_custom_trust:                  &wls_custom_trust              true
+wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
+wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
 
 # create a standard domain with custom identity for the adminserver
 domain_instances:
@@ -100,7 +98,6 @@ pack_domain_instances:
 nodemanager_instances:
   'nodemanager':
     log_output:                            *logoutput
-    custom_identity:                       false
     custom_identity:                       true
     custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -220,50 +217,64 @@ machines_instances:
 
 
 server_instances:
-      'wlsServer1':
-         ensure:                         'present'
-         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
-         listenaddress:                  '10.10.10.100'
-         listenport:                     '8001'
-         logfilename:                    '/var/log/weblogic/wlsServer1.log'
-         machine:                        'Node1'
-         sslenabled:                     '1'
-         ssllistenport:                  '8201'
-         sslhostnameverificationignored: '1'
-         jsseenabled:                    '1' 
-      'wlsServer2':
-         ensure:                         'present'
-         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
-         listenport:                     '8001'
-         logfilename:                    '/var/log/weblogic/wlsServer2.log'
-         machine:                        'Node2'
-         sslenabled:                     '1'
-         ssllistenport:                  '8201'
-         sslhostnameverificationignored: '1'
-         listenaddress:                  '10.10.10.200'
-         jsseenabled:                    '1' 
-      # 'domain2/wlsServer1':
-      #    ensure:                         'present'
-      #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
-      #    listenaddress:                  '10.10.10.100'
-      #    listenport:                     '8005'
-      #    logfilename:                    '/var/log/weblogic/wlsServer1.log'
-      #    machine:                        'Node1'
-      #    sslenabled:                     '1'
-      #    ssllistenport:                  '8205'
-      #    sslhostnameverificationignored: '1'
-      #    jsseenabled:                    '1' 
-      # 'domain2/wlsServer2':
-      #    ensure:                         'present'
-      #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
-      #    listenport:                     '8005'
-      #    logfilename:                    '/var/log/weblogic/wlsServer2.log'
-      #    machine:                        'Node2'
-      #    sslenabled:                     '1'
-      #    ssllistenport:                  '8205'
-      #    sslhostnameverificationignored: '1'
-      #    listenaddress:                  '10.10.10.200'
-      #    jsseenabled:                    '1' 
+  'wlsServer1':
+    ensure:                                'present'
+    arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+    listenaddress:                         '10.10.10.100'
+    listenport:                            '8001'
+    logfilename:                           '/var/log/weblogic/wlsServer1.log'
+    machine:                               'Node1'
+    sslenabled:                            '1'
+    ssllistenport:                         '8201'
+    sslhostnameverificationignored:        '1'
+    jsseenabled:                           '1' 
+    custom_identity:                       '1'
+    custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
+    custom_identity_keystore_passphrase:   'welcome'
+    custom_identity_alias:                 'node1'
+    custom_identity_privatekey_passphrase: 'welcome'
+    trust_keystore_file:                   *wls_trust_keystore_file
+    trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+  'wlsServer2':
+    ensure:                                'present'
+    arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
+    listenport:                            '8001'
+    logfilename:                           '/var/log/weblogic/wlsServer2.log'
+    machine:                               'Node2'
+    sslenabled:                            '1'
+    ssllistenport:                         '8201'
+    sslhostnameverificationignored:        '1'
+    listenaddress:                         '10.10.10.200'
+    jsseenabled:                           '1' 
+    custom_identity:                       '1'
+    custom_identity_keystore_filename:     '/vagrant/identity_node2.jks'
+    custom_identity_keystore_passphrase:   'welcome'
+    custom_identity_alias:                 'node2'
+    custom_identity_privatekey_passphrase: 'welcome'
+    trust_keystore_file:                   *wls_trust_keystore_file
+    trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+  # 'domain2/wlsServer1':
+  #    ensure:                         'present'
+  #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+  #    listenaddress:                  '10.10.10.100'
+  #    listenport:                     '8005'
+  #    logfilename:                    '/var/log/weblogic/wlsServer1.log'
+  #    machine:                        'Node1'
+  #    sslenabled:                     '1'
+  #    ssllistenport:                  '8205'
+  #    sslhostnameverificationignored: '1'
+  #    jsseenabled:                    '1' 
+  # 'domain2/wlsServer2':
+  #    ensure:                         'present'
+  #    arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
+  #    listenport:                     '8005'
+  #    logfilename:                    '/var/log/weblogic/wlsServer2.log'
+  #    machine:                        'Node2'
+  #    sslenabled:                     '1'
+  #    ssllistenport:                  '8205'
+  #    sslhostnameverificationignored: '1'
+  #    listenaddress:                  '10.10.10.200'
+  #    jsseenabled:                    '1' 
 
 server_channel_instances:
   'wlsServer1:Channel-Cluster':
@@ -342,11 +353,12 @@ file_persistence_folders:
 cluster_instances:
   'WebCluster':
     ensure:                     'present'
-    migrationbasis:             'database'
-    migration_datasource:       'jmsDS'
-    migration_table_name:       'ACTIVE'
+    migrationbasis:             'consensus'
+    # migrationbasis:             'database'
+    # migration_datasource:       'jmsDS'
+    # migration_table_name:       'ACTIVE'
     servers:                    'wlsServer1,wlsServer2'
-    datasourceforjobscheduler:  'jmsDS'
+    # datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
   # 'domain2/WebCluster':
@@ -365,36 +377,36 @@ virtual_host_instances:
 
 
 datasource_instances:
-    'hrDS':
-      ensure:                      'present'
-      drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
-      extraproperties:             'SendStreamAsBlob,oracle.net.CONNECT_TIMEOUT'
-      extrapropertiesvalues:       'true,10000'
-      globaltransactionsprotocol:  'TwoPhaseCommit'
-      initialcapacity:             '2'
-      jndinames:                   'jdbc/hrDS'
-      maxcapacity:                 '15'
-      target:                      'wlsServer1,wlsServer2'
-      targettype:                  'Server,Server'
-      testtablename:               'SQL SELECT 1 FROM DUAL'
-      url:                         "jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com"
-      user:                        'hr'
-      password:                    'hr'
-      usexa:                       '1'
-    'jmsDS':
-      ensure:                      'present'
-      drivername:                  'com.mysql.jdbc.Driver'
-      globaltransactionsprotocol:  'None'
-      initialcapacity:             '0'
-      jndinames:                   'jmsDS'
-      maxcapacity:                 '15'
-      target:                      'wlsServer1,wlsServer2'
-      targettype:                  'Server,Server'
-      testtablename:               'SQL SELECT 1'
-      url:                         'jdbc:mysql://10.10.10.10:3306/jms'
-      user:                        'jms'
-      password:                    'jms'
-      usexa:                       '1'
+    # 'hrDS':
+    #   ensure:                      'present'
+    #   drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
+    #   extraproperties:             'SendStreamAsBlob,oracle.net.CONNECT_TIMEOUT'
+    #   extrapropertiesvalues:       'true,10000'
+    #   globaltransactionsprotocol:  'TwoPhaseCommit'
+    #   initialcapacity:             '2'
+    #   jndinames:                   'jdbc/hrDS'
+    #   maxcapacity:                 '15'
+    #   target:                      'wlsServer1,wlsServer2'
+    #   targettype:                  'Server,Server'
+    #   testtablename:               'SQL SELECT 1 FROM DUAL'
+    #   url:                         "jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com"
+    #   user:                        'hr'
+    #   password:                    'hr'
+    #   usexa:                       '1'
+    # 'jmsDS':
+    #   ensure:                      'present'
+    #   drivername:                  'com.mysql.jdbc.Driver'
+    #   globaltransactionsprotocol:  'None'
+    #   initialcapacity:             '0'
+    #   jndinames:                   'jmsDS'
+    #   maxcapacity:                 '15'
+    #   target:                      'wlsServer1,wlsServer2'
+    #   targettype:                  'Server,Server'
+    #   testtablename:               'SQL SELECT 1'
+    #   url:                         'jdbc:mysql://10.10.10.10:3306/jms'
+    #   user:                        'jms'
+    #   password:                    'jms'
+    #   usexa:                       '1'
     # 'domain2/jmsDS':
     #   ensure:                      'present'
     #   drivername:                  'com.mysql.jdbc.Driver'
