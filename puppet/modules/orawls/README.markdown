@@ -175,7 +175,63 @@ or set the following hiera parameter
      
      wls_jsse_enabled:         true
 
-## Custom Identity and Trust store
+## Enterprise security with Custom Identity and Trust store
+
+in combination with JDK7 JCE policy, ORAUTILS and WebLogic JSSE you can use your own certificates 
+
+just generates all the certificates and set the following hiera variables.
+
+    # custom trust
+    orautils::customTrust:             true
+    orautils::trustKeystoreFile:       '/vagrant/truststore.jks'
+    orautils::trustKeystorePassphrase: 'welcome'
+
+    # used by nodemanager, control and domain creation
+    wls_custom_trust:                  &wls_custom_trust              true
+    wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
+    wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
+
+    # create a standard domain with custom identity for the adminserver
+    domain_instances:
+      'Wls1036':
+        domain_template:                       "standard"
+        development_mode:                      false
+        log_output:                            *logoutput
+        custom_identity:                       true
+        custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'admin'
+        custom_identity_privatekey_passphrase: 'welcome'
+
+    nodemanager_instances:
+      'nodemanager':
+        log_output:                            *logoutput
+        custom_identity:                       true
+        custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'admin'
+        custom_identity_privatekey_passphrase: 'welcome'
+        nodemanager_address:                   *domain_adminserver_address
+
+        server_instances:
+          'wlsServer1':
+            ensure:                                'present'
+            arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+            listenaddress:                         '10.10.10.100'
+            listenport:                            '8001'
+            logfilename:                           '/var/log/weblogic/wlsServer1.log'
+            machine:                               'Node1'
+            sslenabled:                            '1'
+            ssllistenport:                         '8201'
+            sslhostnameverificationignored:        '1'
+            jsseenabled:                           '1' 
+            custom_identity:                       '1'
+            custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
+            custom_identity_keystore_passphrase:   'welcome'
+            custom_identity_alias:                 'node1'
+            custom_identity_privatekey_passphrase: 'welcome'
+            trust_keystore_file:                   *wls_trust_keystore_file
+            trust_keystore_passphrase:             *wls_trust_keystore_passphrase
 
 
 ## Linux low on entropy or urandom fix 
@@ -679,7 +735,26 @@ when you just have one WebLogic domain on a server
          domain_template:      "standard"
          development_mode:     false
          log_output:           *logoutput
-    
+
+or with custom identity and custom truststore    
+
+    # used by nodemanager, control and domain creation
+    wls_custom_trust:                  &wls_custom_trust              true
+    wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
+    wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
+
+    # create a standard domain with custom identity for the adminserver
+    domain_instances:
+      'Wls1036':
+        domain_template:                       "standard"
+        development_mode:                      false
+        log_output:                            *logoutput
+        custom_identity:                       true
+        custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'admin'
+        custom_identity_privatekey_passphrase: 'welcome'
+
 
 ###orawls::packdomain 
 pack a WebLogic Domain and add this to the download folder
@@ -794,6 +869,23 @@ when you just have one WebLogic domain on a server
     nodemanager_instances:
       'nodemanager12c':
          log_output:           true
+
+or with custom identity and custom truststore    
+
+    # used by nodemanager, control and domain creation
+    wls_custom_trust:                  &wls_custom_trust              true
+    wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
+    wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
+
+    nodemanager_instances:
+      'nodemanager':
+        log_output:                            *logoutput
+        custom_identity:                       true
+        custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'admin'
+        custom_identity_privatekey_passphrase: 'welcome'
+        nodemanager_address:                   *domain_adminserver_address
 
 
 
@@ -1315,6 +1407,35 @@ in hiera
          sslenabled:                     '1'
          ssllistenport:                  '8201'
          sslhostnameverificationignored: '1'
+
+or with custom identity and custom truststore
+
+    # used by nodemanager, control and domain creation
+    wls_custom_trust:                  &wls_custom_trust              true
+    wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
+    wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
+
+
+    server_instances:
+      'wlsServer1':
+        ensure:                                'present'
+        arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+        listenaddress:                         '10.10.10.100'
+        listenport:                            '8001'
+        logfilename:                           '/var/log/weblogic/wlsServer1.log'
+        machine:                               'Node1'
+        sslenabled:                            '1'
+        ssllistenport:                         '8201'
+        sslhostnameverificationignored:        '1'
+        jsseenabled:                           '1' 
+        custom_identity:                       '1'
+        custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'node1'
+        custom_identity_privatekey_passphrase: 'welcome'
+        trust_keystore_file:                   *wls_trust_keystore_file
+        trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+
  
 ###wls_server_channel
 
