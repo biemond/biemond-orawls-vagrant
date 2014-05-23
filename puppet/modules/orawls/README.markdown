@@ -15,29 +15,29 @@ Got the same options as the wls module but with
 Many thanks to Bert Hajee (hajee) for his contributions, help and the his easy_type module  
 [![Powered By EasyType](https://raw.github.com/hajee/easy_type/master/powered_by_easy_type.png)](https://github.com/hajee/easy_type)
 
-Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10 sparc / x86  
+Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86  
 
 Dependency with 
 - hajee/easy_type (latest)
 - adrien/filemapper >= 1.1.1
 - reidmv/yamlfile >=0.2.0
 
-##Upgrade Notice from versions lower then orawls 0.9.5
-When you already used this orawls module to provision some weblogic domains and you want to upgrade to the latest version then you need to do one of the following steps
-- add a your domains to /etc/wls_domains.yaml
-- or remove the domain and re-create this 
-
-here is an example of a /etc/wls_domains.yaml file
-    ---
-      domains:
-        Wls1036_2: /opt/oracle/wlsdomains/domains/Wls1036_2
-        Wls1036: /opt/oracle/middleware11g/user_projects/domains/Wls1036
-
-this way I can detect all weblogic domains and set the right facts.  
-Also see override WebLogic domain folder
-
 ##Complete examples
 see the following usages below  
+
+###Masterless (vagrant box)
+
+WebLogic 11g Reference implementation, the vagrant test case for full working WebLogic 10.3.6 cluster example  
+https://github.com/biemond/biemond-orawls-vagrant  
+
+WebLlogic 12.1.2 Reference implementation, the vagrant test case for full working WebLogic 12.1.2 cluster example  
+https://github.com/biemond/biemond-orawls-vagrant-12.1.2  
+
+Reference Solaris implementation, the vagrant test case for full working WebLogic 12.1.2 cluster example  
+https://github.com/biemond/biemond-orawls-vagrant-solaris  
+
+Reference Oracle SOA Suite, the vagrant test case for full working WebLogic 10.3.6 SOA Suite + OSB cluster example  
+https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemond-orawls-vagrant-solaris-soa
 
 ###Puppetmaster (vagrant box)
 Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box (https://github.com/biemond/vagrant-puppetmaster) 
@@ -48,17 +48,6 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - adminwls4 ( adminserver 10.3.6 + osb PS6 + soa suite PS6 ( with bpm & bam ))
 - adminwls5 ( adminserver 10.3.6 + osb PS6 )
 
-###Masterless (vagrant box)
-
-Reference implementation, the vagrant test case for full working WebLogic 10.3.6 cluster example  
-https://github.com/biemond/biemond-orawls-vagrant  
-
-Reference Solaris implementation, the vagrant test case for full working WebLogic 12.1.2 cluster example  
-https://github.com/biemond/biemond-orawls-vagrant-solaris  
-
-Reference Oracle SOA Suite, the vagrant test case for full working WebLogic 10.3.6 SOA Suite + OSB cluster example  
-https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemond-orawls-vagrant-solaris-soa
-
 ##Orawls WebLogic Features
 
 - installs WebLogic 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
@@ -68,6 +57,7 @@ https://github.com/biemond/vagrant-soasuite or https://github.com/biemond/biemon
 - pack a WebLogic domain
 - copy a WebLogic domain to a other node with SSH, unpack and enroll to a nodemanager
 - Java Secure Socket Extension (JSSE) support
+- Custom Identity and Trust Store support
 - startup the nodemanager
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
@@ -184,6 +174,8 @@ To enable this in orawls you can set the jsse_enabled on the following manifests
 or set the following hiera parameter
      
      wls_jsse_enabled:         true
+
+## Custom Identity and Trust store
 
 
 ## Linux low on entropy or urandom fix 

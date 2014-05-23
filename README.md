@@ -35,7 +35,7 @@ edit Vagrantfile and update the software share
 
 weblogic 10.3.6  ( located under the software share )
 - wls1036_generic.jar
-- p17071663_1036_Generic.zip ( 10.3.6.06 BSU Patch)
+- p17572726_1036_Generic.zip ( 10.3.6.07 BSU Patch)
 
 
 ##Using the following facts ( VagrantFile )
