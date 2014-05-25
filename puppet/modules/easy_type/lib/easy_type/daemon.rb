@@ -8,8 +8,8 @@ module EasyType
   #
   # rubocop:disable ClassVars
   class Daemon
-    SUCCESS_SYNC_STRING = "~~~~COMMAND SUCCESFULL~~~~\n"
-    FAILED_SYNC_STRING = "~~~~COMMAND FAILED~~~~\n"
+    SUCCESS_SYNC_STRING = /~~~~COMMAND SUCCESFULL~~~~/
+    FAILED_SYNC_STRING = /~~~~COMMAND FAILED~~~~/
 
     @@daemons = {}
     #
@@ -45,8 +45,8 @@ module EasyType
     def sync
       @stdout.each_line do |line|
         Puppet.debug "#{line}"
-        break if line == SUCCESS_SYNC_STRING
-        fail 'command in deamon failed.' if line == FAILED_SYNC_STRING
+        break if line =~ SUCCESS_SYNC_STRING
+        fail 'command in deamon failed.' if line =~ FAILED_SYNC_STRING
       end
     end
 
