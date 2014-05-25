@@ -140,7 +140,7 @@ module EasyType
 
       # @private
       def specific_file?(parameter_name)
-        specific_file(parameter_name) != nil
+        !specific_file(parameter_name).nil?
       end
 
       # @private
@@ -150,7 +150,7 @@ module EasyType
 
       # @private
       def shared_file?(parameter_name)
-        shared_file(parameter_name) != nil
+        !shared_file(parameter_name).nil?
       end
 
       #
