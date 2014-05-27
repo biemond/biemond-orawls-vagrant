@@ -52,7 +52,6 @@ orawls::weblogic::remote_file:          false
 orawls::weblogic::wls_domains_dir:      *wls_domains_dir
 orawls::weblogic::wls_apps_dir:         *wls_apps_dir
 
-
 # patches for WebLogic 10.3.6
 bsu_instances:
   'FCX7':
@@ -61,6 +60,12 @@ bsu_instances:
     patch_file:              'p17572726_1036_Generic.zip'
     log_output:              true
     remote_file:             false
+  # 'T5F1':
+  #   ensure:                  'present'
+  #   patch_id:                'T5F1'
+  #   patch_file:              'p18040640_1036_Generic.zip'
+  #   log_output:              true
+  #   remote_file:             false
 
 # handy WebLogic scripts in /opt/scripts/wls
 orautils::osOracleHomeParam:      *wls_oracle_base_home_dir
