@@ -38,3 +38,11 @@ task :test => [
   :lint,
   :spec,
 ]
+
+require 'rubocop/rake_task'
+
+desc 'Run RuboCop on the lib directory'
+Rubocop::RakeTask.new(:rubocop) do |task|
+  task.patterns = ['lib/easy_type/**/*.rb']
+  task.fail_on_error = true
+end

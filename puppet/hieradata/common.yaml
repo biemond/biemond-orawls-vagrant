@@ -1,7 +1,4 @@
 ---
-messageDefault: 'default'
-messageEnv:     'common'
-
 
 hosts:
   'localhost':
@@ -17,8 +14,6 @@ hosts:
     ip:                "10.10.10.200"
     host_aliases:      'node2'
 
-
-apps_config_dir:    "/vagrant/puppet/apps"
 
 # global WebLogic vars
 wls_oracle_base_home_dir: &wls_oracle_base_home_dir "/opt/oracle"
@@ -57,17 +52,20 @@ orawls::weblogic::remote_file:          false
 orawls::weblogic::wls_domains_dir:      *wls_domains_dir
 orawls::weblogic::wls_apps_dir:         *wls_apps_dir
 
-
 # patches for WebLogic 10.3.6
 bsu_instances:
-  'BYJ1':
-    patch_id:                "BYJ1"
-    patch_file:              "p17071663_1036_Generic.zip"
+  'FCX7':
+    ensure:                  'present'
+    patch_id:                'FCX7'
+    patch_file:              'p17572726_1036_Generic.zip'
     log_output:              true
     remote_file:             false
-
-# FMW installation on top of WebLogic 10.3.6
-fmw_installations:
+  # 'T5F1':
+  #   ensure:                  'present'
+  #   patch_id:                'T5F1'
+  #   patch_file:              'p18040640_1036_Generic.zip'
+  #   log_output:              true
+  #   remote_file:             false
 
 # handy WebLogic scripts in /opt/scripts/wls
 orautils::osOracleHomeParam:      *wls_oracle_base_home_dir

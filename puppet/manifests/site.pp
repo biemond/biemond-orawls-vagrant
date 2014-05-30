@@ -265,10 +265,13 @@ class nodemanager {
   create_resources('orawls::nodemanager',$nodemanager_instances, $default_params)
 
   orautils::nodemanagerautostart{"autostart weblogic 11g":
-    version     => hiera('wls_version'),
-    wlHome      => hiera('wls_weblogic_home_dir'),
-    user        => hiera('wls_os_user'),
-    jsseEnabled => true,
+    version                 => hiera('wls_version'),
+    wlHome                  => hiera('wls_weblogic_home_dir'),
+    user                    => hiera('wls_os_user'),
+    jsseEnabled             => hiera('wls_jsse_enabled'             ,false),
+    customTrust             => hiera('wls_custom_trust'             ,false),
+    trustKeystoreFile       => hiera('wls_trust_keystore_file'      ,undef),
+    trustKeystorePassphrase => hiera('wls_trust_keystore_passphrase',undef),
   }
 
 }
@@ -302,62 +305,67 @@ class groups{
   create_resources('wls_group',$group_instances, $default_params)
 }
 
-class machines{
+class authentication_providers{
   require groups
+  $default_params = {}
+  $authentication_provider_instances = hiera('authentication_provider_instances', {})
+  create_resources('wls_authentication_provider',$authentication_provider_instances, $default_params)
+}
+
+class machines{
+  require authentication_providers
   $default_params = {}
   $machines_instances = hiera('machines_instances', {})
   create_resources('wls_machine',$machines_instances, $default_params)
 }
 
-define wlst_yaml_provider()
-{
-  $type            = $title
-  $apps            = hiera('weblogic_apps')
-  $apps_config_dir = hiera('apps_config_dir')
-
-  $apps.each |$app| { 
-    $allHieraEntriesYaml = loadyaml("${apps_config_dir}/${app}/${type}/${app}_${type}.yaml")
-    if $allHieraEntriesYaml != undef {
-      if $allHieraEntriesYaml["${type}_instances"] != undef {
-          create_resources("wls_${type}",$allHieraEntriesYaml["${type}_instances"])
-      }  
-    }
-  }  
-}
-
 class managed_servers{
   require machines
-  wlst_yaml_provider{'server':} 
+  $default_params = {}
+  $server_instances = hiera('server_instances', {})
+  create_resources('wls_server',$server_instances, $default_params)
 }
 
 class managed_servers_channels{
   require managed_servers
-  wlst_yaml_provider{'server_channel':} 
+  $default_params = {}
+  $server_channel_instances = hiera('server_channel_instances', {})
+  create_resources('wls_server_channel',$server_channel_instances, $default_params)
 }
 
 class datasources{
   require managed_servers_channels
-  wlst_yaml_provider{'datasource':} 
+  $default_params = {}
+  $datasource_instances = hiera('datasource_instances', {})
+  create_resources('wls_datasource',$datasource_instances, $default_params)
 }
 
 class clusters{
   require datasources
-  wlst_yaml_provider{'cluster':} 
+  $default_params = {}
+  $cluster_instances = hiera('cluster_instances', {})
+  create_resources('wls_cluster',$cluster_instances, $default_params)
 }
 
 class virtual_hosts{
   require clusters
-  wlst_yaml_provider{'virtual_host':} 
+  $default_params = {}
+  $virtual_host_instances = hiera('virtual_host_instances', {})
+  create_resources('wls_virtual_host',$virtual_host_instances, $default_params)
 }
 
 class workmanager_constraints{
   require virtual_hosts
-  wlst_yaml_provider{'workmanager_constraint':} 
+  $default_params = {}
+  $workmanager_constraint_instances = hiera('workmanager_constraint_instances', {})
+  create_resources('wls_workmanager_constraint',$workmanager_constraint_instances, $default_params)
 }
 
 class workmanagers{
   require workmanager_constraints
-  wlst_yaml_provider{'workmanager':} 
+  $default_params = {}
+  $workmanager_instances = hiera('workmanager_instances', {})
+  create_resources('wls_workmanager',$workmanager_instances, $default_params)
 }
 
 class file_persistence{
@@ -367,77 +375,106 @@ class file_persistence{
   $file_persistence_folders = hiera('file_persistence_folders', {})
   create_resources('file',$file_persistence_folders, $default_params)
 
-  wlst_yaml_provider{'file_persistence_store':} 
+  $file_persistence_store_instances = hiera('file_persistence_store_instances', {})
+  create_resources('wls_file_persistence_store',$file_persistence_store_instances, $default_params)
 }
 
 class jms_servers{
   require file_persistence
-  wlst_yaml_provider{'jmsserver':} 
+  $default_params = {}
+  $jmsserver_instances = hiera('jmsserver_instances', {})
+  create_resources('wls_jmsserver',$jmsserver_instances, $default_params)
 }
 
 class jms_saf_agents{
   require jms_servers
-  wlst_yaml_provider{'safagent':} 
+  $default_params = {}
+  $safagent_instances = hiera('safagent_instances', {})
+  create_resources('wls_safagent',$safagent_instances, $default_params)
 }
 
 class jms_modules{
   require jms_saf_agents
-  wlst_yaml_provider{'jms_module':} 
+  $default_params = {}
+  $jms_module_instances = hiera('jms_module_instances', {})
+  create_resources('wls_jms_module',$jms_module_instances, $default_params)
 }
 
 class jms_module_subdeployments{
   require jms_modules
-  wlst_yaml_provider{'jms_subdeployment':} 
+  $default_params = {}
+  $jms_subdeployment_instances = hiera('jms_subdeployment_instances', {})
+  create_resources('wls_jms_subdeployment',$jms_subdeployment_instances, $default_params)
 }
 
 class jms_module_quotas{
   require jms_module_subdeployments
-  wlst_yaml_provider{'jms_quota':} 
+  $default_params = {}
+  $jms_quota_instances = hiera('jms_quota_instances', {})
+  create_resources('wls_jms_quota',$jms_quota_instances, $default_params)
 }
 
 class jms_module_cfs{
   require jms_module_quotas
-  wlst_yaml_provider{'jms_connection_factory':} 
+  $default_params = {}
+  $jms_connection_factory_instances = hiera('jms_connection_factory_instances', {})
+  create_resources('wls_jms_connection_factory',$jms_connection_factory_instances, $default_params)
 }
 
 class jms_module_queues_objects{
   require jms_module_cfs
-  wlst_yaml_provider{'jms_queue':} 
+  $default_params = {}
+  $jms_queue_instances = hiera('jms_queue_instances', {})
+  create_resources('wls_jms_queue',$jms_queue_instances, $default_params)
 }
 
 class jms_module_topics_objects{
   require jms_module_queues_objects
-  wlst_yaml_provider{'jms_topic':} 
+  $default_params = {}
+  $jms_topic_instances = hiera('jms_topic_instances', {})
+  create_resources('wls_jms_topic',$jms_topic_instances, $default_params)
 }
 
 class foreign_server_objects{
   require jms_module_topics_objects
-  wlst_yaml_provider{'foreign_server':} 
+  $default_params = {}
+  $foreign_server_instances = hiera('foreign_server_instances', {})
+  create_resources('wls_foreign_server',$foreign_server_instances, $default_params)
 }
 
 class foreign_server_entries_objects{
   require foreign_server_objects
-  wlst_yaml_provider{'foreign_server_object':} 
+  $default_params = {}
+  $foreign_server_object_instances = hiera('foreign_server_object_instances', {})
+  create_resources('wls_foreign_server_object',$foreign_server_object_instances, $default_params)
 }
 
 class saf_remote_context_objects {
   require foreign_server_entries_objects
-  wlst_yaml_provider{'saf_remote_context':} 
+  $default_params = {}
+  $saf_remote_context_instances = hiera('saf_remote_context_instances', {})
+  create_resources('wls_saf_remote_context',$saf_remote_context_instances, $default_params)
 }
 
 class saf_error_handlers {
   require saf_remote_context_objects
-  wlst_yaml_provider{'saf_error_handler':} 
+  $default_params = {}
+  $saf_error_handler_instances = hiera('saf_error_handler_instances', {})
+  create_resources('wls_saf_error_handler',$saf_error_handler_instances, $default_params)
 }
 
 class saf_imported_destination {
   require saf_error_handlers
-  wlst_yaml_provider{'saf_imported_destination':} 
+  $default_params = {}
+  $saf_imported_destination_instances = hiera('saf_imported_destination_instances', {})
+  create_resources('wls_saf_imported_destination',$saf_imported_destination_instances, $default_params)
 }
 
 class saf_imported_destination_objects {
   require saf_imported_destination
-  wlst_yaml_provider{'saf_imported_destination_object':} 
+  $default_params = {}
+  $saf_imported_destination_object_instances = hiera('saf_imported_destination_object_instances', {})
+  create_resources('wls_saf_imported_destination_object',$saf_imported_destination_object_instances, $default_params)
 }
 
 

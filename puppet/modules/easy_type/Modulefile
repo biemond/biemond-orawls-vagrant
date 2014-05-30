@@ -1,5 +1,5 @@
 name    'hajee-easy_type'
-version '0.7.4'
+version '0.8.0'
 source 'http:/www.github.com/hajee/easy_type'
 author 'Bert Hajee'
 license 'Apache License, Version 2.0'

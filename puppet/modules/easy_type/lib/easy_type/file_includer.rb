@@ -41,8 +41,7 @@ module EasyType
 
     # @private
     def absolute_path?(path)
-      (path =~ /^\//)!= nil
+      !(path =~ /^\//).nil?
     end
-
   end
 end

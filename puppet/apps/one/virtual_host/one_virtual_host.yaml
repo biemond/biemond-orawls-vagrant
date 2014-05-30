@@ -1,9 +1,0 @@
----
-
-virtual_host_instances:
- 'WS':
-   ensure:             'present'
-   channel:            'HTTP'
-   target:             'WebCluster'
-   targettype:         'Cluster'
-   virtual_host_names: 'admin.example.com,10.10.10.10'
