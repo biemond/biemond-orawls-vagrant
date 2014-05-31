@@ -65,6 +65,27 @@ define orawls::utils::webtier(
         require     => File["${download_dir}/${title}_createWebtier.py"],
       }
     }
+  } else {
+
+    file { "${download_dir}/${title}_configureWebtier.rsp":
+      ensure  => present,
+      content => template("orawls/wlst/wlstexec/fmw/configureWebtier.rsp.erb"),
+      backup  => false,
+      replace => true,
+      mode    => '0775',
+      owner   => $os_user,
+      group   => $os_group,
+    }
+    exec { "config webtier ${title}":
+      command     => "${middleware_home_dir}/WT1/bin/config.sh -silent -response ${download_dir}/${title}_configureWebtier.rsp -waitforcompletion",
+      environment => ["JAVA_HOME=${jdk_home_dir}"],
+      path        => $exec_path,
+      creates     => "${middleware_home_dir}/WT1/instances/${instance_name}",
+      user        => $os_user,
+      group       => $os_group,
+      logoutput   => $log_output,
+      require     => File["${download_dir}/${title}_configureWebtier.rsp"],
+    }
   }
 
 }    

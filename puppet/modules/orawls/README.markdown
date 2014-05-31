@@ -1215,6 +1215,44 @@ hiera configuration
          soa_enabled:          true
          osb_enabled:          true
 
+### orawls::utils::fmwclusterjrf
+convert existing cluster to a ADF/JRF cluster
+you need to create a wls cluster with some managed servers first
+
+    $default_params = {}
+    $fmw_jrf_cluster_instances = hiera('fmw_jrf_cluster_instances', $default_params)
+    create_resources('orawls::utils::fmwclusterjrf',$fmw_jrf_cluster_instances, $default_params)
+
+hiera configuration
+
+    fmw_jrf_cluster_instances:
+      'WebCluster':
+         domain_name:          "adf_domain"
+         jrf_target_name:      "WebCluster"
+         log_output:           *logoutput
+
+### orawls::utils::webtier
+add an OHS instance to a WebLogic Domain and in the Enterprise Manager
+
+    $default_params = {}
+    $webtier_instances = hiera('webtier_instances', {})
+    create_resources('orawls::utils::webtier',$webtier_instances, $default_params)
+
+hiera configuration
+
+    # 11g
+    webtier_instances:
+      'ohs1':
+        action_name:           'create'
+        instance_name:         'ohs1'
+        log_output:            *logoutput
+
+    # 12.1.2
+      webtier_instances:
+        'ohs1':
+          action_name:           'create'
+          instance_name:         'ohs1'
+          machine_name:          'Node1'
 
 ##Types and providers
 
