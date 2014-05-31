@@ -645,12 +645,38 @@ when you set the defaults hiera variables
         log_output:              true
 
 
-    # FMW installation on top of WebLogic 12.12
+    # FMW installation on top of WebLogic 12.1.2
     fmw_installations:
       'webtier1212':
         version:                 1212 
         fmw_product:             "web"
         fmw_file1:               "ofm_ohs_linux_12.1.2.0.0_64_disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+
+    fmw_installations:
+      'webTierPS6':
+        fmw_product:             "web"
+        fmw_file1:               "ofm_webtier_linux_11.1.1.7.0_64_disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+
+    fmw_installations:
+      'wcPS7':
+        fmw_product:             "wc"
+        fmw_file1:               "ofm_wc_generic_11.1.1.8.0_disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+      'soaPS6':
+        fmw_product:             "soa"
+        fmw_file1:               "ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip"
+        fmw_file2:               "ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip"
+        log_output:              true
+        remote_file:             false
+      'wccPS7':
+        fmw_product:             "wcc"
+        fmw_file1:               "ofm_wcc_generic_11.1.1.8.0_disk1_1of2.zip"
+        fmw_file2:               "ofm_wcc_generic_11.1.1.8.0_disk1_2of2.zip"
         log_output:              true
         remote_file:             false
 

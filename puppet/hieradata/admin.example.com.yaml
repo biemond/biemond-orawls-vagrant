@@ -75,6 +75,11 @@ wls_setting_instances:
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:
+  # 'webTierPS6':
+  #   fmw_product:             "web"
+  #   fmw_file1:               "ofm_webtier_linux_11.1.1.7.0_64_disk1_1of1.zip"
+  #   log_output:              true
+  #   remote_file:             false
   # 'soaPS6':
   #   fmw_product:             "soa"
   #   fmw_file1:               "ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip"
