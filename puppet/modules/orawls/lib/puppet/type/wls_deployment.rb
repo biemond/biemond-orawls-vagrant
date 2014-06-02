@@ -61,9 +61,9 @@ module Puppet
         [
           /^((.*\/)?(.*)?)$/,
           [
-            [ :name        , name     ],
-            [ :domain      , optional ],
-            [ :cluster_name, identity ]
+            [ :name           , name     ],
+            [ :domain         , optional ],
+            [ :deployment_name, identity ]
           ]
         ],
         [
@@ -77,8 +77,15 @@ module Puppet
 
     parameter :name
     parameter :domain
-    property  :source
-    property  :status
-    property  :target 
+    parameter :deployment_name
+    parameter :localpath
+    property  :target
+    property  :targettype 
+    property  :moduletype
+    property  :deploymenttype
+    property  :applicationname
+    property  :versionidentifier
+
+
   end
 end
