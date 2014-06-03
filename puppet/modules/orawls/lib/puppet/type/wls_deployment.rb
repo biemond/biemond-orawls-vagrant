@@ -80,12 +80,9 @@ module Puppet
     parameter :deployment_name
     parameter :localpath
     property  :target
-    property  :targettype 
-    property  :moduletype
+    property  :targettype
     property  :deploymenttype
-    property  :applicationname
     property  :versionidentifier
-
 
   end
 end

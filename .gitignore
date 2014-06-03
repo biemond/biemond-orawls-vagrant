@@ -2,3 +2,5 @@
 *.zip
 *.jar
 .vagrant/*
+
+*.war

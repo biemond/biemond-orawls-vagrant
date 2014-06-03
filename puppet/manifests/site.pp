@@ -42,6 +42,9 @@ node 'admin.example.com' {
   include saf_imported_destination_objects
   include pack_domain
 
+  include library_deployments
+  include application_deployments
+
   Class[java] -> Class[orawls::weblogic]
 }  
 
@@ -477,8 +480,6 @@ class saf_imported_destination_objects {
   create_resources('wls_saf_imported_destination_object',$saf_imported_destination_object_instances, $default_params)
 }
 
-
-
 class pack_domain{
   require saf_imported_destination_objects
   $default_params = {}
@@ -486,4 +487,17 @@ class pack_domain{
   create_resources('orawls::packdomain',$pack_domain_instances, $default_params)
 }
 
+class library_deployments{
+  require pack_domain
+  $default_params = {}
+  $deployment_instances = hiera('deployment_library_instances', $default_params)
+  create_resources('wls_deployment',$deployment_instances, $default_params)
+}
+
+class application_deployments{
+  require library_deployments
+  $default_params = {}
+  $deployment_instances = hiera('deployment_application_instances', $default_params)
+  create_resources('wls_deployment',$deployment_instances, $default_params)
+}
 

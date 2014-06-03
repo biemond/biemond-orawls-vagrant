@@ -7,7 +7,7 @@ def quote(text):
         return ""
 
 f = open("/tmp/wlstScript.out", "w")
-print >>f, "name;applicationname;versionidentifier;deploymenttype;target;targettype;moduletype;domain"
+print >>f, "name;versionidentifier;deploymenttype;target;targettype;domain"
 
 domainConfig()
 
@@ -17,10 +17,8 @@ myapps=cmo.getAppDeployments()
 for appName in myapps:
   cd('/AppDeployments/'+appName.getName() ) 
 
-  app               = get('Name')
+  app               = get('ApplicationName')
   deploymenttype    = get('Type')
-  moduleType        = get('ModuleType')
-  applicationname   = get('ApplicationName')
   versionidentifier = get('VersionIdentifier')
 
   n = ls('/AppDeployments/'+appName.getName()+'/Targets')
@@ -34,7 +32,7 @@ for appName in myapps:
          cd('/AppDeployments/'+appName.getName()+'/Targets/'+token2)
          targetType.append(get('Type'))
 
-  print >>f, ";".join(map(quote, [domain+'/'+app,applicationname,versionidentifier,deploymenttype,','.join(target),','.join(targetType),moduleType,domain]))
+  print >>f, ";".join(map(quote, [domain+'/'+app,versionidentifier,deploymenttype,','.join(target),','.join(targetType),domain]))
 
 print 'libs'
 cd('/')
@@ -42,10 +40,8 @@ mylibs=cmo.getLibraries()
 for libName in mylibs:
   cd('/Libraries/'+libName.getName() ) 
 
-  lib               = get('Name')
+  lib               = get('ApplicationName')
   deploymenttype    = get('Type')
-  moduleType        = get('ModuleType')
-  applicationname   = get('ApplicationName')
   versionidentifier = get('VersionIdentifier')
 
   n = ls('/Libraries/'+libName.getName()+'/Targets')
@@ -59,7 +55,7 @@ for libName in mylibs:
          cd('/Libraries/'+libName.getName()+'/Targets/'+token2)
          targetType.append(get('Type'))
 
-  print >>f, ";".join(map(quote, [domain+'/'+lib,applicationname,versionidentifier,deploymenttype,','.join(target),','.join(targetType),moduleType,domain]))
+  print >>f, ";".join(map(quote, [domain+'/'+lib,versionidentifier,deploymenttype,','.join(target),','.join(targetType),domain]))
 
 
 f.close()

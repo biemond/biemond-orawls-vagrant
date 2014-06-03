@@ -137,8 +137,26 @@ control_instances:
 # create password file for WLST utility
 userconfig_instances:
   'Wls12c':
-     log_output:           *logoutput
-     user_config_dir:      '/home/wls'
+    log_output:           *logoutput
+    user_config_dir:      '/home/wls'
+
+deployment_library_instances:
+  'jersey-bundle':
+    ensure:            'present'
+    deploymenttype:    'Library'
+    versionidentifier: '1.18@1.18.0.0'
+    target:            'AdminServer,WebCluster'
+    targettype:        'Server,Cluster'
+    localpath:         '/vagrant/jersey-bundle-1.18.war'
+
+deployment_application_instances:
+  'webapp':
+    ensure:            'present'
+    deploymenttype:    'AppDeployment'
+    versionidentifier: '1.1@1.1.0.0'
+    target:            'WebCluster'
+    targettype:        'Cluster'
+    localpath:         '/vagrant/webapp.war'
 
 user_instances:
   'testuser1':
