@@ -20,6 +20,7 @@ Should work for Puppet 2.7 & 3.0
 
 ##Version updates
 
+- 1.0.8 RCU & Opatch fixes in combination with ruby 1.9.3
 - 1.0.7 Added unit tests and OPatch upgrade support without OCM registration
 - 1.0.6 Grid install and ASM support
 - 1.0.5 refactored installdb and support for oinstall groups
@@ -262,6 +263,7 @@ For opatchupgrade you need to provide the Oracle support csiNumber and supportId
     # for this example OPatch 14727310
     # the OPatch utility must be upgraded ( patch 6880880, see above)
     oradb::opatch{'14727310_db_patch':
+       ensure                 => 'present',
        oracleProductHome      => '/oracle/product/11.2/db',
        patchId                => '14727310',
        patchFile              => 'p14727310_112030_Linux-x86-64.zip',
