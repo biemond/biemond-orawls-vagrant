@@ -66,6 +66,7 @@ wls_setting_instances:
     connect_url:        "t3://10.10.10.10:7001"
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
+    post_classpath:     "/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar:/opt/oracle/wlsdomains/domains/Wls1036/lib/bb.jar"
   'domain2':
     user:               *wls_os_user
     weblogic_home_dir:  *wls_weblogic_home_dir
@@ -591,16 +592,29 @@ jms_subdeployment_instances:
 
 jms_topic_instances:
    'jmsClusterModule:Topic1':
-     ensure:            'present'
-     defaulttargeting:  '0'
-     distributed:       '1'
-     expirationpolicy:  'Discard'
-     jndiname:          'jms/Topic1'
-     redeliverydelay:   '2000'
-     redeliverylimit:   '2'
-     subdeployment:     'jmsServers'
-     timetodeliver:     '-1'
-     timetolive:        '300000'
+     ensure:               'present'
+     defaulttargeting:     '0'
+     distributed:          '1'
+     expirationpolicy:     'Discard'
+     jndiname:             'jms/Topic1'
+     redeliverydelay:      '2000'
+     redeliverylimit:      '2'
+     subdeployment:        'jmsServers'
+     timetodeliver:        '-1'
+     timetolive:           '300000'
+   'jmsClusterModule:Topic2':
+     ensure:               'present'
+     defaulttargeting:     '0'
+     distributed:          '1'
+     errordestinationtype: 'UniformDistributedQueues'
+     errordestination:     'ErrorQueue'
+     expirationpolicy:     'Redirect'
+     redeliverydelay:      '2000'
+     redeliverylimit:      '3'
+     jndiname:             'jms/Topic2'
+     subdeployment:        'jmsServers'
+     timetodeliver:        '-1'
+     timetolive:           '300000'
 
 safagent_instances:
     'jmsSAFAgent1':
