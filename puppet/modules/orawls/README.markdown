@@ -89,6 +89,7 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 ##Wls types and providers ( ensurable, create,modify,destroy ) + puppet resource
 
 - wls_setting, set the default wls parameters for the other types and also used by puppet resource
+- wls_domain
 - wls_deployment
 - wls_user
 - wls_group
@@ -1365,6 +1366,41 @@ It needs wls_setting and you need to create one for every domain. When domain is
         post_classpath:     "/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar"
       }
 
+###wls_domain
+
+it needs wls_setting and when domain is not provided it will use the 'default'. Probably you need to restart the AdminServer
+
+or use puppet resource wls_domain
+
+    wls_domain { 'default/Wls1036':
+      ensure                      => 'present',
+      jpa_default_provider        => 'org.eclipse.persistence.jpa.PersistenceProvider',
+      jta_max_transactions        => '20000',
+      jta_transaction_timeout     => '35',
+      log_file_min_size           => '5000',
+      log_filecount               => '5',
+      log_filename                => '/var/log/weblogic/Wls1036.log',
+      log_number_of_files_limited => '1',
+      log_rotate_logon_startup    => '1',
+      log_rotationtype            => 'bySize',
+      security_crossdomain        => '0',
+    }
+    wls_domain { 'domain2/Wls11g':
+      ensure                      => 'present',
+      jpa_default_provider        => 'org.apache.openjpa.persistence.PersistenceProviderImpl',
+      jta_max_transactions        => '10000',
+      jta_transaction_timeout     => '30',
+      log_file_min_size           => '5000',
+      log_filecount               => '10',
+      log_filename                => '/var/log/weblogic/Wls11g.log',
+      log_number_of_files_limited => '0',
+      log_rotate_logon_startup    => '0',
+      log_rotationtype            => 'byTime',
+      security_crossdomain        => '1',
+    }
+
+
+
 ###wls_deployment
 
 it needs wls_setting and when domain is not provided it will use the 'default'
@@ -1521,7 +1557,7 @@ in hiera
 
 it needs wls_setting and when domain is not provided it will use the 'default' and probably needs a reboot
 
-only control_flag is a property, the rest are parameters and only used with a create action
+only control_flag is a property, the rest are parameters and only used in a create action
 
 or use puppet resource wls_authentication_provider
 
@@ -1600,7 +1636,7 @@ in hiera
 
 ###wls_server
 
-it needs wls_setting and when domain is not provided it will use the 'default'
+it needs wls_setting and when domain is not provided it will use the 'default' and probably needs a reboot
 
 or use puppet resource wls_server
 

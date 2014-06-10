@@ -1,0 +1,38 @@
+# check the domain else we need to skip this (done in wls_access.rb)
+real_domain='<%= domain %>'
+
+name              = '<%= domain_name %>'
+
+edit()
+startEdit()
+
+try:
+
+	cd('/Log/'+name)
+	# cmo.setRotationType('bySize')
+	# cmo.setRotateLogOnStartup(true)
+	# cmo.setFileCount(5)
+	# cmo.setNumberOfFilesLimited(true)
+	# cmo.setFileName('/var/log/weblogic/Wls10361.log')
+	# cmo.setFileMinSize(500)
+
+	cd('/JTA/'+name)
+	# cmo.setMaxTransactions(20000)
+	# cmo.setTimeoutSeconds(31)
+
+	cd('/JPA/'+name)
+	# cmo.setDefaultJPAProvider('org.eclipse.persistence.jpa.PersistenceProvider')
+
+	cd('/SecurityConfiguration/'+name)
+	# cmo.setCrossDomainSecurityEnabled(false)
+
+    save()
+    activate()          
+    print "~~~~COMMAND SUCCESFULL~~~~"
+
+except:
+    print "Unexpected error:", sys.exc_info()[0]
+    undo('true','y')
+    stopEdit('y')
+    print "~~~~COMMAND FAILED~~~~"
+    raise

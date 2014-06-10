@@ -468,44 +468,34 @@ jms_module_instances:
      target:      'WebCluster'
      targettype:  'Cluster'
 
-foreign_server_instances:
-    'jmsClusterModule:AQForeignServer':
-        ensure:                'present'
-        defaulttargeting:      '1'
-        extraproperties:       'datasource'
-        extrapropertiesvalues: 'jdbc/hrDS'
-        initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
-    'jmsClusterModule:Jboss':
-        ensure:                'present'
-        connectionurl:         'remote://10.10.10.10:4447'
-        defaulttargeting:      '0'
-        extraproperties:       'java.naming.security.principal'
-        extrapropertiesvalues: 'jmsuser'
-        initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
-        subdeployment:         'wlsServers'
-        password:              'test'
+# create jms quotas for the jms module 
+jms_quota_instances:
+   'jmsClusterModule:QuotaBig':
+      ensure:           'present'
+      bytesmaximum:     '9223372036854775807'
+      messagesmaximum:  '9223372036854775807'
+      policy:           'FIFO'
+      shared:           '1'
+   'jmsClusterModule:QuotaLow':
+      ensure:           'present'
+      bytesmaximum:     '20000000000'
+      messagesmaximum:  '9223372036854775807'
+      policy:           'FIFO'
+      shared:           '0'
 
-foreign_server_object_instances:
-  'jmsClusterModule:Jboss:CF':
-      ensure:         'present'
-      localjndiname:  'jms/jboss/CF'
-      object_type:    'connectionfactory'
-      remotejndiname: 'jms/Remote/CF'
-  'jmsClusterModule:Jboss:JBossQ':
-      ensure:         'present'
-      localjndiname:  'jms/jboss/Queue'
-      object_type:    'destination'
-      remotejndiname: 'jms/Remote/Queue'
-  'jmsClusterModule:AQForeignServer:XAQueueCF':
-      ensure:         'present'
-      localjndiname:  'jms/XAQueueCF'
-      object_type:    'connectionfactory'
-      remotejndiname: 'XAQueueConnectionFactory'
-  'jmsClusterModule:AQForeignServer:TestQueue':
-      ensure:         'present'
-      localjndiname:  'jms/aq/TestQueue'
-      object_type:    'destination'
-      remotejndiname: 'Queues/TestQueue'
+jms_subdeployment_instances:
+   'jmsClusterModule:jmsServers':
+      ensure:     'present'
+      target:     'jmsServer1,jmsServer2'
+      targettype: 'JMSServer,JMSServer'
+   'jmsClusterModule:wlsServers':
+      ensure:     'present'
+      target:     'WebCluster'
+      targettype: 'Cluster'
+   'jmsClusterModule:safServers':
+      ensure:     'present'
+      target:     'jmsSAFAgent1,jmsSAFAgent2'
+      targettype: 'SAFAgent,SAFAgent'
 
 jms_connection_factory_instances:
   'jmsClusterModule:cf':
@@ -561,34 +551,6 @@ jms_queue_instances:
      timetodeliver:            '-1'
      timetolive:               '300000'
 
-# create jms quotas for the jms module 
-jms_quota_instances:
-   'jmsClusterModule:QuotaBig':
-      ensure:           'present'
-      bytesmaximum:     '9223372036854775807'
-      messagesmaximum:  '9223372036854775807'
-      policy:           'FIFO'
-      shared:           '1'
-   'jmsClusterModule:QuotaLow':
-      ensure:           'present'
-      bytesmaximum:     '20000000000'
-      messagesmaximum:  '9223372036854775807'
-      policy:           'FIFO'
-      shared:           '0'
-
-jms_subdeployment_instances:
-   'jmsClusterModule:jmsServers':
-      ensure:     'present'
-      target:     'jmsServer1,jmsServer2'
-      targettype: 'JMSServer,JMSServer'
-   'jmsClusterModule:wlsServers':
-      ensure:     'present'
-      target:     'WebCluster'
-      targettype: 'Cluster'
-   'jmsClusterModule:safServers':
-      ensure:     'present'
-      target:     'jmsSAFAgent1,jmsSAFAgent2'
-      targettype: 'SAFAgent,SAFAgent'
 
 jms_topic_instances:
    'jmsClusterModule:Topic1':
@@ -615,6 +577,47 @@ jms_topic_instances:
      subdeployment:        'jmsServers'
      timetodeliver:        '-1'
      timetolive:           '300000'
+
+foreign_server_instances:
+    'jmsClusterModule:AQForeignServer':
+        ensure:                'present'
+        defaulttargeting:      '1'
+        extraproperties:       'datasource'
+        extrapropertiesvalues: 'jdbc/hrDS'
+        initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
+    'jmsClusterModule:Jboss':
+        ensure:                'present'
+        connectionurl:         'remote://10.10.10.10:4447'
+        defaulttargeting:      '0'
+        extraproperties:       'java.naming.security.principal'
+        extrapropertiesvalues: 'jmsuser'
+        initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
+        subdeployment:         'wlsServers'
+        password:              'test'
+
+foreign_server_object_instances:
+  'jmsClusterModule:Jboss:CF':
+      ensure:         'present'
+      localjndiname:  'jms/jboss/CF'
+      object_type:    'connectionfactory'
+      remotejndiname: 'jms/Remote/CF'
+  'jmsClusterModule:Jboss:JBossQ':
+      ensure:         'present'
+      localjndiname:  'jms/jboss/Queue'
+      object_type:    'destination'
+      remotejndiname: 'jms/Remote/Queue'
+  'jmsClusterModule:AQForeignServer:XAQueueCF':
+      ensure:         'present'
+      localjndiname:  'jms/XAQueueCF'
+      object_type:    'connectionfactory'
+      remotejndiname: 'XAQueueConnectionFactory'
+  'jmsClusterModule:AQForeignServer:TestQueue':
+      ensure:         'present'
+      localjndiname:  'jms/aq/TestQueue'
+      object_type:    'destination'
+      remotejndiname: 'Queues/TestQueue'
+
+
 
 safagent_instances:
     'jmsSAFAgent1':
