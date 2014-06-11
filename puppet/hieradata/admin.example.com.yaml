@@ -514,7 +514,7 @@ jms_connection_factory_instances:
       transactiontimeout: '3600'
       xaenabled:          '1'
 
-jms_queue_instances:
+jms_queue_error_instances:
    'jmsClusterModule:ErrorQueue':
      ensure:                   'present'
      distributed:              '1'
@@ -526,6 +526,9 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '-1'
+
+
+jms_queue_instances:
    'jmsClusterModule:Queue1':
      ensure:                   'present'
      distributed:              '1'
@@ -551,6 +554,7 @@ jms_queue_instances:
      timetodeliver:            '-1'
      timetolive:               '300000'
 
+jms_topic_error_instances:
 
 jms_topic_instances:
    'jmsClusterModule:Topic1':

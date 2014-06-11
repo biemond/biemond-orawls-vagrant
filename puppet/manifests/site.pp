@@ -424,15 +424,30 @@ class jms_module_cfs{
   create_resources('wls_jms_connection_factory',$jms_connection_factory_instances, $default_params)
 }
 
-class jms_module_queues_objects{
+class jms_module_queues_error_objects{
   require jms_module_cfs
+  $default_params = {}
+  $jms_queue_instances = hiera('jms_queue_error_instances', {})
+  create_resources('wls_jms_queue',$jms_queue_instances, $default_params)
+}
+
+class jms_module_queues_objects{
+  require jms_module_queues_error_objects
   $default_params = {}
   $jms_queue_instances = hiera('jms_queue_instances', {})
   create_resources('wls_jms_queue',$jms_queue_instances, $default_params)
 }
 
-class jms_module_topics_objects{
+class jms_module_topics_error_objects{
   require jms_module_queues_objects
+  $default_params = {}
+  $jms_topic_instances = hiera('jms_topic_error_instances', {})
+  create_resources('wls_jms_topic',$jms_topic_instances, $default_params)
+}
+
+
+class jms_module_topics_objects{
+  require jms_module_topics_error_objects
   $default_params = {}
   $jms_topic_instances = hiera('jms_topic_instances', {})
   create_resources('wls_jms_topic',$jms_topic_instances, $default_params)

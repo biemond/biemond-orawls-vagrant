@@ -353,16 +353,15 @@ if soaEnabled == true:
     assign('JdbcSystemResource', 'EDNLocalTxDataSource', 'Target', SOAClusterName)
     assign('JdbcSystemResource', 'mds-soa'             , 'Target', SoaAdmin)
     assign('JdbcSystemResource', 'mds-owsm'            , 'Target', All)
+    assign('JdbcSystemResource', 'opssDataSource'      , 'Target', All)
     assign('JdbcSystemResource', 'SOADataSource'       , 'Target', SOAClusterName)
     assign('JdbcSystemResource', 'SOALocalTxDataSource', 'Target', SOAClusterName)
 
 if bamEnabled == true:
     assign('JdbcSystemResource', 'BAMDataSource'       , 'Target', BAMClusterName)
     assign('JdbcSystemResource', 'OraSDPMDataSource'   , 'Target', SoaBam)
-    assign('JdbcSystemResource', 'opssDataSource'      , 'Target', SoaBamAdmin)
 elif soaEnabled == true:
     assign('JdbcSystemResource', 'OraSDPMDataSource'   , 'Target', SOAClusterName)
-    assign('JdbcSystemResource', 'opssDataSource'      , 'Target', SoaAdmin)
 
 if osbEnabled == true:
     assign('JdbcSystemResource', 'wlsbjmsrpDataSource' , 'Target', OsbAdmin)
