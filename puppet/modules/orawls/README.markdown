@@ -63,6 +63,7 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - adminwls5 ( adminserver 10.3.6 + osb PS6 )
 
 ##Orawls WebLogic Features
+
 - [orawls::weblogic](#orawls::weblogic) installs WebLogic, version 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
 - [orawls::bsu](#orawls::bsu) apply a BSU patch on a Middleware home ( < 12.1.2 )
 - apply an OPatch on a Middleware home or a Oracle product home
@@ -75,7 +76,7 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - start or stop AdminServer, Managed or a Cluster
 - storeUserConfig for storing WebLogic Credentials and using in WLST
 
-###Fusion Middleware
+###Fusion Middleware Features
 - installs FMW software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
 - WebTier Oracle HTTP server
 - OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
@@ -85,7 +86,8 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - Change FMW log location of a managed server
 - Resource Adapter plan and entries for AQ, DB and JMS
 
-##Wls types and providers ( ensurable, create,modify,destroy ) + puppet resource
+##Wls types and providers
+ensurable -> create,modify,destroy + puppet resource support
 
 - [wls_setting](#wls_setting), set the default wls parameters for the other types and also used by puppet resource
 - [wls_domain](#wls_domain)
