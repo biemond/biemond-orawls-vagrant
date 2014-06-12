@@ -79,14 +79,14 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
 
 ###Fusion Middleware Features
-- installs FMW software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
-- WebTier Oracle HTTP server
-- OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
-- ADF/JRF support, Assign JRF libraries to a Server or Cluster target
-- OIM IDM / OAM configurations with Oracle OHS OAM WebGate
-- OUD Oracle Unified Directory install, WebLogic domain, instances creation & OUD control
-- Change FMW log location of a managed server
-- Resource Adapter plan and entries for AQ, DB and JMS
+- installs [FMW](#fmw) software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
+- [WebTier](#webtier) Oracle HTTP server
+- [OSB, SOA Suite](#fmwcluster) ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
+- [ADF/JRF support](#fmwclusterjrf), Assign JRF libraries to a Server or Cluster target
+- [OIM IDM](#oimconfig) / OAM configurations with Oracle OHS OAM WebGate
+- [OUD](#instance) OUD Oracle Unified Directory install, WebLogic domain, instances creation & [OUD control](#oud_control)
+- [Change FMW log](#fmwlogdir) location of a managed server
+- [Resource Adapter](#resourceadapter) plan and entries for AQ, DB and JMS
 
 ##Wls types and providers
 ensurable -> create,modify,destroy + puppet resource support
@@ -1329,7 +1329,7 @@ __orawls::oud::instance__ Configure OUD (Oracle Unified Directory) ldap instance
         oud_ldapsPort:              2636
         log_output:                 *logoutput
 
-###oud control
+###oud_control
 __orawls::oud::control__ Stop or start an OUD (Oracle Unified Directory) ldap instance
 
     $default_params = {}
