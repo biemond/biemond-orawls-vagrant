@@ -65,17 +65,17 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 
 ##Orawls WebLogic Features
 
-- [orawls::weblogic](#weblogic) installs WebLogic, version 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
-- [orawls::bsu](#orawls::bsu) apply a BSU patch on a Middleware home ( < 12.1.2 )
-- apply an OPatch on a Middleware home or a Oracle product home
-- creates a WebLogic domain
-- pack a WebLogic domain
-- copy a WebLogic domain to a other node with SSH, unpack and enroll to a nodemanager
+- [Installs WebLogic](#weblogic), version 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
+- [Apply a BSU patch](#bsu) on a Middleware home ( < 12.1.2 )
+- [Apply a OPatch](#opatch) on a Middleware home ( >= 12.1.2 ) or a Oracle product home
+- [Create a WebLogic domain](#domain)
+- [Pack a WebLogic domain](#pack)
+- [Copy a WebLogic domain](#copydomain) to a other node with SSH, unpack and enroll to a nodemanager
 - Java Secure Socket Extension (JSSE) support
 - Custom Identity and Trust Store support
-- startup the nodemanager
-- start or stop AdminServer, Managed or a Cluster
-- storeUserConfig for storing WebLogic Credentials and using in WLST
+- [Startup a nodemanager](#nodemanager)
+- [start or stop AdminServer, Managed or a Cluster](#control)
+- [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
 
 ###Fusion Middleware Features
 - installs FMW software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
@@ -415,7 +415,7 @@ common.yaml
 ##WebLogic Module Usage
 
 ###weblogic
-orawls::weblogic installs WebLogic 10.3.[0-6], 12.1.1 or 12.1.2  
+__orawls::weblogic__ installs WebLogic 10.3.[0-6], 12.1.1 or 12.1.2  
 these settings works for wls_121200.jar when you want to install the 12.1.2 FMW infra version  
 use fmw_infra_121200.jar as filename and set fmw_infra parameter to true  
 
@@ -471,8 +471,8 @@ vagrantcentos64.example.com.yaml
 
 
 
-###orawls::opatch 
-apply an OPatch on a Middleware home or a Oracle product home
+###opatch 
+__orawls::opatch__ apply an OPatch on a Middleware home or a Oracle product home
 
     orawls::opatch {'16175470':
       ensure                  => "present",
@@ -535,9 +535,8 @@ or when you set the defaults hiera variables
          patch_file:               "p16175470_121200_Generic.zip"
         
 
-
-###orawls::bsu 
-apply or remove a WebLogic BSU Patch ( ensure = present or absent )
+###bsu 
+__orawls::bsu__ apply or remove a WebLogic BSU Patch ( ensure = present or absent )
 
     orawls::bsu {'BYJ1':
       ensure                  => "present",
@@ -601,8 +600,8 @@ or when you set the defaults hiera variables
          log_output:              false
 
 
-###orawls::fmw 
-install FMW add-on to a middleware home like OSB,SOA Suite, WebTier (HTTP Server), Oracle Identity Management, Web Center + Content
+###fmw 
+__orawls::fmw__ installs FMW software (add-on) to a middleware home like OSB,SOA Suite, WebTier (HTTP Server), Oracle Identity Management, Web Center + Content
 
 
     # fmw_product = adf|soa|osb|wcc|wc|oim|web|webgate
@@ -704,8 +703,8 @@ when you set the defaults hiera variables
         remote_file:             false
 
 
-###orawls::domain 
-creates WebLogic a standard | OSB or SOA Suite WebLogic Domain  
+###domain 
+__orawls::domain__ creates WebLogic domain like a standard | OSB or SOA Suite | ADF | WebCenter | OIM or OAM or OUD   
 
 optional override the default server arguments in the domain.py template with java_arguments parameter  
 
@@ -837,8 +836,8 @@ or with custom identity and custom truststore
         custom_identity_privatekey_passphrase: 'welcome'
 
 
-###orawls::packdomain 
-pack a WebLogic Domain and add this to the download folder
+###packdomain 
+__orawls::packdomain__ pack a WebLogic Domain and add this to the download folder
 
     $default_params = {}
     $pack_domain_instances = hiera('pack_domain_instances', {})
@@ -851,8 +850,8 @@ pack a WebLogic Domain and add this to the download folder
          log_output:               *logoutput
 
 
-###orawls::copydomain 
-copies a WebLogic domain with SSH or from a share, unpack and enroll to a nodemanager
+###copydomain 
+__orawls::copydomain__ copies a WebLogic domain with SSH or from a share, unpack and enroll to a nodemanager
 
 
 Configuration with Hiera ( need to have puppet > 3.0 )    
@@ -884,8 +883,8 @@ when you just have one WebLogic domain on a server
          log_output:              *logoutput
     
 
-###orawls::nodemanager 
-start the nodemanager of a WebLogic Domain or Middleware Home
+###nodemanager 
+__orawls::nodemanager__ start the nodemanager of a WebLogic Domain or Middleware Home
 
     orawls::nodemanager{'nodemanager12c':
       version                    => 1212, # 1036|1111|1211|1212
@@ -970,8 +969,8 @@ or with custom identity and custom truststore
 
 
 
-###orawls::control 
-start or stops the AdminServer,Managed Server or a Cluster of a WebLogic Domain
+###control 
+__orawls::control__ start or stops the AdminServer,Managed Server or a Cluster of a WebLogic Domain
 
     orawls::control{'startWLSAdminServer12c':
       domain_name                => "Wls12c",
@@ -1080,8 +1079,8 @@ when you just have one WebLogic domain on a server
 
 
 
-###orawls::urandomfix 
-Linux low on entropy or urandom fix can cause certain operations to be very slow. Encryption operations need entropy to ensure randomness. Entropy is generated by the OS when you use the keyboard, the mouse or the disk.
+###urandomfix 
+__orawls::urandomfix__ Linux low on entropy or urandom fix can cause certain operations to be very slow. Encryption operations need entropy to ensure randomness. Entropy is generated by the OS when you use the keyboard, the mouse or the disk.
 
 If an encryption operation is missing entropy it will wait until enough is generated.
 
@@ -1091,8 +1090,8 @@ three options
 -  set -Djava.security.egd=file:/dev/./urandom param 
 
 
-###orawls::storeuserconfig 
-Creates WLST user config for WLST , this way you don't need to know the weblogic password.
+###storeuserconfig 
+__orawls::storeuserconfig__ Creates WLST user config for WLST , this way you don't need to know the weblogic password.
 when you set the defaults hiera variables
 
     orawls::storeuserconfig{'Wls12c':
@@ -1140,8 +1139,8 @@ when you just have one WebLogic domain on a server
          log_output:           true
          user_config_dir:      '/home/oracle'
 
-###orawls::fmwlogdir 
-Change a log folder location of a FMW server  
+###fmwlogdir 
+__orawls::fmwlogdir__ Change a log folder location of a FMW server  
 when you set the defaults hiera variables
 
     orawls::fmwlogdir{'AdminServer':
@@ -1175,8 +1174,8 @@ or when you set the defaults hiera variables
 
 
 
-###orawls::resourceadapter 
-Add a Resource adapter plan for Aq ,DB or JMS with some entries  
+###resourceadapter 
+__orawls::resourceadapter__ Add a Resource adapter plan for Aq ,DB or JMS with some entries  
 when you set the defaults hiera variables
  
     $default_params = {}
@@ -1213,8 +1212,8 @@ or when you set the defaults hiera variables
         adapter_entry_value:       'jdbc/hrDS'
 
 
-### orawls::utils::fmwcluster
-convert existing cluster to a osb or soa suite cluster (BPM is optional) and also convert BAM to a BAM cluster  
+###fmwcluster
+__orawls::utils::fmwcluster__ convert existing cluster to a osb or soa suite cluster (BPM is optional) and also convert BAM to a BAM cluster  
 see this for an example https://github.com/biemond/biemond-orawls-vagrant-solaris-soa  
 you need to create a osb, soa or bam cluster with some managed servers first 
 for the osb or soa suite managed servers make sure to set the coherence arguments parameters  
@@ -1238,8 +1237,8 @@ hiera configuration
          soa_enabled:          true
          osb_enabled:          true
 
-### orawls::utils::fmwclusterjrf
-convert existing cluster to a ADF/JRF cluster
+###fmwclusterjrf
+__orawls::utils::fmwclusterjrf__ convert existing cluster to a ADF/JRF cluster
 you need to create a wls cluster with some managed servers first
 
     $default_params = {}
@@ -1254,8 +1253,8 @@ hiera configuration
          jrf_target_name:      "WebCluster"
          log_output:           *logoutput
 
-### orawls::utils::webtier
-add an OHS instance to a WebLogic Domain and in the Enterprise Manager, optional with OHS OAM Webgate
+###webtier
+__orawls::utils::webtier__ add an OHS instance to a WebLogic Domain and in the Enterprise Manager, optional with OHS OAM Webgate
 
     $default_params = {}
     $webtier_instances = hiera('webtier_instances', {})
@@ -1278,8 +1277,8 @@ hiera configuration
           instance_name:         'ohs1'
           machine_name:          'Node1'
 
-### orawls::utils::oimconfig
-Configure OIM , oim server, design or remote configuration
+###oimconfig
+__orawls::utils::oimconfig__ Configure OIM , oim server, design or remote configuration
 
     $default_params = {}
     $oimconfig_instances = hiera('oimconfig_instances', $default_params)
@@ -1300,8 +1299,8 @@ Configure OIM , oim server, design or remote configuration
         repository_prefix:          "DEV"
         repository_password:        "Welcome01"
 
-### orawls::oud::instance
-Configure OUD (Oracle Unified Directory) ldap instance
+###instance
+__orawls::oud::instance__ Configure OUD (Oracle Unified Directory) ldap instance
 
     $default_params = {}
     $oudconfig_instances = hiera('oudconfig_instances', $default_params)
@@ -1329,8 +1328,8 @@ Configure OUD (Oracle Unified Directory) ldap instance
         oud_ldapsPort:              2636
         log_output:                 *logoutput
 
-### orawls::oud::control
-Stop or start an OUD (Oracle Unified Directory) ldap instance
+###oud control
+__orawls::oud::control__ Stop or start an OUD (Oracle Unified Directory) ldap instance
 
     $default_params = {}
     $oud_control_instances = hiera('oud_control_instances', $default_params)
