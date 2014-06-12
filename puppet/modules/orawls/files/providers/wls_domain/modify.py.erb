@@ -17,9 +17,9 @@ log_number_of_files_limited = <%= log_number_of_files_limited %>
 
 def formatBoolean(value):
   if value == 1:
-    return 'True'
+    return true
   else:
-    return 'False'    
+    return false    
 
 print "start edit"
 
@@ -35,10 +35,7 @@ try:
       cmo.setRotationType(log_rotationtype)
     if log_rotate_logon_startup:
       print "change log 2 " + str(log_rotate_logon_startup)
-      if log_rotate_logon_startup == 1:
-        cmo.setRotateLogOnStartup(true)
-      else:
-        cmo.setRotateLogOnStartup(false)  
+      cmo.setRotateLogOnStartup(formatBoolean(log_rotate_logon_startup))
     if log_filecount:
       print "change log 3" + str(log_filecount)
       cmo.setFileCount(int(log_filecount))

@@ -281,22 +281,6 @@ else you can use $source =>
 
 when the files are also accesiable locally then you can also set $remote_file => false this will not move the files to the download folder, just extract or install 
 
-###orawls module Files folder  
-you need to download all the Oracle binaries and agree to the Oracle (Developer) License
-
-WebLogic 11g:
-- wls1036_generic.jar
-
-WebLogic 11g BSU patches: 
-- p17071663_1036_Generic.zip
-
-WebLogic 12.1.2:
-- wls_121200.jar
-- fmw_infra_121200.jar
-
-WebLogic 12.1.2 OPatch:
-- p16175470_121200_Generic.zip
-
 ##WebLogic requirements
 
 Operating System settings like User, Group, ULimits and kernel parameters requirements
