@@ -1,7 +1,24 @@
 # check the domain else we need to skip this (done in wls_access.rb)
 real_domain='<%= domain %>'
 
-name              = '<%= domain_name %>'
+name                        = '<%= domain_name %>'
+jta_transaction_timeout     = <%= jta_transaction_timeout %>
+jta_max_transactions        = <%= jta_max_transactions %>
+jpa_default_provider        = '<%= jpa_default_provider %>'
+security_crossdomain        = <%= security_crossdomain %>
+log_file_min_size           = <%= log_file_min_size %>
+log_filecount               = <%= log_filecount %>
+log_rotate_logon_startup    = <%= log_rotate_logon_startup %>
+log_filename                = '<%= log_filename %>'
+log_rotationtype            = '<%= log_rotationtype %>'
+log_number_of_files_limited = <%= log_number_of_files_limited %>
+
+def formatBoolean(value):
+    if value == 1:
+        return 'True'
+    else:
+        return 'False'    
+
 
 edit()
 startEdit()
@@ -9,22 +26,32 @@ startEdit()
 try:
 
 	cd('/Log/'+name)
-	# cmo.setRotationType('bySize')
-	# cmo.setRotateLogOnStartup(true)
-	# cmo.setFileCount(5)
-	# cmo.setNumberOfFilesLimited(true)
-	# cmo.setFileName('/var/log/weblogic/Wls10361.log')
-	# cmo.setFileMinSize(500)
+    if log_rotationtype:
+	  cmo.setRotationType(log_rotationtype)
+    if log_rotate_logon_startup:
+	  cmo.setRotateLogOnStartup(formatBoolean(log_rotate_logon_startup))
+    if log_filecount:
+	  cmo.setFileCount(log_filecount)
+    if log_number_of_files_limited:
+	  cmo.setNumberOfFilesLimited(formatBoolean(log_number_of_files_limited))
+    if log_filename:
+	  cmo.setFileName(log_filename)
+    if log_file_min_size:
+	  cmo.setFileMinSize(int(log_file_min_size))
 
 	cd('/JTA/'+name)
-	# cmo.setMaxTransactions(20000)
-	# cmo.setTimeoutSeconds(31)
+    if jta_transaction_timeout:
+      cmo.setTimeoutSeconds(int(jta_transaction_timeout))
+    if jta_max_transactions:  	
+	  cmo.setMaxTransactions(int(jta_max_transactions))
 
 	cd('/JPA/'+name)
-	# cmo.setDefaultJPAProvider('org.eclipse.persistence.jpa.PersistenceProvider')
+    if jpa_default_provider:
+	  cmo.setDefaultJPAProvider(jpa_default_provider)
 
 	cd('/SecurityConfiguration/'+name)
-	# cmo.setCrossDomainSecurityEnabled(false)
+	if security_crossdomain:
+	  cmo.setCrossDomainSecurityEnabled(formatBoolean(security_crossdomain)
 
     save()
     activate()          

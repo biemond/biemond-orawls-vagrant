@@ -15,6 +15,7 @@ node 'admin.example.com' {
   include opatch
   include domains
   include nodemanager, startwls, userconfig
+  include wls_domains
   include users
   include groups
   include machines
@@ -294,8 +295,15 @@ class userconfig{
   create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
 } 
 
-class users{
+class wls_domains{
   require userconfig
+  $default_params = {}
+  $wls_domain_instances = hiera('wls_domain_instances', {})
+  create_resources('wls_domain',$wls_domain_instances, $default_params)
+}
+
+class users{
+  require wls_domains
   $default_params = {}
   $user_instances = hiera('user_instances', {})
   create_resources('wls_user',$user_instances, $default_params)

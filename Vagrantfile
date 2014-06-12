@@ -34,7 +34,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       puppet.module_path       = "puppet/modules"
       puppet.manifest_file     = "site.pp"
 
-      puppet.options           = "--verbose --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
+      puppet.options           = "--verbose --debug --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
 
       #puppet.options           = "--verbose --debug --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
   

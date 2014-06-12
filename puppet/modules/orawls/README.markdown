@@ -88,8 +88,8 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 
 ##Wls types and providers ( ensurable, create,modify,destroy ) + puppet resource
 
-- wls_setting, set the default wls parameters for the other types and also used by puppet resource
-- wls_domain
+- [wls_setting](#wls_setting), set the default wls parameters for the other types and also used by puppet resource
+- [wls_domain](#wls_domain)
 - wls_deployment
 - wls_user
 - wls_group
@@ -1345,9 +1345,9 @@ Stop or start an OUD (Oracle Unified Directory) ldap instance
 
 It needs wls_setting and you need to create one for every domain. When domain is not provided on the type it will use the default entry.
 
-###wls_setting, required for all the weblogic type/providers
+###wls_setting
 
-
+required for all the weblogic type/providers
 
       wls_setting { 'default':
         user               => 'oracle',
@@ -1372,7 +1372,7 @@ it needs wls_setting and when domain is not provided it will use the 'default'. 
 
 or use puppet resource wls_domain
 
-    wls_domain { 'default/Wls1036':
+    wls_domain { 'Wls1036':
       ensure                      => 'present',
       jpa_default_provider        => 'org.eclipse.persistence.jpa.PersistenceProvider',
       jta_max_transactions        => '20000',
@@ -1398,6 +1398,39 @@ or use puppet resource wls_domain
       log_rotationtype            => 'byTime',
       security_crossdomain        => '1',
     }
+
+in hiera
+
+    require userconfig
+    $default_params = {}
+    $wls_domain_instances = hiera('wls_domain_instances', {})
+    create_resources('wls_domain',$wls_domain_instances, $default_params)
+
+    wls_domain_instances:
+      'Wls1036':
+        ensure:                      'present'
+        jpa_default_provider:        'org.eclipse.persistence.jpa.PersistenceProvider'
+        jta_max_transactions:        '20000'
+        jta_transaction_timeout:     '35'
+        log_file_min_size:           '5000'
+        log_filecount:               '5'
+        log_filename:                '/var/log/weblogic/Wls1036.log'
+        log_number_of_files_limited: '1'
+        log_rotate_logon_startup:    '1'
+        log_rotationtype:            'bySize'
+        security_crossdomain:        '0'
+      'domain2/Wls11g':
+        ensure:                      'present'
+        jpa_default_provider:        'org.apache.openjpa.persistence.PersistenceProviderImpl'
+        jta_max_transactions:        '10000'
+        jta_transaction_timeout:     '30'
+        log_file_min_size:           '5000'
+        log_filecount:               '10'
+        log_filename:                '/var/log/weblogic/Wls11g.log'
+        log_number_of_files_limited: '0'
+        log_rotate_logon_startup:    '0'
+        log_rotationtype:            'byTime'
+        security_crossdomain:        '1'
 
 
 
