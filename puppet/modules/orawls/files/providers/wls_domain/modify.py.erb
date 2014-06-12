@@ -31,16 +31,22 @@ try:
     print "change log"
     cd('/Log/'+name)
     if log_rotationtype:
+      print "change log 1"
       cmo.setRotationType(log_rotationtype)
     if log_rotate_logon_startup:
-      cmo.setRotateLogOnStartup(formatBoolean(log_rotate_logon_startup))
+      print "change log 2"
+      # cmo.setRotateLogOnStartup( formatBoolean(log_rotate_logon_startup) )
     if log_filecount:
+      print "change log 3"
       cmo.setFileCount(int(log_filecount))
     if log_number_of_files_limited:
+      print "change log 4"
       cmo.setNumberOfFilesLimited(int(log_number_of_files_limited))
     if log_filename:
+      print "change log 5"
       cmo.setFileName(log_filename)
     if log_file_min_size:
+      print "change log 6"
       cmo.setFileMinSize(int(log_file_min_size))
 
     print "change jta"
