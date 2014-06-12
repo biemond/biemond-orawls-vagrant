@@ -63,8 +63,8 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - adminwls5 ( adminserver 10.3.6 + osb PS6 )
 
 ##Orawls WebLogic Features
-- [installs WebLogic](#orawls::weblogic) 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
-- [apply a BSU patch](#orawls::bsu) on a Middleware home ( < 12.1.2 )
+- [orawls::weblogic](#orawls::weblogic) installs WebLogic, version 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
+- [orawls::bsu](#orawls::bsu) apply a BSU patch on a Middleware home ( < 12.1.2 )
 - apply an OPatch on a Middleware home or a Oracle product home
 - creates a WebLogic domain
 - pack a WebLogic domain
