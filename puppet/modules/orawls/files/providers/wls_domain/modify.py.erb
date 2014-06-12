@@ -1,6 +1,8 @@
 # check the domain else we need to skip this (done in wls_access.rb)
 real_domain='<%= domain %>'
 
+print "modify domain"
+
 name                        = '<%= domain_name %>'
 jta_transaction_timeout     = <%= jta_transaction_timeout %>
 jta_max_transactions        = <%= jta_max_transactions %>
@@ -19,40 +21,46 @@ def formatBoolean(value):
     else:
         return 'False'    
 
+print "start edit"
 
 edit()
 startEdit()
 
 try:
 
-	cd('/Log/'+name)
+    print "change log"
+    cd('/Log/'+name)
     if log_rotationtype:
-	  cmo.setRotationType(log_rotationtype)
+      cmo.setRotationType(log_rotationtype)
     if log_rotate_logon_startup:
-	  cmo.setRotateLogOnStartup(formatBoolean(log_rotate_logon_startup))
+      cmo.setRotateLogOnStartup(formatBoolean(log_rotate_logon_startup))
     if log_filecount:
-	  cmo.setFileCount(log_filecount)
+      cmo.setFileCount(int(log_filecount))
     if log_number_of_files_limited:
-	  cmo.setNumberOfFilesLimited(formatBoolean(log_number_of_files_limited))
+      cmo.setNumberOfFilesLimited(int(log_number_of_files_limited))
     if log_filename:
-	  cmo.setFileName(log_filename)
+      cmo.setFileName(log_filename)
     if log_file_min_size:
-	  cmo.setFileMinSize(int(log_file_min_size))
+      cmo.setFileMinSize(int(log_file_min_size))
 
-	cd('/JTA/'+name)
+    print "change jta"
+    cd('/JTA/'+name)
     if jta_transaction_timeout:
       cmo.setTimeoutSeconds(int(jta_transaction_timeout))
-    if jta_max_transactions:  	
-	  cmo.setMaxTransactions(int(jta_max_transactions))
+    if jta_max_transactions:    
+      cmo.setMaxTransactions(int(jta_max_transactions))
 
-	cd('/JPA/'+name)
+    print "change jpa"
+    cd('/JPA/'+name)
     if jpa_default_provider:
-	  cmo.setDefaultJPAProvider(jpa_default_provider)
+      cmo.setDefaultJPAProvider(jpa_default_provider)
 
-	cd('/SecurityConfiguration/'+name)
-	if security_crossdomain:
-	  cmo.setCrossDomainSecurityEnabled(formatBoolean(security_crossdomain)
+    print "change security"
+    cd('/SecurityConfiguration/'+name)
+    if security_crossdomain:
+      cmo.setCrossDomainSecurityEnabled(formatBoolean(security_crossdomain))
 
+    print "save"
     save()
     activate()          
     print "~~~~COMMAND SUCCESFULL~~~~"

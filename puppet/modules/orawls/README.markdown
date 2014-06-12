@@ -63,9 +63,8 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - adminwls5 ( adminserver 10.3.6 + osb PS6 )
 
 ##Orawls WebLogic Features
-
-- installs WebLogic 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
-- apply a BSU patch on a Middleware home ( < 12.1.2 )
+- [installs WebLogic](#orawls::weblogic) 10g,11g,12c( 12.1.1 & 12.1.2 + FMW infra )
+- [apply a BSU patch](#orawls::bsu) on a Middleware home ( < 12.1.2 )
 - apply an OPatch on a Middleware home or a Oracle product home
 - creates a WebLogic domain
 - pack a WebLogic domain
@@ -77,7 +76,7 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - storeUserConfig for storing WebLogic Credentials and using in WLST
 
 ###Fusion Middleware
-- installs FMW add-on to a middleware home like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
+- installs FMW software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
 - WebTier Oracle HTTP server
 - OSB, SOA Suite ( with BPM ) and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
 - ADF/JRF support, Assign JRF libraries to a Server or Cluster target
@@ -90,33 +89,33 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 
 - [wls_setting](#wls_setting), set the default wls parameters for the other types and also used by puppet resource
 - [wls_domain](#wls_domain)
-- wls_deployment
-- wls_user
-- wls_group
-- wls_authentication_provider
-- wls_machine
-- wls_server
-- wls_server_channel
-- wls_cluster
-- wls_virtual_host
-- wls_workmanager_constraint
-- wls_workmanager
-- wls_datasource
-- wls_file_persistence_store
-- wls_jmsserver
-- wls_safagent
-- wls_jms_module
-- wls_jms_quota
-- wls_jms_subdeployment
-- wls_jms_queue
-- wls_jms_topic
-- wls_jms_connection_factory
-- wls_saf_remote_context
-- wls_saf_error_handler
-- wls_saf_imported_destination
-- wls_saf_imported_destination_object
-- wls_foreign_server
-- wls_foreign_server_object
+- [wls_deployment](#wls_deployment)
+- [wls_domain](#wls_domain)
+- [wls_user](#wls_user)
+- [wls_authentication_provider](#wls_authentication_provider)
+- [wls_machine](#wls_machine)
+- [wls_server](#wls_server)
+- [wls_server_channel](#wls_server_channel)
+- [wls_cluster](#wls_cluster)
+- [wls_virtual_host](#wls_virtual_host)
+- [wls_workmanager_constraint](#wls_workmanager_constraint)
+- [wls_workmanager](#wls_workmanager)
+- [wls_datasource](#wls_datasource)
+- [wls_file_persistence_store](#wls_file_persistence_store)
+- [wls_jmsserver](#wls_jmsserver)
+- [wls_safagent](#wls_safagent)
+- [wls_jms_module](#wls_jms_module)
+- [wls_jms_quota](#wls_jms_quota)
+- [wls_jms_subdeployment](#wls_jms_subdeployment)
+- [wls_jms_queue](#wls_jms_queue)
+- [wls_jms_topic](#wls_jms_topic)
+- [wls_jms_connection_factory](#wls_jms_connection_factory)
+- [wls_saf_remote_context](#wls_saf_remote_context)
+- [wls_saf_error_handler](#wls_saf_error_handler)
+- [wls_saf_imported_destination](#wls_saf_imported_destination)
+- [wls_saf_imported_destination_object](#wls_saf_imported_destination_object)
+- [wls_foreign_server](#wls_foreign_server)
+- [wls_foreign_server_object](#wls_foreign_server_object)
 
 
 ##Domain creation options (Dev or Prod mode)
