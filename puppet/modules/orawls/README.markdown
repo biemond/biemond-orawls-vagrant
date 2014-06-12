@@ -71,8 +71,9 @@ Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box 
 - [Create a WebLogic domain](#domain)
 - [Pack a WebLogic domain](#pack)
 - [Copy a WebLogic domain](#copydomain) to a other node with SSH, unpack and enroll to a nodemanager
-- Java Secure Socket Extension (JSSE) support
-- Custom Identity and Trust Store support
+- [JSSE](#Java Secure Socket Extension support) Java Secure Socket Extension support
+- [Custom Identity and Trust Store support](#Enterprise security with Custom Identity and Trust store)
+- [Linux low on entropy or urandom fix](#Linux low on entropy or urandom fix)
 - [Startup a nodemanager](#nodemanager)
 - [start or stop AdminServer, Managed or a Cluster](#control)
 - [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
@@ -173,7 +174,7 @@ or hiera parameters of weblogic.pp
     orawls::weblogic::wls_domains_dir:      *wls_domains_dir
     orawls::weblogic::wls_apps_dir:         *wls_apps_dir
 
-##Java Secure Socket Extension (JSSE) support 
+##Java Secure Socket Extension support 
 
 Requires the JDK 7 or 8 JCE extension 
 
@@ -264,7 +265,7 @@ can cause certain operations to be very slow. Encryption operations need entropy
 If an encryption operation is missing entropy it will wait until enough is generated.
 
 three options  
--  use rngd service (use this orawls::urandomfix class)  
+-  use rngd service (include __orawls::urandomfix__ class)  
 -  set java.security in JDK ( jre/lib/security in my jdk7 module )  
 -  set -Djava.security.egd=file:/dev/./urandom param 
 
@@ -836,7 +837,7 @@ or with custom identity and custom truststore
         custom_identity_privatekey_passphrase: 'welcome'
 
 
-###packdomain 
+###pack 
 __orawls::packdomain__ pack a WebLogic Domain and add this to the download folder
 
     $default_params = {}
