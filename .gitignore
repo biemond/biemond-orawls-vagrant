@@ -4,3 +4,5 @@
 .vagrant/*
 
 *.war
+
+*.lock
