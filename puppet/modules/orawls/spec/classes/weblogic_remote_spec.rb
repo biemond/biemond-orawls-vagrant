@@ -70,6 +70,45 @@ describe 'orawls::weblogic', :type => :class do
  
   end
 
+  describe "weblogic domains params" do
+    let(:params){{
+                  :version              => 1036,
+                  :download_dir         => '/install',
+                  :filename             => 'wls1036_generic.jar',
+                  :os_user              => 'oracle',
+                  :os_group             => 'dba',
+                  :middleware_home_dir  => '/opt/oracle/middleware11gR1',
+                  :oracle_base_home_dir => '/opt/oracle', 
+                  :jdk_home_dir         => '/usr/java/jdk1.7.0_45',
+                  :remote_file          => true,
+                  :source               => 'puppet:///middleware',
+                  :temp_directory       => '/data',
+                  :wls_domains_dir      => '/opt/oracle/wlsdomains/domains',
+                  :wls_apps_dir         => '/opt/oracle/wlsdomains/applications',
+                }}
+    let(:facts) {{ :operatingsystem => 'CentOS' ,
+                   :kernel          => 'Linux',
+                   :osfamily        => 'RedHat' }}
+
+
+    describe "WebLogic structure" do
+      it do 
+        should contain_orawls__utils__structure("weblogic structure 1036").with({
+             'oracle_base_home_dir' => '/opt/oracle',
+             'ora_inventory_dir'    => '/opt/oracle/oraInventory',
+             'os_group'             => 'dba',
+             'os_user'              => 'oracle',
+             'download_dir'         => '/install',
+             'wls_domains_dir'      => '/opt/oracle/wlsdomains/domains',
+             'wls_apps_dir'         => '/opt/oracle/wlsdomains/applications',
+           })
+      end
+    end
+
+
+  end
+
+
   describe "weblogic local install" do
     let(:params){{
                   :version              => 1036,
