@@ -10,6 +10,7 @@ module EasyType
   class Daemon
     SUCCESS_SYNC_STRING = /~~~~COMMAND SUCCESFULL~~~~/
     FAILED_SYNC_STRING = /~~~~COMMAND FAILED~~~~/
+    TIMEOUT = 120 # wait 2 minutes
 
     @@daemons = {}
     #
@@ -42,11 +43,12 @@ module EasyType
     # ,return the string '~~~~COMMAND SUCCESFULL~~~~'. If it failed, return the string '~~~~COMMAND FAILED~~~~'
     #
     #
-    def sync
+    def sync( &proc)
       @stdout.each_line do |line|
         Puppet.debug "#{line}"
         break if line =~ SUCCESS_SYNC_STRING
         fail 'command in deamon failed.' if line =~ FAILED_SYNC_STRING
+        proc.call(line) if proc
       end
     end
 

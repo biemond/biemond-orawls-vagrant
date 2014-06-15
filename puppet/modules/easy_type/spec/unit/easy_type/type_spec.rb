@@ -19,7 +19,7 @@ describe EasyType::Type do
     Puppet::Type.rmtype(:test)
   end
 
-  subject { Puppet::Type::Test.new(:name => 'test') }
+  subject { Puppet::Type::Test.new(:name => 'test/name') }
 
 
   describe ".on_create" do
@@ -63,6 +63,117 @@ describe EasyType::Type do
 
   end
 
+
+  describe ".map_title_to_attribues" do
+
+    before do
+      module Puppet
+        class Type
+          class Test
+            newparam(:second_name) do
+              isnamevar
+            end
+          end
+        end
+      end
+    end
+
+    context 'passing symbols' do
+
+      before do
+        module Puppet
+          class Type
+            class Test
+              map_title_to_attributes(:name, :second_name) do
+                /^(.*)\/(.*)$/
+              end
+            end
+          end
+        end
+      end
+
+      it "adds a class method title_patterns" do
+        expect( subject.class.title_patterns).to eql([[/^(.*)\/(.*)$/, [[:name, nil], [:second_name, nil]]]])
+      end
+    end
+
+    context 'passing strings' do
+
+      before do
+        module Puppet
+          class Type
+            class Test
+              map_title_to_attributes('name', 'second_name') do
+                /^(.*)\/(.*)$/
+              end
+            end
+          end
+        end
+      end
+
+      it "adds a class method title_patterns" do
+        expect( subject.class.title_patterns).to eql([[/^(.*)\/(.*)$/, [[:name, nil], [:second_name, nil]]]])
+      end
+    end
+
+
+    context 'passing a Array with an Array' do
+
+
+      before do
+
+        module Kernel
+
+          def a_proc
+            @@a_prox ||= lambda {|x| x}
+          end
+        end
+
+        module Puppet
+          class Type
+            class Test
+              map_title_to_attributes('name', [:second_name, a_proc] ) do
+                /^(.*)\/(.*)$/
+              end
+            end
+          end
+        end
+      end
+
+      it "adds a class method title_patterns containing the proc" do
+        expect( subject.class.title_patterns).to eql([[/^(.*)\/(.*)$/, [[:name, nil], [:second_name, a_proc]]]])
+      end
+    end
+
+
+    context 'passing a Array with an Hash' do
+
+
+      before do
+
+        module Kernel
+
+          def a_proc
+            @@a_prox ||= lambda {|x| x}
+          end
+        end
+
+        module Puppet
+          class Type
+            class Test
+              map_title_to_attributes('name', :second_name => a_proc ) do
+                /^(.*)\/(.*)$/
+              end
+            end
+          end
+        end
+      end
+
+      it "adds a class method title_patterns containing the proc" do
+        expect( subject.class.title_patterns).to eql([[/^(.*)\/(.*)$/, [[:name, nil], [:second_name, a_proc]]]])
+      end
+    end
+  end
 
   describe ".on_modify" do
 
