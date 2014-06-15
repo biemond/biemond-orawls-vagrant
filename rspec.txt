@@ -5,7 +5,6 @@ sudo gem install bundler
 sudo yum -y install gcc ruby-devel rubygems libxml2 libxslt-devel
 
 cd /etc/puppet/modules/orawls/
-cd /etc/puppet/modules/oradb/
 
 bundle install --without development
 
