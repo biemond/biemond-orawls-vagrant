@@ -36,7 +36,7 @@ module Puppet
 
     parameter :domain
     parameter :name
-    parameter :domain_name
+    parameter :weblogic_domain_name
     property  :jta_transaction_timeout
     property  :jta_max_transactions
     property  :jpa_default_provider
@@ -79,7 +79,7 @@ module Puppet
           [
             [ :name        , name     ],
             [ :domain      , optional ],
-            [ :domain_name , identity ]
+            [ :weblogic_domain_name , identity ]
           ]
         ],
         [

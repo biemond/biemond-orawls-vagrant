@@ -45,9 +45,46 @@ module Puppet
     property  :targettype
     property  :constraintvalue
 
-    map_title_to_attributes(:name, [:domain, parse_domain_title], :workmanager_constraint_name) do 
-     /^((.*\/)?(.*)?)$/
+    # map_title_to_attributes(:name, [:domain, parse_domain_title], :workmanager_constraint_name) do 
+    #  /^((.*\/)?(.*)?)$/
+    # end
+    def self.title_patterns
+      # possible values for /^((.*\/)?(.*):(.*)?)$/
+      # default/server1:channel1 with this as regex outcome 
+      #    default/server1:channel1  default/ server1 channel1
+      # server1:channel1 with this as regex outcome
+      #    server1  nil  server1 channel1
+      identity  = lambda {|x| x}
+      name      = lambda {|x| 
+          if x.include? "/"
+            x            # it contains a domain
+          else
+            'default/'+x # add the default domain
+          end
+        }
+      optional  = lambda{ |x| 
+          if x.nil?
+            'default' # when not found use default
+          else
+            x[0..-2]  # remove the last char / from domain name
+          end
+        }
+      [
+        [
+          /^((.*\/)?(.*)?)$/,
+          [
+            [ :name                       , name     ],
+            [ :domain                     , optional ],
+            [ :workmanager_constraint_name, identity ]
+          ]
+        ],
+        [
+          /^([^=]+)$/,
+          [
+            [ :name, identity ]
+          ]
+        ]
+      ]
     end
-
   end
 end
