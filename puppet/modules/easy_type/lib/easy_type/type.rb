@@ -117,16 +117,24 @@ module EasyType
 
 
       #
-      # easy way to map parts of a title to one of the attributes and properties
-      # `puppet/type/type_name/parameter_name, or in the shared directory `puppet/type/shared`
+      # easy way to map parts of a title to one of the attributes and properties. 
       #
       # @example
-      # map_title_to_attributes(/^((.*\/)?(.*):(.*)?)$/) do
-      #   [:name,:domain, :jmsmodule, :queue_name]
+      # map_title_to_attributes([:name,:domain, :jmsmodule, :queue_name]) do
+      #  /^((.*\/)?(.*):(.*)?)$/) 
       # end
       #
-      # @param [Regexp] regexp the regular expression to map parts of the title
-      # @yield yields an array containing the symbols idetifying the parameters an properties to use
+      # @param [Array] an array containing the symbols idetifying the parameters an properties to use
+      # @yield yields regexp the regular expression to map parts of the title.
+      #
+      # You can also pass a Hash as one of the entries in the array. The key mus be the field to map to
+      # and the value mus be a closure (Proc or a Lambda) to manage the value
+      #
+      # @example
+      # default_name = lambda {| name| name.nil? ? 'default' : name}
+      # map_title_to_attributes([:name -> default_name,:domain, :jmsmodule, :queue_name]) do
+      #  /^((.*\/)?(.*):(.*)?)$/) 
+      # end
       #
       def map_title_to_attributes(*attributes)
         attribute_array = attributes.map  do | attr| 
@@ -220,6 +228,21 @@ module EasyType
         end
       end
 
+      #
+      # retuns the string needed to start the creation of an sql type
+      #
+      # @example
+      #  newtype(:oracle_user) do
+      #
+      #    on_refresh do
+      #      # restart the server
+      #    end
+      #
+      # @param [Method] block The code to be run on getting a notification
+      #
+      def on_notify(&block)
+        define_method(:refresh, &block) if block
+      end
 
       # @private
       def eigenclass

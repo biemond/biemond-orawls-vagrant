@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require 'open3'
+require 'timeout'
 
 module EasyType
   #
@@ -10,7 +11,7 @@ module EasyType
   class Daemon
     SUCCESS_SYNC_STRING = /~~~~COMMAND SUCCESFULL~~~~/
     FAILED_SYNC_STRING = /~~~~COMMAND FAILED~~~~/
-    TIMEOUT = 120 # wait 2 minutes
+    TIMEOUT = 60 # wait 60 seconds as default
 
     @@daemons = {}
     #
@@ -20,14 +21,28 @@ module EasyType
       daemon_for(identity) if daemonized?(identity)
     end
 
-    # @nodoc
-    def initialize(identifier, command, user)
+    ##
+    # Initialize a command daemon. In the command daemon, the specified command is run in a daemon process.
+    # The specified command must readiths commands from stdi and output any results from stdout.
+    # A daemon proces must be identified by an identifier string. If you want to run multiple daemon processes,
+    # say for connecting to an other, you can use a different name. 
+    #
+    # If you want to run the daemon as an other user, you can specify a user name, the process will run under.
+    # This must be an existing user.
+    # 
+    # Checkout sync on how to sync the output. You can specify a timeout value to have the daemon read's
+    # timed out if it dosen't get an expected answer within that time.
+    #
+    #
+    #
+    def initialize(identifier, command, user, timeout = TIMEOUT)
       if @@daemons[identifier]
         return @@daemons[identifier]
       else
         initialize_daemon(user, command)
         @identifier = identifier
         @@daemons[identifier] = self
+        @timeout = timeout
       end
     end
 
@@ -44,7 +59,8 @@ module EasyType
     #
     #
     def sync( &proc)
-      @stdout.each_line do |line|
+      while true do
+        line = timed_readline
         Puppet.debug "#{line}"
         break if line =~ SUCCESS_SYNC_STRING
         fail 'command in deamon failed.' if line =~ FAILED_SYNC_STRING
@@ -53,6 +69,14 @@ module EasyType
     end
 
     private
+
+    def timed_readline
+      Timeout.timeout(@timeout) do
+        @stdout.readline
+      end
+      rescue Timeout::Error
+        fail "timeout on reading expected output from daemon process."
+    end
 
     # @nodoc
     def self.daemonized?(identity)
