@@ -300,6 +300,27 @@ class wls_domains{
   $default_params = {}
   $wls_domain_instances = hiera('wls_domain_instances', {})
   create_resources('wls_domain',$wls_domain_instances, $default_params)
+
+  wls_adminserver{'Wls1036:AdminServer':
+    ensure                    => 'running',   #running|start|abort|stop 
+    server_name               => hiera('domain_adminserver'),
+    domain_name               => hiera('domain_name'),
+    domain_path               => "/opt/oracle/wlsdomains/domains/Wls1036",
+    os_user                   => hiera('wls_os_user'),
+    weblogic_home_dir         => hiera('wls_weblogic_home_dir'),
+    weblogic_user             => hiera('wls_weblogic_user'),
+    weblogic_password         => hiera('domain_wls_password'),
+    jdk_home_dir              => hiera('wls_jdk_home_dir'),
+    nodemanager_address       => hiera('domain_adminserver_address'),
+    nodemanager_port          => hiera('domain_nodemanager_port'),
+    jsse_enabled              => hiera('wls_jsse_enabled'),
+    custom_trust              => hiera('wls_custom_trust'),
+    trust_keystore_file       => hiera('wls_trust_keystore_file'),
+    trust_keystore_passphrase => hiera('wls_trust_keystore_passphrase'),
+    refreshonly => true,
+    subscribe   => Wls_domain['Wls1036'],
+  }
+
 }
 
 class users{
@@ -335,6 +356,22 @@ class managed_servers{
   $default_params = {}
   $server_instances = hiera('server_instances', {})
   create_resources('wls_server',$server_instances, $default_params)
+
+  # wls_managedserver{'Wls1036:JMSServer1':
+  #   ensure                    => 'running',   #running|start|abort|stop 
+  #   target                    => 'Server', #Server|Cluster
+  #   server_name               => 'JMSServer1',
+  #   domain_name               => hiera('domain_name'),
+  #   os_user                   => hiera('wls_os_user'),
+  #   weblogic_home_dir         => hiera('wls_weblogic_home_dir'),
+  #   weblogic_user             => hiera('wls_weblogic_user'),
+  #   weblogic_password         => hiera('domain_wls_password'),
+  #   jdk_home_dir              => hiera('wls_jdk_home_dir'),
+  #   adminserver_address       => hiera('domain_adminserver_address'),
+  #   adminserver_port          => hiera('domain_adminserver_port'),
+  #   require                   => Wls_server['JMSServer1'],
+  # }
+
 }
 
 class managed_servers_channels{

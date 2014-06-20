@@ -148,7 +148,7 @@ wls_domain_instances:
     jta_max_transactions:        '20000'
     jta_transaction_timeout:     '35'
     log_file_min_size:           '5000'
-    log_filecount:               '5'
+    log_filecount:               '10'
     log_filename:                '/var/log/weblogic/Wls1036.log'
     log_number_of_files_limited: '1'
     log_rotate_logon_startup:    '1'
@@ -342,6 +342,24 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+  # 'JMSServer1':
+  #   ensure:                                'present'
+  #   arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/JMSServer1.out -Dweblogic.Stderr=/var/log/weblogic/JMSServer1_err.out'
+  #   listenaddress:                         '10.10.10.10'
+  #   listenport:                            '8001'
+  #   logfilename:                           '/var/log/weblogic/JMSServer1.log'
+  #   machine:                               'LocalMachine'
+  #   sslenabled:                            '1'
+  #   ssllistenport:                         '8002'
+  #   sslhostnameverificationignored:        '1'
+  #   jsseenabled:                           '1' 
+  #   trust_keystore_file:                   *wls_trust_keystore_file
+  #   trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+  #   custom_identity:                       '1'
+  #   custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
+  #   custom_identity_keystore_passphrase:   'welcome'
+  #   custom_identity_alias:                 'admin'
+  #   custom_identity_privatekey_passphrase: 'welcome'
 
 server_channel_instances:
   'wlsServer1:Channel-Cluster':
