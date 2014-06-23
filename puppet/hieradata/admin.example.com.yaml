@@ -269,10 +269,21 @@ machines_instances:
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
 
+server_vm_args_permsize:      &server_vm_args_permsize     '-XX:PermSize=256m' 
+server_vm_args_max_permsize:  &server_vm_args_max_permsize '-XX:MaxPermSize=256m' 
+server_vm_args_memory:        &server_vm_args_memory       '-Xms752m' 
+server_vm_args_max_memory:    &server_vm_args_max_memory   '-Xmx752m' 
+
 server_instances:
   'wlsServer1':
     ensure:                                'present'
-    arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+    arguments:
+           - *server_vm_args_permsize
+           - *server_vm_args_max_permsize
+           - *server_vm_args_memory
+           - *server_vm_args_max_memory
+           - '-Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out'
+           - '-Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
     listenaddress:                         '10.10.10.100'
     listenport:                            '8001'
     logfilename:                           '/var/log/weblogic/wlsServer1.log'
@@ -290,7 +301,13 @@ server_instances:
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
   'wlsServer2':
     ensure:                                'present'
-    arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
+    arguments:
+           - *server_vm_args_permsize
+           - *server_vm_args_max_permsize
+           - *server_vm_args_memory
+           - *server_vm_args_max_memory
+           - '-Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out'
+           - '-Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
     listenport:                            '8001'
     logfilename:                           '/var/log/weblogic/wlsServer2.log'
     machine:                               'Node2'
@@ -342,24 +359,6 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
-  # 'JMSServer1':
-  #   ensure:                                'present'
-  #   arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/JMSServer1.out -Dweblogic.Stderr=/var/log/weblogic/JMSServer1_err.out'
-  #   listenaddress:                         '10.10.10.10'
-  #   listenport:                            '8001'
-  #   logfilename:                           '/var/log/weblogic/JMSServer1.log'
-  #   machine:                               'LocalMachine'
-  #   sslenabled:                            '1'
-  #   ssllistenport:                         '8002'
-  #   sslhostnameverificationignored:        '1'
-  #   jsseenabled:                           '1' 
-  #   trust_keystore_file:                   *wls_trust_keystore_file
-  #   trust_keystore_passphrase:             *wls_trust_keystore_passphrase
-  #   custom_identity:                       '1'
-  #   custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
-  #   custom_identity_keystore_passphrase:   'welcome'
-  #   custom_identity_alias:                 'admin'
-  #   custom_identity_privatekey_passphrase: 'welcome'
 
 server_channel_instances:
   'wlsServer1:Channel-Cluster':
