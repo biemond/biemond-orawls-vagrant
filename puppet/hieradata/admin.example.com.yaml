@@ -167,6 +167,44 @@ wls_domain_instances:
     log_rotationtype:            'byTime'
     security_crossdomain:        '1'
 
+wls_adminserver_instances:
+  'AdminServer_Wls1036':
+    ensure:                    'running' 
+    server_name:               *domain_adminserver
+    domain_name:               *domain_name
+    domain_path:               "/opt/oracle/wlsdomains/domains/Wls1036"
+    os_user:                   *wls_os_user
+    weblogic_home_dir:         *wls_weblogic_home_dir
+    weblogic_user:             *wls_weblogic_user 
+    weblogic_password:         *domain_wls_password
+    jdk_home_dir:              '/usr/java/latest'
+    nodemanager_address:       *domain_adminserver_address
+    nodemanager_port:          *domain_nodemanager_port
+    jsse_enabled:              true
+    custom_trust:              *wls_custom_trust
+    trust_keystore_file:       *wls_trust_keystore_file
+    trust_keystore_passphrase: *wls_trust_keystore_passphrase
+    refreshonly:               true
+    subscribe:                 Wls_domain[Wls1036]
+  'AdminServer_Wls11g':
+    ensure:                    'running' 
+    server_name:               *domain_adminserver
+    domain_name:               'Wls11g'
+    domain_path:               "/opt/oracle/wlsdomains/domains/Wls11g"
+    os_user:                   *wls_os_user
+    weblogic_home_dir:         *wls_weblogic_home_dir
+    weblogic_user:             *wls_weblogic_user 
+    weblogic_password:         *domain_wls_password
+    jdk_home_dir:              '/usr/java/latest'
+    nodemanager_address:       *domain_adminserver_address
+    nodemanager_port:          7011
+    jsse_enabled:              true
+    custom_trust:              *wls_custom_trust
+    trust_keystore_file:       *wls_trust_keystore_file
+    trust_keystore_passphrase: *wls_trust_keystore_passphrase
+    refreshonly:               true
+    subscribe:                 Wls_domain[domain2/Wls11g]
+
 deployment_library_instances:
   # 'jersey-bundle':
   #   ensure:            'present'
@@ -436,7 +474,9 @@ cluster_instances:
     # migrationbasis:             'database'
     # migration_datasource:       'jmsDS'
     # migration_table_name:       'ACTIVE'
-    servers:                    'wlsServer1,wlsServer2'
+    servers:
+      - 'wlsServer1'
+      - 'wlsServer2'
     # datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
@@ -464,8 +504,12 @@ datasource_instances:
       initialcapacity:             '2'
       jndinames:                   'jdbc/hrDS,jdbc/hrDS2'
       maxcapacity:                 '15'
-      target:                      'wlsServer1,wlsServer2'
-      targettype:                  'Server,Server'
+      target:
+        - 'wlsServer1'
+        - 'wlsServer2'
+      targettype:
+        - 'Server'
+        - 'Server'
       testtablename:               'SQL SELECT 1 FROM DUAL'
       url:                         "jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com"
       user:                        'hr'
@@ -539,8 +583,12 @@ jms_quota_instances:
 jms_subdeployment_instances:
    'jmsClusterModule:jmsServers':
       ensure:     'present'
-      target:     'jmsServer1,jmsServer2'
-      targettype: 'JMSServer,JMSServer'
+      target:     
+        - 'jmsServer1'
+        - 'jmsServer2'
+      targettype: 
+        - 'JMSServer'
+        - 'JMSServer'
    'jmsClusterModule:wlsServers':
       ensure:     'present'
       target:     'WebCluster'
