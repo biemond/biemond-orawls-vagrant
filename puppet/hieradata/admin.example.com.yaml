@@ -210,8 +210,12 @@ deployment_library_instances:
   #   ensure:            'present'
   #   deploymenttype:    'Library'
   #   versionidentifier: '1.18@1.18.0.0'
-  #   target:            'AdminServer,WebCluster'
-  #   targettype:        'Server,Cluster'
+  #   target:
+  #     - 'AdminServer'
+  #     - 'WebCluster'
+  #   targettype:
+  #     - 'Server'
+  #     - 'Cluster'
   #   localpath:         '/vagrant/jersey-bundle-1.18.war'
 
 deployment_application_instances:
@@ -219,8 +223,10 @@ deployment_application_instances:
   #   ensure:            'present'
   #   deploymenttype:    'AppDeployment'
   #   versionidentifier: '1.1@1.1.0.0'
-  #   target:            'WebCluster'
-  #   targettype:        'Cluster'
+  #   target:
+  #     - 'WebCluster'
+  #   targettype:
+  #     - 'Cluster'
   #   localpath:         '/vagrant/webapp.war'
 
 user_instances:
@@ -255,19 +261,23 @@ group_instances:
     authenticationprovider: 'DefaultAuthenticator'
     description:            'My TestGroup'
     realm:                  'myrealm'
-    users:                  'testuser1,testuser2'
+    users:
+      - 'testuser1'
+      - 'testuser2'
   'SuperUsers':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
     description:            'SuperUsers'
     realm:                  'myrealm'
-    users:                  'testuser2'
+    users:                  
+      - 'testuser2'
   'domain2/TestGroup':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
     description:            'SuperUsers'
     realm:                  'myrealm'
-    users:                  'testuser3'
+    users:                  
+      - 'testuser3'
 
 authentication_provider_instances:
   # 'ldap':
@@ -483,7 +493,9 @@ cluster_instances:
   'domain2/WebCluster':
     ensure:                     'present'
     migrationbasis:             'consensus'
-    servers:                    'wlsServer1,wlsServer2'
+    servers:
+      - 'wlsServer1'
+      - 'wlsServer2'
     messagingmode:              'unicast'
 
 virtual_host_instances:
@@ -492,17 +504,25 @@ virtual_host_instances:
    channel:            'HTTP'
    target:             'WebCluster'
    targettype:         'Cluster'
-   virtual_host_names: 'admin.example.com,10.10.10.10'
+   virtual_host_names: 
+     - 'admin.example.com'
+     - '10.10.10.10'
 
 datasource_instances:
     'hrDS':
       ensure:                      'present'
       drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
-      extraproperties:             'SendStreamAsBlob,oracle.net.CONNECT_TIMEOUT'
-      extrapropertiesvalues:       'true,10000'
+      extraproperties:             
+        - 'SendStreamAsBlob'
+        - 'oracle.net.CONNECT_TIMEOUT'
+      extrapropertiesvalues:       
+        - 'true'
+        - '10000'
       globaltransactionsprotocol:  'TwoPhaseCommit'
       initialcapacity:             '2'
-      jndinames:                   'jdbc/hrDS,jdbc/hrDS2'
+      jndinames:                   
+        - 'jdbc/hrDS'
+        - 'jdbc/hrDS2'
       maxcapacity:                 '15'
       target:
         - 'wlsServer1'
@@ -520,10 +540,15 @@ datasource_instances:
       drivername:                  'com.mysql.jdbc.Driver'
       globaltransactionsprotocol:  'None'
       initialcapacity:             '0'
-      jndinames:                   'jmsDS'
+      jndinames:                   
+        - 'jmsDS'
       maxcapacity:                 '15'
-      target:                      'wlsServer1,wlsServer2'
-      targettype:                  'Server,Server'
+      target:
+        - 'wlsServer1'
+        - 'wlsServer2'
+      targettype:
+        - 'Server'
+        - 'Server'
       testtablename:               'SQL SELECT 1'
       url:                         'jdbc:mysql://10.10.10.10:3306/jms'
       user:                        'jms'
@@ -534,36 +559,48 @@ file_persistence_store_instances:
   'jmsFile1':
     ensure:         'present'
     directory:      'persistence1'
-    target:         'wlsServer1'
-    targettype:     'Server'
+    target:         
+      - 'wlsServer1'
+    targettype:     
+      - 'Server'
   'jmsFile2':
     ensure:         'present'
     directory:      'persistence2'
-    target:         'wlsServer2'
-    targettype:     'Server'
+    target:         
+      - 'wlsServer2'
+    targettype:
+      - 'Server'
   'jmsFileSAFAgent1':
     ensure:         'present'
     directory:      'persistenceSaf1'
-    target:         'wlsServer1'
-    targettype:     'Server'
+    target:
+      - 'wlsServer1'
+    targettype:
+      - 'Server'
 
 jmsserver_instances:
    'jmsServer1':
      ensure:              'present'
-     target:              'wlsServer1'
-     targettype:          'Server'
+     target:              
+       - 'wlsServer1'
+     targettype:
+       - 'Server'
      persistentstore:     'jmsFile1'
      persistentstoretype: 'FileStore'
    'jmsServer2':
      ensure:              'present'
-     target:              'wlsServer2'
-     targettype:          'Server'
+     target:              
+       - 'wlsServer2'
+     targettype:
+       - 'Server'
 
 jms_module_instances:
    'jmsClusterModule':
      ensure:      'present'
-     target:      'WebCluster'
-     targettype:  'Cluster'
+     target:
+       - 'WebCluster'
+     targettype:
+       - 'Cluster'
 
 # create jms quotas for the jms module 
 jms_quota_instances:
@@ -591,12 +628,18 @@ jms_subdeployment_instances:
         - 'JMSServer'
    'jmsClusterModule:wlsServers':
       ensure:     'present'
-      target:     'WebCluster'
-      targettype: 'Cluster'
+      target:
+        - 'WebCluster'
+      targettype:
+        - 'Cluster'
    'jmsClusterModule:safServers':
       ensure:     'present'
-      target:     'jmsSAFAgent1,jmsSAFAgent2'
-      targettype: 'SAFAgent,SAFAgent'
+      target:     
+        - 'jmsSAFAgent1'
+        - 'jmsSAFAgent2'
+      targettype:
+        - 'SAFAgent'
+        - 'SAFAgent'
 
 jms_connection_factory_instances:
   'jmsClusterModule:cf':
@@ -687,15 +730,19 @@ foreign_server_instances:
     'jmsClusterModule:AQForeignServer':
         ensure:                'present'
         defaulttargeting:      '1'
-        extraproperties:       'datasource'
-        extrapropertiesvalues: 'jdbc/hrDS'
+        extraproperties:       
+          - 'datasource'
+        extrapropertiesvalues: 
+          - 'jdbc/hrDS'
         initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
     'jmsClusterModule:Jboss':
         ensure:                'present'
         connectionurl:         'remote://10.10.10.10:4447'
         defaulttargeting:      '0'
-        extraproperties:       'java.naming.security.principal'
-        extrapropertiesvalues: 'jmsuser'
+        extraproperties:       
+          - 'java.naming.security.principal'
+        extrapropertiesvalues: 
+          - 'jmsuser'
         initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
         subdeployment:         'wlsServers'
         password:              'test'
@@ -725,18 +772,22 @@ foreign_server_object_instances:
 
 
 safagent_instances:
-    'jmsSAFAgent1':
-          ensure:              'present'
-          target:              'wlsServer1'
-          targettype:          'Server'
-          servicetype:         'Sending-only'
-          persistentstore:     'jmsFileSAFAgent1'
-          persistentstoretype: 'FileStore'
-    'jmsSAFAgent2':
-          ensure:              'present'
-          target:              'wlsServer2'
-          targettype:          'Server'
-          servicetype:         'Both'
+  'jmsSAFAgent1':
+      ensure:              'present'
+      target:
+        - 'wlsServer1'
+      targettype:
+        - 'Server'
+      servicetype:         'Sending-only'
+      persistentstore:     'jmsFileSAFAgent1'
+      persistentstoretype: 'FileStore'
+  'jmsSAFAgent2':
+      ensure:              'present'
+      target:
+        - 'wlsServer2'
+      targettype:
+        - 'Server'
+      servicetype:         'Both'
 
 saf_error_handler_instances:
   'jmsClusterModule:ErrorHandling-0':
@@ -748,20 +799,20 @@ saf_error_handler_instances:
      logformat:        '%header%%properties%'
 
 saf_imported_destination_instances:
-    'jmsClusterModule:SAFImportedDestinations-1':
-      ensure:               'present'
-      defaulttargeting:     '1'
-      jndiprefix:           'saf2_'
-      remotecontext:        'RemoteSAFContext-1'
-    'jmsClusterModule:SAFImportedDestinations-0':
-      ensure:               'present'
-      defaulttargeting:     '0'
-      subdeployment:        'safServers'
-      errorhandling:        'ErrorHandling-1'
-      jndiprefix:           'saf_'
-      remotecontext:        'RemoteSAFContext-0'
-      timetolivedefault:    '100000000'
-      usetimetolivedefault: '1'
+  'jmsClusterModule:SAFImportedDestinations-1':
+    ensure:               'present'
+    defaulttargeting:     '1'
+    jndiprefix:           'saf2_'
+    remotecontext:        'RemoteSAFContext-1'
+  'jmsClusterModule:SAFImportedDestinations-0':
+    ensure:               'present'
+    defaulttargeting:     '0'
+    subdeployment:        'safServers'
+    errorhandling:        'ErrorHandling-1'
+    jndiprefix:           'saf_'
+    remotecontext:        'RemoteSAFContext-0'
+    timetolivedefault:    '100000000'
+    usetimetolivedefault: '1'
 
 saf_imported_destination_object_instances:
   'jmsClusterModule:SAFImportedDestinations-0:SAFDemoQueue':
@@ -797,27 +848,35 @@ workmanager_instances:
     maxthreadsconstraint:  'MaxThreadsConstraint'
     minthreadsconstraint:  'MinThreadsConstraint'
     stuckthreads:          '0'
-    target:                'WebCluster'
-    targettype:            'Cluster'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
 
 workmanager_constraint_instances:
   'CapacityConstraint':
     ensure:          'present'
     constraintvalue: '20'
-    target:          'WebCluster'
-    targettype:      'Cluster'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
     constrainttype:  'Capacity'
   'MaxThreadsConstraint':
     ensure:          'present'
     constraintvalue: '4'
-    target:          'WebCluster'
-    targettype:      'Cluster'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
     constrainttype:  'MaxThreadsConstraint'
   'MinThreadsConstraint':
     ensure:          'present'
     constraintvalue: '2'
-    target:          'WebCluster'
-    targettype:      'Cluster'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
     constrainttype:  'MinThreadsConstraint'
 
 
