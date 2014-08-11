@@ -137,7 +137,7 @@ control_instances:
 
 # create password file for WLST utility
 userconfig_instances:
-  'Wls12c':
+  'Wls11g':
     log_output:           *logoutput
     user_config_dir:      '/home/wls'
 
