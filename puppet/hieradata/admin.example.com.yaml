@@ -67,7 +67,7 @@ wls_setting_instances:
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
     post_classpath:     "/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar:/opt/oracle/wlsdomains/domains/Wls1036/lib/bb.jar"
-  'domain2':
+  'Wls11gSetting':
     user:               *wls_os_user
     weblogic_home_dir:  *wls_weblogic_home_dir
     connect_url:        "t3://10.10.10.10:7011"
@@ -141,6 +141,8 @@ userconfig_instances:
     log_output:           *logoutput
     user_config_dir:      '/home/wls'
 
+# this will change some domain parameters and will not create or destroy a new domain
+# use orawls::domain to create a new domain
 wls_domain_instances:
   'Wls1036':
     ensure:                      'present'
@@ -154,7 +156,7 @@ wls_domain_instances:
     log_rotate_logon_startup:    '1'
     log_rotationtype:            'bySize'
     security_crossdomain:        '0'
-  'domain2/Wls11g':
+  'Wls11gSetting/Wls11g':
     ensure:                      'present'
     jpa_default_provider:        'org.apache.openjpa.persistence.PersistenceProviderImpl'
     jta_max_transactions:        '10000'
@@ -167,6 +169,7 @@ wls_domain_instances:
     log_rotationtype:            'byTime'
     security_crossdomain:        '1'
 
+# subscribe on a domain change and restart the adminserver
 wls_adminserver_instances:
   'AdminServer_Wls1036':
     ensure:                    'running' 
@@ -203,7 +206,7 @@ wls_adminserver_instances:
     trust_keystore_file:       *wls_trust_keystore_file
     trust_keystore_passphrase: *wls_trust_keystore_passphrase
     refreshonly:               true
-    subscribe:                 Wls_domain[domain2/Wls11g]
+    subscribe:                 Wls_domain[Wls11gSetting/Wls11g]
 
 deployment_library_instances:
   # 'jersey-bundle':
@@ -248,7 +251,7 @@ user_instances:
     authenticationprovider: 'DefaultAuthenticator'
     realm:                  'myrealm'
     description:            'my test user'
-  'domain2/testuser3':
+  'Wls11gSetting/testuser3':
     ensure:                 'present'
     password:               'weblogic1'
     authenticationprovider: 'DefaultAuthenticator'
@@ -271,7 +274,7 @@ group_instances:
     realm:                  'myrealm'
     users:                  
       - 'testuser2'
-  'domain2/TestGroup':
+  'Wls11gSetting/TestGroup':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
     description:            'SuperUsers'
@@ -304,13 +307,13 @@ machines_instances:
     listenport:     '5556'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
-  'domain2/Node1':
+  'Wls11gSetting/Node1':
     ensure:         'present'
     listenaddress:  '10.10.10.100'
     listenport:     '5557'
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
-  'domain2/Node2':
+  'Wls11gSetting/Node2':
     ensure:         'present'
     listenaddress:  '10.10.10.200'
     listenport:     '5557'
@@ -381,7 +384,7 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
-  'domain2/wlsServer1':
+  'Wls11gSetting/wlsServer1':
     ensure:                                'present'
     arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
     listenaddress:                         '10.10.10.100'
@@ -399,7 +402,7 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
-  'domain2/wlsServer2':
+  'Wls11gSetting/wlsServer2':
     ensure:                                'present'
     arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
     listenport:                            '8005'
@@ -490,7 +493,7 @@ cluster_instances:
     # datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
-  'domain2/WebCluster':
+  'Wls11gSetting/WebCluster':
     ensure:                     'present'
     migrationbasis:             'consensus'
     servers:
