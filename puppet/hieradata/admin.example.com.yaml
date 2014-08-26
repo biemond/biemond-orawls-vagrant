@@ -208,29 +208,32 @@ wls_adminserver_instances:
     refreshonly:               true
     subscribe:                 Wls_domain[Wls11gSetting/Wls11g]
 
-deployment_library_instances:
-  # 'jersey-bundle':
-  #   ensure:            'present'
-  #   deploymenttype:    'Library'
-  #   versionidentifier: '1.18@1.18.0.0'
-  #   target:
-  #     - 'AdminServer'
-  #     - 'WebCluster'
-  #   targettype:
-  #     - 'Server'
-  #     - 'Cluster'
-  #   localpath:         '/vagrant/jersey-bundle-1.18.war'
-
-deployment_application_instances:
-  # 'webapp':
-  #   ensure:            'present'
-  #   deploymenttype:    'AppDeployment'
-  #   versionidentifier: '1.1@1.1.0.0'
-  #   target:
-  #     - 'WebCluster'
-  #   targettype:
-  #     - 'Cluster'
-  #   localpath:         '/vagrant/webapp.war'
+deployment_instances:
+  'jersey-bundle':
+    ensure:            'present'
+    deploymenttype:    'Library'
+    versionidentifier: '1.18@1.18.0.0'
+    target:
+      - 'AdminServer'
+      - 'WebCluster'
+    targettype:
+      - 'Server'
+      - 'Cluster'
+    localpath:         '/vagrant/jersey-bundle-1.18.war'
+    require:
+      - Wls_cluster[WebCluster]
+  'webapp':
+    ensure:            'present'
+    deploymenttype:    'AppDeployment'
+    versionidentifier: '1.1@1.1.0.0'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
+    localpath:         '/vagrant/webapp.war'
+    require:
+      - Wls_deployment[jersey-bundle]
+      - Wls_cluster[WebCluster]
 
 user_instances:
   'testuser1':
@@ -267,6 +270,9 @@ group_instances:
     users:
       - 'testuser1'
       - 'testuser2'
+    require:
+      - Wls_user[testuser1]
+      - Wls_user[testuser2]
   'SuperUsers':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
@@ -274,6 +280,8 @@ group_instances:
     realm:                  'myrealm'
     users:                  
       - 'testuser2'
+    require:
+      - Wls_user[testuser2]
   'Wls11gSetting/TestGroup':
     ensure:                 'present'
     authenticationprovider: 'DefaultAuthenticator'
@@ -281,6 +289,8 @@ group_instances:
     realm:                  'myrealm'
     users:                  
       - 'testuser3'
+    require:
+      - Wls_user[testuser3]
 
 authentication_provider_instances:
   # 'ldap':
@@ -355,6 +365,8 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+    require:
+      - Wls_machine[Node1]
   'wlsServer2':
     ensure:                                'present'
     arguments:
@@ -384,6 +396,8 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+    require:
+      - Wls_machine[Node2]
   'Wls11gSetting/wlsServer1':
     ensure:                                'present'
     arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
@@ -402,6 +416,8 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+    require:
+      - Wls_machine[Wls11gSetting/Node1]
   'Wls11gSetting/wlsServer2':
     ensure:                                'present'
     arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out'
@@ -420,6 +436,8 @@ server_instances:
     custom_identity_privatekey_passphrase: 'welcome'
     trust_keystore_file:                   *wls_trust_keystore_file
     trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+    require:
+      - Wls_machine[Wls11gSetting/Node2]
 
 server_channel_instances:
   'wlsServer1:Channel-Cluster':
@@ -432,6 +450,8 @@ server_channel_instances:
     protocol:         'cluster-broadcast'
     publicaddress:    '10.10.10.100'
     tunnelingenabled: '0'
+    require:
+      - Wls_server[wlsServer1]
   'wlsServer2:Channel-Cluster':
     ensure:           'present'
     enabled:          '1'
@@ -440,6 +460,8 @@ server_channel_instances:
     outboundenabled:  '0'
     protocol:         'cluster-broadcast'
     tunnelingenabled: '0'
+    require:
+      - Wls_server[wlsServer2]
   'wlsServer1:HTTP':
     ensure:           'present'
     enabled:          '1'
@@ -448,6 +470,8 @@ server_channel_instances:
     outboundenabled:  '0'
     protocol:         'http'
     tunnelingenabled: '0'
+    require:
+      - Wls_server[wlsServer1]
   'wlsServer2:HTTP':
     ensure:           'present'
     enabled:          '1'
@@ -456,29 +480,8 @@ server_channel_instances:
     outboundenabled:  '0'
     protocol:         'http'
     tunnelingenabled: '0'            
-
-file_persistence_folders:
-   '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
-      ensure:     directory
-      recurse:    false
-      replace:    false
-      mode:       '0775'
-      owner:      'wls'
-      group:      'dba'
-   '/opt/oracle/wlsdomains/domains/Wls1036/persistence2':
-      ensure:     directory
-      recurse:    false
-      replace:    false
-      mode:       '0775'
-      owner:      'wls'
-      group:      'dba'
-   '/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1':
-      ensure:     directory
-      recurse:    false
-      replace:    false
-      mode:       '0775'
-      owner:      'wls'
-      group:      'dba'
+    require:
+      - Wls_server[wlsServer2]
 
 cluster_instances:
   'WebCluster':
@@ -493,6 +496,9 @@ cluster_instances:
     # datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
+    require:
+      - Wls_server[wlsServer1]
+      - Wls_server[wlsServer2]
   'Wls11gSetting/WebCluster':
     ensure:                     'present'
     migrationbasis:             'consensus'
@@ -500,6 +506,9 @@ cluster_instances:
       - 'wlsServer1'
       - 'wlsServer2'
     messagingmode:              'unicast'
+    require:
+      - Wls_server[Wls11gSetting/wlsServer1]
+      - Wls_server[Wls11gSetting/wlsServer2]
 
 virtual_host_instances:
  'WS':
@@ -510,7 +519,9 @@ virtual_host_instances:
    virtual_host_names: 
      - 'admin.example.com'
      - '10.10.10.10'
-
+   require:
+     - Wls_cluster[WebCluster]
+ 
 datasource_instances:
     'hrDS':
       ensure:                      'present'
@@ -538,6 +549,9 @@ datasource_instances:
       user:                        'hr'
       password:                    'hr'
       usexa:                       '1'
+      require:
+        - Wls_server[wlsServer1]
+        - Wls_server[wlsServer2]
     'jmsDS':
       ensure:                      'present'
       drivername:                  'com.mysql.jdbc.Driver'
@@ -557,6 +571,32 @@ datasource_instances:
       user:                        'jms'
       password:                    'jms'
       usexa:                       '1'
+      require:
+        - Wls_server[wlsServer1]
+        - Wls_server[wlsServer2]
+
+file_persistence_folders:
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistence2':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
+   '/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1':
+      ensure:     directory
+      recurse:    false
+      replace:    false
+      mode:       '0775'
+      owner:      'wls'
+      group:      'dba'
 
 file_persistence_store_instances:
   'jmsFile1':
@@ -566,6 +606,9 @@ file_persistence_store_instances:
       - 'wlsServer1'
     targettype:     
       - 'Server'
+    require:
+      - Wls_server[wlsServer1]
+      - File[/opt/oracle/wlsdomains/domains/Wls1036/persistence1]
   'jmsFile2':
     ensure:         'present'
     directory:      'persistence2'
@@ -573,6 +616,9 @@ file_persistence_store_instances:
       - 'wlsServer2'
     targettype:
       - 'Server'
+    require:
+      - Wls_server[wlsServer2]
+      - File[/opt/oracle/wlsdomains/domains/Wls1036/persistence2]
   'jmsFileSAFAgent1':
     ensure:         'present'
     directory:      'persistenceSaf1'
@@ -580,6 +626,9 @@ file_persistence_store_instances:
       - 'wlsServer1'
     targettype:
       - 'Server'
+    require:
+      - Wls_server[wlsServer1]
+      - File[/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1]
 
 jmsserver_instances:
    'jmsServer1':
@@ -590,12 +639,17 @@ jmsserver_instances:
        - 'Server'
      persistentstore:     'jmsFile1'
      persistentstoretype: 'FileStore'
+     require:
+       - Wls_server[wlsServer1]
+       - Wls_file_persistence_store[jmsFile1]
    'jmsServer2':
      ensure:              'present'
      target:              
        - 'wlsServer2'
      targettype:
        - 'Server'
+     require:
+       - Wls_server[wlsServer2]
 
 jms_module_instances:
    'jmsClusterModule':
@@ -604,6 +658,7 @@ jms_module_instances:
        - 'WebCluster'
      targettype:
        - 'Cluster'
+     require:     Wls_cluster[WebCluster] 
 
 # create jms quotas for the jms module 
 jms_quota_instances:
@@ -613,12 +668,14 @@ jms_quota_instances:
       messagesmaximum:  '9223372036854775807'
       policy:           'FIFO'
       shared:           '1'
+      require:          Wls_jms_module[jmsClusterModule]
    'jmsClusterModule:QuotaLow':
       ensure:           'present'
       bytesmaximum:     '20000000000'
       messagesmaximum:  '9223372036854775807'
       policy:           'FIFO'
       shared:           '0'
+      require:          Wls_jms_module[jmsClusterModule]
 
 jms_subdeployment_instances:
    'jmsClusterModule:jmsServers':
@@ -629,12 +686,19 @@ jms_subdeployment_instances:
       targettype: 
         - 'JMSServer'
         - 'JMSServer'
+      require:
+        - Wls_jms_module[jmsClusterModule]
+        - Wls_jmsserver[jmsServer1]
+        - Wls_jmsserver[jmsServer2]
    'jmsClusterModule:wlsServers':
       ensure:     'present'
       target:
         - 'WebCluster'
       targettype:
         - 'Cluster'
+      require:
+        - Wls_jms_module[jmsClusterModule]
+        - Wls_cluster[WebCluster]
    'jmsClusterModule:safServers':
       ensure:     'present'
       target:     
@@ -643,6 +707,10 @@ jms_subdeployment_instances:
       targettype:
         - 'SAFAgent'
         - 'SAFAgent'
+      require:
+        - Wls_jms_module[jmsClusterModule]
+        - Wls_safagent[jmsSAFAgent1]
+        - Wls_safagent[jmsSAFAgent1]
 
 jms_connection_factory_instances:
   'jmsClusterModule:cf':
@@ -653,6 +721,9 @@ jms_connection_factory_instances:
       subdeployment:      'wlsServers'
       transactiontimeout: '3600'
       xaenabled:          '0'
+      require:
+        - Wls_jms_module[jmsClusterModule]
+        - Wls_jms_subdeployment[jmsClusterModule:wlsServers]
   'jmsClusterModule:cf2':
       ensure:             'present'
       jmsmodule:          'jmsClusterModule'
@@ -660,8 +731,10 @@ jms_connection_factory_instances:
       jndiname:           'jms/cf2'
       transactiontimeout: '3600'
       xaenabled:          '1'
+      require:
+        - Wls_jms_module[jmsClusterModule]
 
-jms_queue_error_instances:
+jms_queue_instances:
    'jmsClusterModule:ErrorQueue':
      ensure:                   'present'
      distributed:              '1'
@@ -673,9 +746,9 @@ jms_queue_error_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '-1'
-
-
-jms_queue_instances:
+     require:
+       - Wls_jms_module[jmsClusterModule]
+       - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
    'jmsClusterModule:Queue1':
      ensure:                   'present'
      distributed:              '1'
@@ -688,6 +761,10 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '300000'
+     require:
+       - Wls_jms_module[jmsClusterModule]
+       - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
+       - Wls_jms_queue[jmsClusterModule:ErrorQueue]
    'jmsClusterModule:Queue2':
      ensure:                   'present'
      distributed:              '1'
@@ -700,8 +777,10 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '300000'
+     require:
+       - Wls_jms_module[jmsClusterModule]
+       - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
 
-jms_topic_error_instances:
 
 jms_topic_instances:
    'jmsClusterModule:Topic1':
@@ -715,6 +794,9 @@ jms_topic_instances:
      subdeployment:        'jmsServers'
      timetodeliver:        '-1'
      timetolive:           '300000'
+     require:
+       - Wls_jms_module[jmsClusterModule]
+       - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
    'jmsClusterModule:Topic2':
      ensure:               'present'
      defaulttargeting:     '0'
@@ -728,6 +810,11 @@ jms_topic_instances:
      subdeployment:        'jmsServers'
      timetodeliver:        '-1'
      timetolive:           '300000'
+     require:
+       - Wls_jms_module[jmsClusterModule]
+       - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
+       - Wls_jms_queue[jmsClusterModule:ErrorQueue]
+
 
 foreign_server_instances:
     'jmsClusterModule:AQForeignServer':
@@ -738,6 +825,9 @@ foreign_server_instances:
         extrapropertiesvalues: 
           - 'jdbc/hrDS'
         initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
+        require:
+          - Wls_jms_module[jmsClusterModule]
+          - Wls_datasource[hrDS]
     'jmsClusterModule:Jboss':
         ensure:                'present'
         connectionurl:         'remote://10.10.10.10:4447'
@@ -749,6 +839,9 @@ foreign_server_instances:
         initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
         subdeployment:         'wlsServers'
         password:              'test'
+        require:
+          - Wls_jms_module[jmsClusterModule]
+          - Wls_jms_subdeployment[jmsClusterModule:wlsServers]
 
 foreign_server_object_instances:
   'jmsClusterModule:Jboss:CF':
@@ -756,23 +849,33 @@ foreign_server_object_instances:
       localjndiname:  'jms/jboss/CF'
       object_type:    'connectionfactory'
       remotejndiname: 'jms/Remote/CF'
+      require:
+        - Wls_jms_module[jmsClusterModule]
+        - Wls_foreign_server[jmsClusterModule:Jboss]
   'jmsClusterModule:Jboss:JBossQ':
       ensure:         'present'
       localjndiname:  'jms/jboss/Queue'
       object_type:    'destination'
       remotejndiname: 'jms/Remote/Queue'
+      require:
+        - Wls_foreign_server[jmsClusterModule:Jboss]
+        - Wls_jms_module[jmsClusterModule]
   'jmsClusterModule:AQForeignServer:XAQueueCF':
       ensure:         'present'
       localjndiname:  'jms/XAQueueCF'
       object_type:    'connectionfactory'
       remotejndiname: 'XAQueueConnectionFactory'
+      require:
+        - Wls_foreign_server[jmsClusterModule:AQForeignServer]
+        - Wls_jms_module[jmsClusterModule]
   'jmsClusterModule:AQForeignServer:TestQueue':
       ensure:         'present'
       localjndiname:  'jms/aq/TestQueue'
       object_type:    'destination'
       remotejndiname: 'Queues/TestQueue'
-
-
+      require:
+        - Wls_foreign_server[jmsClusterModule:AQForeignServer]
+        - Wls_jms_module[jmsClusterModule]
 
 safagent_instances:
   'jmsSAFAgent1':
@@ -784,6 +887,10 @@ safagent_instances:
       servicetype:         'Sending-only'
       persistentstore:     'jmsFileSAFAgent1'
       persistentstoretype: 'FileStore'
+      require:
+        - Wls_server[wlsServer1]
+        - Wls_file_persistence_store[jmsFileSAFAgent1]
+        - File[/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1]
   'jmsSAFAgent2':
       ensure:              'present'
       target:
@@ -791,15 +898,31 @@ safagent_instances:
       targettype:
         - 'Server'
       servicetype:         'Both'
+      require:              Wls_server[wlsServer2]
+
+
+saf_remote_context_instances:
+  'jmsClusterModule:RemoteSAFContext-0':
+     ensure:            'present'
+     connect_url:       't3://10.10.10.10:7001'
+     weblogic_user:     'weblogic'
+     weblogic_password: 'weblogic1'
+     require:           Wls_jms_module[jmsClusterModule]
+  'jmsClusterModule:RemoteSAFContext-1':
+     ensure:            'present'
+     connect_url:       't3://10.10.10.10:7001'
+     require:           Wls_jms_module[jmsClusterModule]
 
 saf_error_handler_instances:
   'jmsClusterModule:ErrorHandling-0':
      ensure:           'present'
      policy:           'Discard'
+     require:          Wls_jms_module[jmsClusterModule]
   'jmsClusterModule:ErrorHandling-1':
      ensure:           'present'
      policy:           'Log'
      logformat:        '%header%%properties%'
+     require:          Wls_jms_module[jmsClusterModule]
 
 saf_imported_destination_instances:
   'jmsClusterModule:SAFImportedDestinations-1':
@@ -807,6 +930,10 @@ saf_imported_destination_instances:
     defaulttargeting:     '1'
     jndiprefix:           'saf2_'
     remotecontext:        'RemoteSAFContext-1'
+    require:
+        - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-1]
+        - Wls_jms_module[jmsClusterModule]
+
   'jmsClusterModule:SAFImportedDestinations-0':
     ensure:               'present'
     defaulttargeting:     '0'
@@ -816,6 +943,12 @@ saf_imported_destination_instances:
     remotecontext:        'RemoteSAFContext-0'
     timetolivedefault:    '100000000'
     usetimetolivedefault: '1'
+    require:
+        - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-0]
+        - Wls_saf_error_handler[jmsClusterModule:ErrorHandling-1]
+        - Wls_jms_subdeployment[jmsClusterModule:safServers]
+        - Wls_jms_module[jmsClusterModule]
+
 
 saf_imported_destination_object_instances:
   'jmsClusterModule:SAFImportedDestinations-0:SAFDemoQueue':
@@ -824,6 +957,9 @@ saf_imported_destination_object_instances:
       remotejndiname:        'jms/DemoQueue'
       unitoforderrouting:    'Hash'
       nonpersistentqos:      'Exactly-Once'
+      require:
+        - Wls_saf_imported_destination[jmsClusterModule:SAFImportedDestinations-0]
+        - Wls_jms_module[jmsClusterModule]
   'jmsClusterModule:SAFImportedDestinations-0:SAFDemoTopic':
       ensure:                'present'
       object_type:           'topic'
@@ -832,17 +968,9 @@ saf_imported_destination_object_instances:
       unitoforderrouting:    'Hash'
       usetimetolivedefault:  '1'
       nonpersistentqos:      'Exactly-Once'
-
-
-saf_remote_context_instances:
-  'jmsClusterModule:RemoteSAFContext-0':
-     ensure:            'present'
-     connect_url:       't3://10.10.10.10:7001'
-     weblogic_user:     'weblogic'
-     weblogic_password: 'weblogic1'
-  'jmsClusterModule:RemoteSAFContext-1':
-     ensure:            'present'
-     connect_url:       't3://10.10.10.10:7001'
+      require:
+        - Wls_saf_imported_destination[jmsClusterModule:SAFImportedDestinations-0]
+        - Wls_jms_module[jmsClusterModule]
 
 workmanager_instances:
   'WorkManagerConstraints':
@@ -855,6 +983,11 @@ workmanager_instances:
       - 'WebCluster'
     targettype:
       - 'Cluster'
+    require:
+      - Wls_workmanager_constraint[CapacityConstraint]
+      - Wls_workmanager_constraint[MaxThreadsConstraint]
+      - Wls_workmanager_constraint[MinThreadsConstraint]
+      - Wls_cluster[WebCluster]
 
 workmanager_constraint_instances:
   'CapacityConstraint':
@@ -865,6 +998,7 @@ workmanager_constraint_instances:
     targettype:
       - 'Cluster'
     constrainttype:  'Capacity'
+    require:         Wls_cluster[WebCluster]
   'MaxThreadsConstraint':
     ensure:          'present'
     constraintvalue: '4'
@@ -873,6 +1007,7 @@ workmanager_constraint_instances:
     targettype:
       - 'Cluster'
     constrainttype:  'MaxThreadsConstraint'
+    require:         Wls_cluster[WebCluster]
   'MinThreadsConstraint':
     ensure:          'present'
     constraintvalue: '2'
@@ -881,5 +1016,6 @@ workmanager_constraint_instances:
     targettype:
       - 'Cluster'
     constrainttype:  'MinThreadsConstraint'
+    require:         Wls_cluster[WebCluster]
 
 
