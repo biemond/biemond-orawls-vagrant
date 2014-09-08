@@ -710,7 +710,7 @@ jms_subdeployment_instances:
       require:
         - Wls_jms_module[jmsClusterModule]
         - Wls_safagent[jmsSAFAgent1]
-        - Wls_safagent[jmsSAFAgent1]
+        - Wls_safagent[jmsSAFAgent2]
 
 jms_connection_factory_instances:
   'jmsClusterModule:cf':
