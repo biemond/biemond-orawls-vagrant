@@ -1,9 +1,14 @@
 #History
 
 ##1.0.15
+- RCU 12.1.3 support for MFT 
+- BSU fix for hard mdw path in patch policy
+- SOA Cluster also works for FMW version 11.1.1.6
+- wls_server type new attributes two_way_ssl, client_certificate_enforced 
+- wls_authentication_provider type now works for DefaultIdentityAsserter
 
 ##1.0.14
-- Change log Tab for forge
+- Change log Tab for puppetlabs forge
 
 ##1.0.13 
 - Support for multiple jrf clusters

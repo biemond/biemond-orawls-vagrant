@@ -293,15 +293,15 @@ group_instances:
       - Wls_user[testuser3]
 
 authentication_provider_instances:
-  # 'ldap':
-  #   ensure:             'present'
-  #   control_flag:       'SUFFICIENT'
-  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
-  #   attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
-  #   attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;true'
-  # 'DefaultAuthenticator':
-  #   ensure:             'present'
-  #   control_flag:       'SUFFICIENT'
+  'DefaultAuthenticator':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+  'ldap':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+    providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+    attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
+    attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;true'
 
 # create 2 machines
 machines_instances:
@@ -357,6 +357,8 @@ server_instances:
     sslenabled:                            '1'
     ssllistenport:                         '8201'
     sslhostnameverificationignored:        '1'
+    two_way_ssl:                           '0'
+    client_certificate_enforced:           '0'
     jsseenabled:                           '1' 
     custom_identity:                       '1'
     custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
