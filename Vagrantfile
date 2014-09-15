@@ -20,7 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     admin.vm.network :private_network, ip: "10.10.10.10"
   
     admin.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
       vb.customize ["modifyvm", :id, "--name", "admin"]
     end
   
@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       puppet.options           = "--verbose --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
 
-      #puppet.options           = "--verbose --debug --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
+      #puppet.options           = "--verbose --debug --trace --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
   
       puppet.facter = {
         "environment"            => "development",
