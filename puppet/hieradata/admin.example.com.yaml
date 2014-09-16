@@ -76,15 +76,15 @@ wls_setting_instances:
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:
-  # 'webTierPS6':
-  #   fmw_product:             "web"
-  #   fmw_file1:               "ofm_webtier_linux_11.1.1.7.0_64_disk1_1of1.zip"
-  #   log_output:              true
-  #   remote_file:             false
   # 'soaPS6':
   #   fmw_product:             "soa"
   #   fmw_file1:               "ofm_soa_generic_11.1.1.7.0_disk1_1of2.zip"
   #   fmw_file2:               "ofm_soa_generic_11.1.1.7.0_disk1_2of2.zip"
+  #   log_output:              true
+  #   remote_file:             false
+  # 'webTierPS6':
+  #   fmw_product:             "web"
+  #   fmw_file1:               "ofm_webtier_linux_11.1.1.7.0_64_disk1_1of1.zip"
   #   log_output:              true
   #   remote_file:             false
   # 'osbPS6':
@@ -95,7 +95,7 @@ fmw_installations:
 
 opatch_instances:
   # '17584181':
-  #    ensure:                   "present"                  
+  #    ensure:                   "present"
   #    oracle_product_home_dir:  "/opt/oracle/middleware11g/Oracle_SOA1"
   #    patch_id:                 "17584181"
   #    patch_file:               "p17584181_111170_Generic.zip"
@@ -172,13 +172,13 @@ wls_domain_instances:
 # subscribe on a domain change and restart the adminserver
 wls_adminserver_instances:
   'AdminServer_Wls1036':
-    ensure:                    'running' 
+    ensure:                    'running'
     server_name:               *domain_adminserver
     domain_name:               *domain_name
     domain_path:               "/opt/oracle/wlsdomains/domains/Wls1036"
     os_user:                   *wls_os_user
     weblogic_home_dir:         *wls_weblogic_home_dir
-    weblogic_user:             *wls_weblogic_user 
+    weblogic_user:             *wls_weblogic_user
     weblogic_password:         *domain_wls_password
     jdk_home_dir:              '/usr/java/latest'
     nodemanager_address:       *domain_adminserver_address
@@ -190,13 +190,13 @@ wls_adminserver_instances:
     refreshonly:               true
     subscribe:                 Wls_domain[Wls1036]
   'AdminServer_Wls11g':
-    ensure:                    'running' 
+    ensure:                    'running'
     server_name:               *domain_adminserver
     domain_name:               'Wls11g'
     domain_path:               "/opt/oracle/wlsdomains/domains/Wls11g"
     os_user:                   *wls_os_user
     weblogic_home_dir:         *wls_weblogic_home_dir
-    weblogic_user:             *wls_weblogic_user 
+    weblogic_user:             *wls_weblogic_user
     weblogic_password:         *domain_wls_password
     jdk_home_dir:              '/usr/java/latest'
     nodemanager_address:       *domain_adminserver_address
@@ -278,7 +278,7 @@ group_instances:
     authenticationprovider: 'DefaultAuthenticator'
     description:            'SuperUsers'
     realm:                  'myrealm'
-    users:                  
+    users:
       - 'testuser2'
     require:
       - Wls_user[testuser2]
@@ -287,7 +287,7 @@ group_instances:
     authenticationprovider: 'DefaultAuthenticator'
     description:            'SuperUsers'
     realm:                  'myrealm'
-    users:                  
+    users:
       - 'testuser3'
     require:
       - Wls_user[Wls11gSetting/testuser3]
@@ -330,10 +330,10 @@ machines_instances:
     machinetype:    'UnixMachine'
     nmtype:         'SSL'
 
-server_vm_args_permsize:      &server_vm_args_permsize     '-XX:PermSize=256m' 
-server_vm_args_max_permsize:  &server_vm_args_max_permsize '-XX:MaxPermSize=256m' 
-server_vm_args_memory:        &server_vm_args_memory       '-Xms752m' 
-server_vm_args_max_memory:    &server_vm_args_max_memory   '-Xmx752m' 
+server_vm_args_permsize:      &server_vm_args_permsize     '-XX:PermSize=256m'
+server_vm_args_max_permsize:  &server_vm_args_max_permsize '-XX:MaxPermSize=256m'
+server_vm_args_memory:        &server_vm_args_memory       '-Xms752m'
+server_vm_args_max_memory:    &server_vm_args_max_memory   '-Xmx752m'
 
 server_instances:
   'wlsServer1':
@@ -359,7 +359,7 @@ server_instances:
     sslhostnameverificationignored:        '1'
     two_way_ssl:                           '0'
     client_certificate_enforced:           '0'
-    jsseenabled:                           '1' 
+    jsseenabled:                           '1'
     custom_identity:                       '1'
     custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -390,7 +390,7 @@ server_instances:
     ssllistenport:                         '8201'
     sslhostnameverificationignored:        '1'
     listenaddress:                         '10.10.10.200'
-    jsseenabled:                           '1' 
+    jsseenabled:                           '1'
     custom_identity:                       '1'
     custom_identity_keystore_filename:     '/vagrant/identity_node2.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -410,7 +410,7 @@ server_instances:
     sslenabled:                            '1'
     ssllistenport:                         '8205'
     sslhostnameverificationignored:        '1'
-    jsseenabled:                           '1' 
+    jsseenabled:                           '1'
     custom_identity:                       '1'
     custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -430,7 +430,7 @@ server_instances:
     ssllistenport:                         '8205'
     sslhostnameverificationignored:        '1'
     listenaddress:                         '10.10.10.200'
-    jsseenabled:                           '1' 
+    jsseenabled:                           '1'
     custom_identity:                       '1'
     custom_identity_keystore_filename:     '/vagrant/identity_node2.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -481,7 +481,7 @@ server_channel_instances:
     listenport:       '8004'
     outboundenabled:  '0'
     protocol:         'http'
-    tunnelingenabled: '0'            
+    tunnelingenabled: '0'
     require:
       - Wls_server[wlsServer2]
 
@@ -518,25 +518,25 @@ virtual_host_instances:
    channel:            'HTTP'
    target:             'WebCluster'
    targettype:         'Cluster'
-   virtual_host_names: 
+   virtual_host_names:
      - 'admin.example.com'
      - '10.10.10.10'
    require:
      - Wls_cluster[WebCluster]
- 
+
 datasource_instances:
     'hrDS':
       ensure:                      'present'
       drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
-      extraproperties:             
+      extraproperties:
         - 'SendStreamAsBlob'
         - 'oracle.net.CONNECT_TIMEOUT'
-      extrapropertiesvalues:       
+      extrapropertiesvalues:
         - 'true'
         - '10000'
       globaltransactionsprotocol:  'TwoPhaseCommit'
       initialcapacity:             '2'
-      jndinames:                   
+      jndinames:
         - 'jdbc/hrDS'
         - 'jdbc/hrDS2'
       maxcapacity:                 '15'
@@ -559,7 +559,7 @@ datasource_instances:
       drivername:                  'com.mysql.jdbc.Driver'
       globaltransactionsprotocol:  'None'
       initialcapacity:             '0'
-      jndinames:                   
+      jndinames:
         - 'jmsDS'
       maxcapacity:                 '15'
       target:
@@ -604,9 +604,9 @@ file_persistence_store_instances:
   'jmsFile1':
     ensure:         'present'
     directory:      'persistence1'
-    target:         
+    target:
       - 'wlsServer1'
-    targettype:     
+    targettype:
       - 'Server'
     require:
       - Wls_server[wlsServer1]
@@ -614,7 +614,7 @@ file_persistence_store_instances:
   'jmsFile2':
     ensure:         'present'
     directory:      'persistence2'
-    target:         
+    target:
       - 'wlsServer2'
     targettype:
       - 'Server'
@@ -635,7 +635,7 @@ file_persistence_store_instances:
 jmsserver_instances:
    'jmsServer1':
      ensure:              'present'
-     target:              
+     target:
        - 'wlsServer1'
      targettype:
        - 'Server'
@@ -646,7 +646,7 @@ jmsserver_instances:
        - Wls_file_persistence_store[jmsFile1]
    'jmsServer2':
      ensure:              'present'
-     target:              
+     target:
        - 'wlsServer2'
      targettype:
        - 'Server'
@@ -660,9 +660,9 @@ jms_module_instances:
        - 'WebCluster'
      targettype:
        - 'Cluster'
-     require:     Wls_cluster[WebCluster] 
+     require:     Wls_cluster[WebCluster]
 
-# create jms quotas for the jms module 
+# create jms quotas for the jms module
 jms_quota_instances:
    'jmsClusterModule:QuotaBig':
       ensure:           'present'
@@ -682,10 +682,10 @@ jms_quota_instances:
 jms_subdeployment_instances:
    'jmsClusterModule:jmsServers':
       ensure:     'present'
-      target:     
+      target:
         - 'jmsServer1'
         - 'jmsServer2'
-      targettype: 
+      targettype:
         - 'JMSServer'
         - 'JMSServer'
       require:
@@ -703,7 +703,7 @@ jms_subdeployment_instances:
         - Wls_cluster[WebCluster]
    'jmsClusterModule:safServers':
       ensure:     'present'
-      target:     
+      target:
         - 'jmsSAFAgent1'
         - 'jmsSAFAgent2'
       targettype:
@@ -822,9 +822,9 @@ foreign_server_instances:
     'jmsClusterModule:AQForeignServer':
         ensure:                'present'
         defaulttargeting:      '1'
-        extraproperties:       
+        extraproperties:
           - 'datasource'
-        extrapropertiesvalues: 
+        extrapropertiesvalues:
           - 'jdbc/hrDS'
         initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
         require:
@@ -834,9 +834,9 @@ foreign_server_instances:
         ensure:                'present'
         connectionurl:         'remote://10.10.10.10:4447'
         defaulttargeting:      '0'
-        extraproperties:       
+        extraproperties:
           - 'java.naming.security.principal'
-        extrapropertiesvalues: 
+        extrapropertiesvalues:
           - 'jmsuser'
         initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
         subdeployment:         'wlsServers'
