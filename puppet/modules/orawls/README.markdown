@@ -96,7 +96,7 @@ Dependency with
 - [wls_saf_imported_destination_object](#wls_saf_imported_destination_object)
 - [wls_foreign_server](#wls_foreign_server)
 - [wls_foreign_server_object](#wls_foreign_server_object)
-
+- [wls_mail_session](#wls_mail_session)
 
 ## Domain creation options (Dev or Prod mode)
 
@@ -871,6 +871,7 @@ FMW 11g, 12.1.2 , 12.1.3 ADF domain with webtier
          repository_sys_password:  "Welcome01"
          rcu_database_url:         "wlsdb.example.com:1521:wlsrepos.example.com"
          webtier_enabled:          true
+         create_rcu:               true
 
 FMW 11g WebLogic SOA Suite domain
 
@@ -1989,7 +1990,7 @@ or use puppet resource wls_server
       sslenabled                        => '0',
     }
 
-or with log parameters and ssl
+or with log parameters, default file store and ssl
 
     # this will use default as wls_setting identifier
     wls_server { 'default/wlsServer2':
@@ -2008,8 +2009,9 @@ or with log parameters and ssl
       sslenabled                        => '1',
       sslhostnameverificationignored    => '1',
       ssllistenport                     => '8201',
-      two_way_ssl                       => '0'
-      client_certificate_enforced       => '0'
+      two_way_ssl                       => '0',
+      client_certificate_enforced       => '0',
+      default_file_store                => '/path/to/default_file_store/',
     }
 
 or with JSSE with custom identity and trust
@@ -2081,6 +2083,7 @@ or with log parameters
         ssllistenport:                         '8201'
         sslhostnameverificationignored:        '1'
         jsseenabled:                           '1'
+        default_file_store:                    '/path/to/default_file_store/'
 
 
 You can also pass server arguments as an array, as it makes it easier to use references in YAML.
@@ -2234,6 +2237,9 @@ or use puppet resource wls_cluster
       unicastbroadcastchannel => 'channel',
       multicastaddress        => '239.192.0.0',
       multicastport           => '7001',
+      frontendhost            => '10.10.10.10'
+      frontendhttpport        => '1001'
+      frontendhttpsport       => '1002'
     }
 
 in hiera
@@ -3211,4 +3217,39 @@ in hiera
         object_type:    'destination'
         remotejndiname: 'Queues/TestQueue'
 
+### wls_mail_session
 
+it needs wls_setting and when identifier is not provided it will use the 'default'
+
+or use puppet resource wls_mail_server
+
+Valid mail properties are found at: https://javamail.java.net/nonav/docs/api/
+
+    wls_mail_session { 'myMailSession':
+      ensure         => 'present',
+      jndiname       => 'myMailSession',
+      target         => ['ManagedServer1', 'WebCluster'],
+      targettype     => ['Server', 'Cluster'],
+      mailpropertynames => ['mail.host', 'mail.user'],
+      mailpropertyvalues => ['smtp.hostname.com', 'smtpadmin'],
+    }
+
+
+in hiera
+
+    mail_session_instances:
+      'myMailSession':
+        ensure:  present
+        jndiname: 'myMailSession'
+        target:
+         - 'ManagedServer1'
+         - 'WebCluster'
+        targettype:
+         - 'Server'
+         - 'Cluster'
+        mailpropertynames:
+         - 'mail.host'
+         - 'mail.user'
+        mailpropertyvalues:
+         - 'smtp.hostname.com'
+         - 'smtpadmin'

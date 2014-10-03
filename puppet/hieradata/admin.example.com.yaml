@@ -498,6 +498,9 @@ cluster_instances:
     # datasourceforjobscheduler:  'jmsDS'
     messagingmode:              'unicast'
     unicastbroadcastchannel:    'Channel-Cluster'
+    frontendhost:               '10.10.10.10'
+    frontendhttpport:           '2001'
+    frontendhttpsport:          '2002'
     require:
       - Wls_server[wlsServer1]
       - Wls_server[wlsServer2]
@@ -511,6 +514,24 @@ cluster_instances:
     require:
       - Wls_server[Wls11gSetting/wlsServer1]
       - Wls_server[Wls11gSetting/wlsServer2]
+
+
+mail_session_instances:
+  'myMailSession':
+    ensure:  present
+    jndiname: 'myMailSession'
+    target:
+     - 'WebCluster'
+    targettype:
+     - 'Cluster'
+    mailpropertynames:
+     - 'mail.host'
+     - 'mail.user'
+    mailpropertyvalues:
+     - 'smtp.hostname.com'
+     - 'smtpadmin'
+    require:
+      - Wls_cluster[WebCluster]
 
 virtual_host_instances:
  'WS':

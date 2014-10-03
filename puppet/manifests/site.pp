@@ -5,7 +5,7 @@
 #
 
 node 'admin.example.com' {
-  
+
   include os
   include ssh
   include java, orawls::urandomfix
@@ -26,7 +26,7 @@ node 'admin.example.com' {
   include deployments
 
   Class[java] -> Class[orawls::weblogic]
-}  
+}
 
 # operating settings for Middleware
 class os {
@@ -126,7 +126,7 @@ class ssh {
     ensure => "directory",
     alias  => "wls-ssh-dir",
   }
-  
+
   file { "/home/wls/.ssh/id_rsa.pub":
     ensure  => present,
     owner   => "wls",
@@ -135,7 +135,7 @@ class ssh {
     source  => "/vagrant/ssh/id_rsa.pub",
     require => File["wls-ssh-dir"],
   }
-  
+
   file { "/home/wls/.ssh/id_rsa":
     ensure  => present,
     owner   => "wls",
@@ -144,7 +144,7 @@ class ssh {
     source  => "/vagrant/ssh/id_rsa",
     require => File["wls-ssh-dir"],
   }
-  
+
   file { "/home/wls/.ssh/authorized_keys":
     ensure  => present,
     owner   => "wls",
@@ -152,7 +152,7 @@ class ssh {
     mode    => "644",
     source  => "/vagrant/ssh/id_rsa.pub",
     require => File["wls-ssh-dir"],
-  }        
+  }
 }
 
 class java {
@@ -170,9 +170,9 @@ class java {
   # $LOG_DIR='/tmp/log_puppet_weblogic'
 
   jdk7::install7{ 'jdk1.7.0_51':
-      version                   => "7u51" , 
+      version                   => "7u51" ,
       fullVersion               => "jdk1.7.0_51",
-      alternativesPriority      => 18000, 
+      alternativesPriority      => 18000,
       x64                       => true,
       downloadDir               => "/var/tmp/install",
       urandomJavaFix            => true,
@@ -201,7 +201,7 @@ class java {
 # log all java executions:
 define javaexec_debug() {
   exec { "patch java to log all executions on $title":
-    command => "/bin/mv ${title} ${title}_ && /bin/cp /vagrant/puppet/files/java_debug ${title} && /bin/chmod +x ${title}", 
+    command => "/bin/mv ${title} ${title}_ && /bin/cp /vagrant/puppet/files/java_debug ${title} && /bin/chmod +x ${title}",
     unless  => "/usr/bin/test -f ${title}_",
   }
 }
@@ -270,11 +270,11 @@ class startwls {
 }
 
 class userconfig{
-  require orawls::weblogic, domains, nodemanager, startwls 
+  require orawls::weblogic, domains, nodemanager, startwls
   $default_params = {}
   $userconfig_instances = hiera('userconfig_instances', {})
   create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
-} 
+}
 
 
 class security{
@@ -318,6 +318,9 @@ class basic_config{
 
   $server_template_instances = hiera('server_template_instances', {})
   create_resources('wls_server_template',$server_template_instances, $default_params)
+
+  $mail_session_instances = hiera('mail_session_instances', {})
+  create_resources('wls_mail_session',$mail_session_instances, $default_params)
 
 }
 

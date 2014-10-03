@@ -1,9 +1,9 @@
-newparam(:jms_module_name) do
+newparam(:mailsession_name) do
   include EasyType
   include EasyType::Validators::Name
 
   isnamevar
 
-  desc 'The jms module name'
+  desc 'The mail session name'
 
 end
