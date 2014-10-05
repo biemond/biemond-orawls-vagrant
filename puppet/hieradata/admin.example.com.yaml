@@ -544,18 +544,15 @@ cluster_instances:
 
 mail_session_instances:
   'myMailSession':
-    ensure:  present
+    ensure:   present
     jndiname: 'myMailSession'
     target:
      - 'WebCluster'
     targettype:
      - 'Cluster'
-    mailpropertynames:
-     - 'mail.host'
-     - 'mail.user'
-    mailpropertyvalues:
-     - 'smtp.hostname.com'
-     - 'smtpadmin'
+    mailproperty:
+     - 'mail.host=smtp.hostname.com'
+     - 'mail.user=smtpadmin'
     require:
       - Wls_cluster[WebCluster]
 
