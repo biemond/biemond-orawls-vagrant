@@ -115,6 +115,15 @@ all templates creates a WebLogic domain, logs the domain creation output
 - domain 'oud'         -> OUD (Oracle Unified Directory)
 
 
+## Puppet master with orawls module key points
+it should work on every PE or opensource puppet master, customers and I succesfull tested orawls on PE 3.0, 3.1, 3.2, 3.3. See also the puppet master vagrant box
+
+But when it fails you can do the following actions.
+- Update orawls and its dependencies on the puppet master.
+- After adding or refreshing the easy_type or orawls modules you need to restart all the PE services on the puppet master (this will flush the PE cache) and always do a puppet agent run on the Puppet master
+- To solve this error "no such file to load -- easy_type" you need just to do a puppet run on the puppet master when it is still failing you can move the easy_type module to its primary module location ( /etc/puppetlabs/puppet/module )
+
+
 ## Orawls WebLogic Facter
 
 Contains WebLogic Facter which displays the following
@@ -2643,8 +2652,7 @@ or use puppet resource wls_datasource
     wls_datasource { 'hrDS':
       ensure                     => 'present',
       drivername                 => 'oracle.jdbc.xa.client.OracleXADataSource',
-      extraproperties            => ['SendStreamAsBlob','oracle.net.CONNECT_TIMEOUT'],
-      extrapropertiesvalues      => ['true','10000'],
+      extraproperties            => ['SendStreamAsBlob=true','oracle.net.CONNECT_TIMEOUT=10000'],
       globaltransactionsprotocol => 'TwoPhaseCommit',
       initialcapacity            => '1',
       jndinames                  => ['jdbc/hrDS'],
@@ -2684,11 +2692,8 @@ in hiera
           ensure:                      'present'
           drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
           extraproperties:
-            - 'SendStreamAsBlob'
-            - 'oracle.net.CONNECT_TIMEOUT'
-          extrapropertiesvalues:
-            - 'true'
-            - '10000'
+            - 'SendStreamAsBlob=true'
+            - 'oracle.net.CONNECT_TIMEOUT=1000'
           globaltransactionsprotocol:  'TwoPhaseCommit'
           initialcapacity:             '1'
           jndinames:
@@ -3137,16 +3142,14 @@ or use puppet resource wls_foreign_server
     wls_foreign_server { 'jmsClusterModule:AQForeignServer':
       ensure                => 'present',
       defaulttargeting      => '1',
-      extraproperties       => 'datasource',
-      extrapropertiesvalues => ['jdbc/hrDS'],
+      extraproperties       => 'datasource=jdbc/hrDS',
       initialcontextfactory => ['oracle.jms.AQjmsInitialContextFactory'],
     }
     wls_foreign_server { 'jmsClusterModule:Jboss':
       ensure                => 'present',
       connectionurl         => 'remote://10.10.10.10:4447',
       defaulttargeting      => '0',
-      extraproperties       => ['java.naming.security.principal'],
-      extrapropertiesvalues => ['jmsuser'],
+      extraproperties       => ['java.naming.security.principal=jmsuser'],
       initialcontextfactory => 'org.jboss.naming.remote.client.InitialContextFactory',
       subdeployment         => 'wlsServers',
     }
@@ -3157,18 +3160,14 @@ in hiera
         ensure:                'present'
         defaulttargeting:      '1'
         extraproperties:
-          - 'datasource'
-        extrapropertiesvalues:
-          - 'jdbc/hrDS'
+          - 'datasource=jdbc/hrDS'
         initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
     'jmsClusterModule:Jboss':
         ensure:                'present'
         connectionurl:         'remote://10.10.10.10:4447'
         defaulttargeting:      '0'
         extraproperties:
-          - 'java.naming.security.principal'
-        extrapropertiesvalues:
-          - 'jmsuser'
+          - 'java.naming.security.principal=jmsuser'
         initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
         subdeployment:         'wlsServers'
         password:              'test'
@@ -3230,8 +3229,7 @@ Valid mail properties are found at: https://javamail.java.net/nonav/docs/api/
       jndiname       => 'myMailSession',
       target         => ['ManagedServer1', 'WebCluster'],
       targettype     => ['Server', 'Cluster'],
-      mailpropertynames => ['mail.host', 'mail.user'],
-      mailpropertyvalues => ['smtp.hostname.com', 'smtpadmin'],
+      mailproperty   => ['mail.host=smtp.hostname.com', 'mail.user=smtpadmin'],
     }
 
 
@@ -3247,9 +3245,6 @@ in hiera
         targettype:
          - 'Server'
          - 'Cluster'
-        mailpropertynames:
-         - 'mail.host'
-         - 'mail.user'
-        mailpropertyvalues:
-         - 'smtp.hostname.com'
-         - 'smtpadmin'
+        mailproperty:
+         - 'mail.host=smtp.hostname.com'
+         - 'mail.user=smtpadmin'
