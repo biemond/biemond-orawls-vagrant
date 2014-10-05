@@ -573,11 +573,8 @@ datasource_instances:
       ensure:                      'present'
       drivername:                  'oracle.jdbc.xa.client.OracleXADataSource'
       extraproperties:
-        - 'SendStreamAsBlob'
-        - 'oracle.net.CONNECT_TIMEOUT'
-      extrapropertiesvalues:
-        - 'true'
-        - '10000'
+        - 'SendStreamAsBlob=true'
+        - 'oracle.net.CONNECT_TIMEOUT=10001'
       globaltransactionsprotocol:  'TwoPhaseCommit'
       initialcapacity:             '2'
       jndinames:
@@ -867,9 +864,8 @@ foreign_server_instances:
         ensure:                'present'
         defaulttargeting:      '1'
         extraproperties:
-          - 'datasource'
-        extrapropertiesvalues:
-          - 'jdbc/hrDS'
+          - 'datasource=jdbc/hrDS'
+          - 'test=xxxx'
         initialcontextfactory: 'oracle.jms.AQjmsInitialContextFactory'
         require:
           - Wls_jms_module[jmsClusterModule]
@@ -879,9 +875,7 @@ foreign_server_instances:
         connectionurl:         'remote://10.10.10.10:4447'
         defaulttargeting:      '0'
         extraproperties:
-          - 'java.naming.security.principal'
-        extrapropertiesvalues:
-          - 'jmsuser'
+          - 'java.naming.security.principal=jmsuser'
         initialcontextfactory: 'org.jboss.naming.remote.client.InitialContextFactory'
         subdeployment:         'wlsServers'
         password:              'test'
