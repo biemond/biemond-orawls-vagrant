@@ -59,6 +59,16 @@ domain_instances:
     custom_identity_alias:                 'admin'
     custom_identity_privatekey_passphrase: 'welcome'
 
+file_domain_libs:
+   # '/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar':
+   #    ensure:     present
+   #    source:     '/vagrant/idmsSecurityProvider-3.26-SNAPSHOT.jar'
+   #    mode:       '0775'
+   #    owner:      'wls'
+   #    group:      'dba'
+   #    require:    Orawls::Domain[Wls11g]
+   #    before:     Wls_setting[Wls11gSetting]
+
 wls_setting_instances:
   'default':
     user:               *wls_os_user
@@ -72,7 +82,7 @@ wls_setting_instances:
     connect_url:        "t3://10.10.10.10:7011"
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
-    post_classpath:     "/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar:/opt/oracle/wlsdomains/domains/Wls1036/lib/bb.jar"
+    # post_classpath:     "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:
@@ -141,6 +151,32 @@ userconfig_instances:
     log_output:           *logoutput
     user_config_dir:      '/home/wls'
 
+authentication_provider_instances:
+  'DefaultAuthenticator':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+    before:             Wls_domain[Wls1036]
+  # 'Wls11gSetting/IdmsAuthenticator':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'nl.rsg.security.idms.providers.authentication.IdmsAuthenticator'
+  #   attributes:         'Endpoint;RequestTimeout;ConnectTimeout'
+  #   attributesvalues:   'http://xxxx.com/MSL/4/AccountService;60000;5000'
+  #   before:             Wls_domain[Wls11gSetting/Wls11g]
+  # 'Wls11gSetting/IdmsIdentityAsserter':
+  #   ensure:             'present'
+  #   providerclassname:  'nl.rsg.security.idms.providers.identity.IdmsIdentityAsserter'
+  #   before:             Wls_domain[Wls11gSetting/Wls11g]
+  # 'ldap':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+  #   attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
+  #   attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;true'
+  #   before:             Wls_domain[Wls1036]
+
+
+
 # this will change some domain parameters and will not create or destroy a new domain
 # use orawls::domain to create a new domain
 wls_domain_instances:
@@ -200,40 +236,13 @@ wls_adminserver_instances:
     weblogic_password:         *domain_wls_password
     jdk_home_dir:              '/usr/java/latest'
     nodemanager_address:       *domain_adminserver_address
-    nodemanager_port:          7011
+    nodemanager_port:          *domain_nodemanager_port
     jsse_enabled:              true
     custom_trust:              *wls_custom_trust
     trust_keystore_file:       *wls_trust_keystore_file
     trust_keystore_passphrase: *wls_trust_keystore_passphrase
     refreshonly:               true
     subscribe:                 Wls_domain[Wls11gSetting/Wls11g]
-
-deployment_instances:
-  'jersey-bundle':
-    ensure:            'present'
-    deploymenttype:    'Library'
-    versionidentifier: '1.18@1.18.0.0'
-    target:
-      - 'AdminServer'
-      - 'WebCluster'
-    targettype:
-      - 'Server'
-      - 'Cluster'
-    localpath:         '/vagrant/jersey-bundle-1.18.war'
-    require:
-      - Wls_cluster[WebCluster]
-  'webapp':
-    ensure:            'present'
-    deploymenttype:    'AppDeployment'
-    versionidentifier: '1.1@1.1.0.0'
-    target:
-      - 'WebCluster'
-    targettype:
-      - 'Cluster'
-    localpath:         '/vagrant/webapp.war'
-    require:
-      - Wls_deployment[jersey-bundle]
-      - Wls_cluster[WebCluster]
 
 user_instances:
   'testuser1':
@@ -292,16 +301,33 @@ group_instances:
     require:
       - Wls_user[Wls11gSetting/testuser3]
 
-authentication_provider_instances:
-  'DefaultAuthenticator':
-    ensure:             'present'
-    control_flag:       'SUFFICIENT'
-  # 'ldap':
-  #   ensure:             'present'
-  #   control_flag:       'SUFFICIENT'
-  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
-  #   attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
-  #   attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;true'
+deployment_instances:
+  'jersey-bundle':
+    ensure:            'present'
+    deploymenttype:    'Library'
+    versionidentifier: '1.18@1.18.0.0'
+    target:
+      - 'AdminServer'
+      - 'WebCluster'
+    targettype:
+      - 'Server'
+      - 'Cluster'
+    localpath:         '/vagrant/jersey-bundle-1.18.war'
+    require:
+      - Wls_cluster[WebCluster]
+  'webapp':
+    ensure:            'present'
+    deploymenttype:    'AppDeployment'
+    versionidentifier: '1.1@1.1.0.0'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
+    localpath:         '/vagrant/webapp.war'
+    require:
+      - Wls_deployment[jersey-bundle]
+      - Wls_cluster[WebCluster]
+
 
 # create 2 machines
 machines_instances:

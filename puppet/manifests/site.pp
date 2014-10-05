@@ -235,6 +235,9 @@ class domains{
   $domain_instances = hiera('domain_instances', {})
   create_resources('orawls::domain',$domain_instances, $default_params)
 
+  $file_domain_libs = hiera('file_domain_libs', {})
+  create_resources('file',$file_domain_libs, $default_params)
+
   $wls_setting_instances = hiera('wls_setting_instances', {})
   create_resources('wls_setting',$wls_setting_instances, $default_params)
 
@@ -275,7 +278,6 @@ class userconfig{
   $userconfig_instances = hiera('userconfig_instances', {})
   create_resources('orawls::storeuserconfig',$userconfig_instances, $default_params)
 }
-
 
 class security{
   require userconfig
