@@ -1507,6 +1507,8 @@ __orawls::oud::control__ Stop or start an OUD (Oracle Unified Directory) ldap in
 
 All wls types needs a wls_setting definition, this is a pointer to an WebLogic AdminServer and you need to create one for every WebLogic domain. When you don't provide a wls_setting identifier in the title of the weblogic type then it will use default as identifier.
 
+Global timeout parameter for WebLogic resource types. use timeout and value in seconds, default = 120 seconds or 2 minutes
+
 ###wls_setting
 
 required for all the weblogic type/providers, this is a pointer to an WebLogic AdminServer.
@@ -1722,6 +1724,7 @@ or use puppet resource wls_deployment
       targettype        => ['Server','Cluster'],
       versionidentifier => '1.18@1.18.0.0',
       localpath         =>  '/vagrant/jersey-bundle-1.18.war',
+      timeout           => 60,
     }
     # this will use default as wls_setting identifier
     wls_deployment { 'webapp':
@@ -1730,6 +1733,7 @@ or use puppet resource wls_deployment
       target            => ['WebCluster'],
       targettype        => ['Cluster'],
       localpath         => '/vagrant/webapp.war',
+      timeout           => 60,
     }
 
 or add a version
@@ -2028,6 +2032,7 @@ or with log parameters, default file store and ssl
       two_way_ssl                       => '0',
       client_certificate_enforced       => '0',
       default_file_store                => '/path/to/default_file_store/',
+      max_message_size                  => '25000000',
     }
 
 or with JSSE with custom identity and trust
@@ -2058,6 +2063,7 @@ or with JSSE with custom identity and trust
       custom_identity_privatekey_passphrase => 'welcome',
       trust_keystore_file                   => '/vagrant/truststore.jks',
       trust_keystore_passphrase             => 'welcome',
+      max_message_size                      => '25000000',
     }
 
 
@@ -2100,6 +2106,8 @@ or with log parameters
         sslhostnameverificationignored:        '1'
         jsseenabled:                           '1'
         default_file_store:                    '/path/to/default_file_store/'
+        max_message_size:                      '25000000'
+
 
 
 You can also pass server arguments as an array, as it makes it easier to use references in YAML.
