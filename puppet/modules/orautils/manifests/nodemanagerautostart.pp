@@ -7,6 +7,7 @@ define orautils::nodemanagerautostart(
   $wlHome                  = undef,
   $user                    = 'oracle',
   $domain                  = undef,
+  $domainPath              = undef,
   $logDir                  = undef,
   $jsseEnabled             = false,
   $customTrust             = false,
@@ -25,8 +26,8 @@ define orautils::nodemanagerautostart(
       $nodeMgrLckFile = "${logDir}/nodemanager.log.lck"
     }
   } elsif ( $version in ['1212','1213']){
-    $nodeMgrPath    = "${wlHome}/../user_projects/domains/${domain}/nodemanager"
-    $nodeMgrBinPath = "${wlHome}/../user_projects/domains/${domain}/bin"
+    $nodeMgrPath    = "${domainPath}/nodemanager"
+    $nodeMgrBinPath = "${domainPath}/bin"
     $scriptName = "nodemanager_${domain}"
 
     if $logDir == undef {
@@ -63,7 +64,8 @@ define orautils::nodemanagerautostart(
   file { "/etc/init.d/${scriptName}" :
     ensure  => present,
     mode    => '0755',
-    content => template('orautils/nodemanager.erb'),
+    # content => template('orautils/nodemanager.erb'),
+    content => regsubst(template('orautils/nodemanager.erb'), '\r\n', "\n", 'EMG'),
   }
 
   exec { "chkconfig ${scriptName}":
