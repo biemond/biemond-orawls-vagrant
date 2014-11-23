@@ -35,24 +35,24 @@ class os {
   $host_instances = hiera('hosts', {})
   create_resources('host',$host_instances, $default_params)
 
-  exec { "create swap file":
-    command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",
-    creates => "/var/swap.1",
-  }
+  # exec { "create swap file":
+  #   command => "/bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=8192",
+  #   creates => "/var/swap.1",
+  # }
 
-  exec { "attach swap file":
-    command => "/sbin/mkswap /var/swap.1 && /sbin/swapon /var/swap.1",
-    require => Exec["create swap file"],
-    unless => "/sbin/swapon -s | grep /var/swap.1",
-  }
+  # exec { "attach swap file":
+  #   command => "/sbin/mkswap /var/swap.1 && /sbin/swapon /var/swap.1",
+  #   require => Exec["create swap file"],
+  #   unless => "/sbin/swapon -s | grep /var/swap.1",
+  # }
 
-  #add swap file entry to fstab
-  exec {"add swapfile entry to fstab":
-    command => "/bin/echo >>/etc/fstab /var/swap.1 swap swap defaults 0 0",
-    require => Exec["attach swap file"],
-    user => root,
-    unless => "/bin/grep '^/var/swap.1' /etc/fstab 2>/dev/null",
-  }
+  # #add swap file entry to fstab
+  # exec {"add swapfile entry to fstab":
+  #   command => "/bin/echo >>/etc/fstab /var/swap.1 swap swap defaults 0 0",
+  #   require => Exec["attach swap file"],
+  #   user => root,
+  #   unless => "/bin/grep '^/var/swap.1' /etc/fstab 2>/dev/null",
+  # }
 
   service { iptables:
         enable    => false,
@@ -166,12 +166,12 @@ class java {
 
   include jdk7
 
-  # $javas = ["/usr/java/jdk1.7.0_51/jre/bin/java", "/usr/java/jdk1.7.0_51/bin/java"]
+  # $javas = ["/usr/java/jdk1.7.0_55/jre/bin/java", "/usr/java/jdk1.7.0_55/bin/java"]
   # $LOG_DIR='/tmp/log_puppet_weblogic'
 
-  jdk7::install7{ 'jdk1.7.0_51':
-      version                   => "7u51" ,
-      fullVersion               => "jdk1.7.0_51",
+  jdk7::install7{ 'jdk1.7.0_55':
+      version                   => "7u55" ,
+      fullVersion               => "jdk1.7.0_55",
       alternativesPriority      => 18000,
       x64                       => true,
       downloadDir               => "/var/tmp/install",
@@ -299,15 +299,19 @@ class basic_config{
   $wls_domain_instances = hiera('wls_domain_instances', {})
   create_resources('wls_domain',$wls_domain_instances, $default_params)
 
-  # subscribe on changes
-  $wls_adminserver_instances = hiera('wls_adminserver_instances', {})
-  create_resources('wls_adminserver',$wls_adminserver_instances, $default_params)
+  # subscribe on domain changes
+  $wls_adminserver_instances_domain = hiera('wls_adminserver_instances_domain', {})
+  create_resources('wls_adminserver',$wls_adminserver_instances_domain, $default_params)
 
   $machines_instances = hiera('machines_instances', {})
   create_resources('wls_machine',$machines_instances, $default_params)
 
   $server_instances = hiera('server_instances', {})
   create_resources('wls_server',$server_instances, $default_params)
+
+  # subscribe on server changes
+  $wls_adminserver_instances_server = hiera('wls_adminserver_instances_server', {})
+  create_resources('wls_adminserver',$wls_adminserver_instances_server, $default_params)
 
   $server_channel_instances = hiera('server_channel_instances', {})
   create_resources('wls_server_channel',$server_channel_instances, $default_params)

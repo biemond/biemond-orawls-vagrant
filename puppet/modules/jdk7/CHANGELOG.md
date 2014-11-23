@@ -1,5 +1,8 @@
 # History
 
+## 0.4.6
+- sets keytool as defaultsss
+
 ## 0.4.5
 - sets javac as default
 

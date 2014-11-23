@@ -24,6 +24,7 @@ Dependency with
 - reidmv/yamlfile >=0.2.0
 
 ## Complete examples
+- Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
 - WebLogic 12.1.3 Reference implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-12.1.3](https://github.com/biemond/biemond-orawls-vagrant-12.1.3)
 - WebLogic 12.1.3 infra (JRF), the vagrant test case for full working WebLogic 12.1.3 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.1.3-infra](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra)
 - WebLogic 12.1.3 infra with OSB, the vagrant test case for full working WebLogic 12.1.3 infra OSB cluster example [biemond-orawls-vagrant-12.1.3-infra-osb](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra-osb)
@@ -2305,12 +2306,13 @@ or use puppet resource wls_coherence_cluster
 
     # this will use default as wls_setting identifier
     wls_coherence_cluster { 'WebCoherenceCluster':
-      ensure         => 'present',
-      clusteringmode => 'unicast',
-      multicastport  => '33389',
-      target         => ['WebCluster'],
-      targettype     => ['Cluster'],
-      unicastport    => '9999',
+      ensure          => 'present',
+      clusteringmode  => 'unicast',
+      multicastport   => '33389',
+      target          => ['WebCluster'],
+      targettype      => ['Cluster'],
+      unicastport     => '9999',
+      storage_enabled =>  '1',
     }
     wls_coherence_cluster { 'defaultCoherenceCluster':
       ensure         => 'present',
@@ -2327,13 +2329,16 @@ in hiera
 
 
     coherence_cluster_instances:
-      'WebCoherenceCluster':
-        ensure:         'present'
-        clusteringmode: 'unicast'
-        multicastport:  '33389'
-        target:         ['WebCluster']
-        targettype:     ['Cluster']
-        unicastport:    '9999'
+      'clusterCoherence':
+        ensure:           'present'
+        clusteringmode:   'unicast'
+        multicastaddress: '231.1.1.1'
+        multicastport:    '33387'
+        target:           ['DynamicCluster']
+        targettype:       ['Cluster']
+        unicastport:      '9099'
+        unicastaddress:   '10.10.10.100,10.10.10.200'
+        storage_enabled:  '1'
 
 
 
