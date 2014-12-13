@@ -22,6 +22,8 @@ Dependency with
 - hajee/easy_type >=0.10.0
 - adrien/filemapper >= 1.1.1
 - reidmv/yamlfile >=0.2.0
+- fiddyspence/sleep => 1.1.2
+
 
 ## Complete examples
 - Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
@@ -120,6 +122,7 @@ all templates creates a WebLogic domain, logs the domain creation output
 it should work on every PE or opensource puppet master, customers and I succesfull tested orawls on PE 3.0, 3.1, 3.2, 3.3. See also the puppet master vagrant box
 
 But when it fails you can do the following actions.
+- Check the time difference/timezone between all the puppet master and agent machines.
 - Update orawls and its dependencies on the puppet master.
 - After adding or refreshing the easy_type or orawls modules you need to restart all the PE services on the puppet master (this will flush the PE cache) and always do a puppet agent run on the Puppet master
 - To solve this error "no such file to load -- easy_type" you need just to do a puppet run on the puppet master when it is still failing you can move the easy_type module to its primary module location ( /etc/puppetlabs/puppet/module )
