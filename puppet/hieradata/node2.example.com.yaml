@@ -11,12 +11,15 @@ wls_middleware_home_dir:  &wls_middleware_home_dir  "/opt/oracle/middleware11g"
 # when you have just one domain on a server
 domain_name:                &domain_name                "Wls1036"
 domain_adminserver:         &domain_adminserver         "AdminServer"
-domain_adminserver_address: &domain_adminserver_address "10.10.10.10"
+domain_adminserver_address: &domain_adminserver_address "%{hiera('adminserver_address')}"
 domain_adminserver_port:    &domain_adminserver_port    7001
 domain_nodemanager_port:    &domain_nodemanager_port    5556
 domain_wls_password:        &domain_wls_password        "weblogic1"
 
-orautils::nodeMgrAddressParam:    "10.10.10.200"
+domain_node1_address: &domain_node1_address "%{hiera('node1_address')}"
+domain_node2_address: &domain_node2_address "%{hiera('node2_address')}"
+
+orautils::nodeMgrAddressParam:    *domain_node2_address
 
 # custom trust
 orautils::customTrust:             true
@@ -37,7 +40,7 @@ copy_instances:
 nodemanager_instances:
   'nodemanager':
     log_output:                            *logoutput
-    nodemanager_address:                   "10.10.10.200"
+    nodemanager_address:                   *domain_node2_address
     custom_identity:                       true
     custom_identity_keystore_filename:     '/vagrant/identity_node2.jks'
     custom_identity_keystore_passphrase:   'welcome'
