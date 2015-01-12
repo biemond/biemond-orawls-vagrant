@@ -704,6 +704,22 @@ datasource_instances:
       #   - Wls_server[wlsServer1]
       #   - Wls_server[wlsServer2]
 
+
+multi_datasource_instances:
+  'myMultiDatasource':
+    ensure:        present
+    jndinames:     'myMultiDatasource'
+    testfrequency: 120
+    algorithmtype: 'Failover'
+    datasources:
+      - 'jmsDS'
+    target:
+      - 'wlsServer1'
+      - 'wlsServer2'
+    targettype:
+     - 'Server'
+     - 'Server'
+
 file_persistence_folders:
    '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
       ensure:     directory
@@ -1118,9 +1134,9 @@ saf_imported_destination_instances:
     defaulttargeting:     '1'
     jndiprefix:           'saf2_'
     remotecontext:        'RemoteSAFContext-1'
-    # require:
-    #     - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-1]
-    #     - Wls_jms_module[jmsClusterModule]
+    require:
+        - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-1]
+        - Wls_jms_module[jmsClusterModule]
 
   'jmsClusterModule:SAFImportedDestinations-0':
     ensure:               'present'
@@ -1131,12 +1147,11 @@ saf_imported_destination_instances:
     remotecontext:        'RemoteSAFContext-0'
     timetolivedefault:    '100000000'
     usetimetolivedefault: '1'
-    # require:
-    #     - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-0]
-    #     - Wls_saf_error_handler[jmsClusterModule:ErrorHandling-1]
-    #     - Wls_jms_subdeployment[jmsClusterModule:safServers]
-    #     - Wls_jms_module[jmsClusterModule]
-
+    require:
+        - Wls_saf_remote_context[jmsClusterModule:RemoteSAFContext-0]
+        - Wls_saf_error_handler[jmsClusterModule:ErrorHandling-1]
+        - Wls_jms_subdeployment[jmsClusterModule:safServers]
+        - Wls_jms_module[jmsClusterModule]
 
 saf_imported_destination_object_instances:
   'jmsClusterModule:SAFImportedDestinations-0:SAFDemoQueue':
@@ -1171,11 +1186,11 @@ workmanager_instances:
       - 'WebCluster'
     targettype:
       - 'Cluster'
-    # require:
-    #   - Wls_workmanager_constraint[CapacityConstraint]
-    #   - Wls_workmanager_constraint[MaxThreadsConstraint]
-    #   - Wls_workmanager_constraint[MinThreadsConstraint]
-    #   - Wls_cluster[WebCluster]
+    require:
+      - Wls_workmanager_constraint[CapacityConstraint]
+      - Wls_workmanager_constraint[MaxThreadsConstraint]
+      - Wls_workmanager_constraint[MinThreadsConstraint]
+      - Wls_cluster[WebCluster]
 
 workmanager_constraint_instances:
   'CapacityConstraint':

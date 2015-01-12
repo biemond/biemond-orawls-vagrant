@@ -335,6 +335,10 @@ class datasources{
   $default_params = {}
   $datasource_instances = hiera('datasource_instances', {})
   create_resources('wls_datasource',$datasource_instances, $default_params)
+
+  $multi_datasource_instances = hiera('multi_datasource_instances', {})
+  create_resources('wls_multi_datasource',$multi_datasource_instances, $default_params)
+
 }
 
 
