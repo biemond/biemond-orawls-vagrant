@@ -159,18 +159,21 @@ authentication_provider_instances:
     control_flag:       'SUFFICIENT'
     order:              '0'
     before:             Wls_domain[Wls1036]
-  # 'ldap':
+  'ldap':
+    ensure:             'present'
+    control_flag:       'SUFFICIENT'
+    providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+    attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
+    attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;1'
+    order:              '1'
+    before:             Wls_domain[Wls1036]
+  # 'ActiveDirectoryAuthenticator':
   #   ensure:             'present'
   #   control_flag:       'SUFFICIENT'
-  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
-  #   attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
-  #   attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;1'
+  #   providerclassname:  'weblogic.security.providers.authentication.ActiveDirectoryAuthenticator'
+  #   attributes:         'Credential;GroupBaseDN;GroupFromNameFilter;GroupMembershipSearching;Host;MaxGroupMembershipSearchLevel;Principal;UserBaseDN;UserFromNameFilter;UserNameAttribute;Port'
+  #   attributesvalues:   'password;DC=ad,DC=company,DC=org;(&(sAMAccountName=%g)(objectclass=group));limited;ad.company.org;0;CN=SER_WASadmin,OU=Service Accounts,DC=ad,DC=company,DC=org;DC=ad,DC=company,DC=org;(&(sAMAccountName=%u)(objectclass=user));sAMAccountName;389'
   #   order:              '1'
-  #   before:             Wls_domain[Wls1036]
-  # 'Wls11gSetting/IdmsIdentityAsserter':
-  #   ensure:             'present'
-  #   providerclassname:  'nl.rsg.security.idms.providers.identity.IdmsIdentityAsserter'
-  #   before:             Wls_domain[Wls11gSetting/Wls11g]
   # 'Wls11gSetting/IdmsAuthenticator':
   #   ensure:             'present'
   #   control_flag:       'SUFFICIENT'
@@ -180,7 +183,14 @@ authentication_provider_instances:
   #   order:              '0'
   #   before:             Wls_domain[Wls11gSetting/Wls11g]
 
-
+identity_asserter_instances:
+  'DefaultIdentityAsserter':
+    ensure:             'present'
+    providerclassname:  'weblogic.security.providers.authentication.DefaultIdentityAsserter'
+    activetypes:        'AuthenticatedUser'
+    defaultmappertype:  'E'
+    order:              '1'
+    before:             Wls_domain[Wls1036]
 
 # this will change some domain parameters and will not create or destroy a new domain
 # use orawls::domain to create a new domain
