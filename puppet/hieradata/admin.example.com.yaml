@@ -157,7 +157,7 @@ authentication_provider_instances:
   'DefaultAuthenticator':
     ensure:             'present'
     control_flag:       'SUFFICIENT'
-    order:              '0'
+    # order:              '0'
     before:             Wls_domain[Wls1036]
   'ldap':
     ensure:             'present'
@@ -165,7 +165,7 @@ authentication_provider_instances:
     providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
     attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
     attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;1'
-    order:              '1'
+    # order:              '1'
     before:             Wls_domain[Wls1036]
   # 'ActiveDirectoryAuthenticator':
   #   ensure:             'present'
@@ -189,7 +189,7 @@ identity_asserter_instances:
     providerclassname:  'weblogic.security.providers.authentication.DefaultIdentityAsserter'
     activetypes:        'AuthenticatedUser'
     defaultmappertype:  'E'
-    order:              '1'
+    # order:              '2'
     before:             Wls_domain[Wls1036]
 
 # this will change some domain parameters and will not create or destroy a new domain
@@ -591,9 +591,11 @@ server_channel_instances:
     enabled:          '1'
     httpenabled:      '1'
     listenport:       '8004'
+    publicport:       '8104'
     outboundenabled:  '0'
     protocol:         'http'
     tunnelingenabled: '0'
+    max_message_size: '35000000'
     # require:
     #   - Wls_server[wlsServer1]
   'wlsServer2:HTTP':
@@ -601,9 +603,11 @@ server_channel_instances:
     enabled:          '1'
     httpenabled:      '1'
     listenport:       '8004'
+    publicport:       '8104'
     outboundenabled:  '0'
     protocol:         'http'
     tunnelingenabled: '0'
+    max_message_size: '35000000'
     # require:
     #   - Wls_server[wlsServer2]
 
@@ -716,19 +720,19 @@ datasource_instances:
 
 
 multi_datasource_instances:
-  'myMultiDatasource':
-    ensure:        present
-    jndinames:     'myMultiDatasource'
-    testfrequency: 120
-    algorithmtype: 'Failover'
-    datasources:
-      - 'jmsDS'
-    target:
-      - 'wlsServer1'
-      - 'wlsServer2'
-    targettype:
-     - 'Server'
-     - 'Server'
+  # 'myMultiDatasource':
+  #   ensure:        present
+  #   jndinames:     'myMultiDatasource'
+  #   testfrequency: 120
+  #   algorithmtype: 'Failover'
+  #   datasources:
+  #     - 'jmsDS'
+  #   target:
+  #     - 'wlsServer1'
+  #     - 'wlsServer2'
+  #   targettype:
+  #    - 'Server'
+  #    - 'Server'
 
 file_persistence_folders:
    '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
