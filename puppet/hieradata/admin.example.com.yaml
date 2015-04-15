@@ -78,12 +78,14 @@ wls_setting_instances:
     connect_url:        "t3://%{hiera('domain_adminserver_address')}:7001"
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
+    loglevel:           'debug'
   'Wls11gSetting':
     user:               *wls_os_user
     weblogic_home_dir:  *wls_weblogic_home_dir
     connect_url:        "t3://%{hiera('domain_adminserver_address')}:7011"
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
+    loglevel:           'debug'
     # post_classpath:     "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
 
 # FMW installation on top of WebLogic 10.3.6
@@ -322,6 +324,9 @@ deployment_instances:
   #   deploymenttype:    'Library'
   #   versionidentifier: '1.18@1.18.0.0'
   #   timeout:           60
+  #   stagingmode:       "nostage"
+  #   remote:            "1"
+  #   upload:            "1"
   #   target:
   #     - 'AdminServer'
   #     - 'WebCluster'
@@ -329,21 +334,24 @@ deployment_instances:
   #     - 'Server'
   #     - 'Cluster'
   #   localpath:         '/vagrant/jersey-bundle-1.18.war'
-  #   # require:
-  #   #   - Wls_cluster[WebCluster]
+  #   require:
+  #      - Wls_cluster[WebCluster]
   # 'webapp':
   #   ensure:            'present'
   #   deploymenttype:    'AppDeployment'
   #   versionidentifier: '1.1@1.1.0.0'
   #   timeout:           60
+  #   stagingmode:       "nostage"
+  #   remote:            "1"
+  #   upload:            "1"
   #   target:
   #     - 'WebCluster'
   #   targettype:
   #     - 'Cluster'
   #   localpath:         '/vagrant/webapp.war'
   #   require:
-  #     # - Wls_deployment[jersey-bundle]
-  #     # - Wls_cluster[WebCluster]
+  #      - Wls_deployment[jersey-bundle]
+  #      - Wls_cluster[WebCluster]
 
 
 # create 2 machines
