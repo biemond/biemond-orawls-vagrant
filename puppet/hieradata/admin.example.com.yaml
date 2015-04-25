@@ -62,14 +62,14 @@ domain_instances:
     custom_identity_privatekey_passphrase: 'welcome'
 
 file_domain_libs:
-   # '/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar':
-   #    ensure:     present
-   #    source:     '/vagrant/idmsSecurityProvider-3.26-SNAPSHOT.jar'
-   #    mode:       '0775'
-   #    owner:      'wls'
-   #    group:      'dba'
-   #    require:    Orawls::Domain[Wls11g]
-   #    before:     Wls_setting[Wls11gSetting]
+  '/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar':
+    ensure:     present
+    source:     '/vagrant/idmsSecurityProvider-3.26-SNAPSHOT.jar'
+    mode:       '0775'
+    owner:      'wls'
+    group:      'dba'
+    require:    Orawls::Domain[Wls11g]
+    before:     Wls_setting[Wls11gSetting]
 
 wls_setting_instances:
   'default':
@@ -86,7 +86,7 @@ wls_setting_instances:
     weblogic_user:      *wls_weblogic_user
     weblogic_password:  *domain_wls_password
     loglevel:           'debug'
-    # post_classpath:     "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
+    post_classpath:     "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:
@@ -156,10 +156,18 @@ userconfig_instances:
     user_config_dir:      '/home/wls'
 
 authentication_provider_instances:
+  # 'Wls11gSetting/IdmsAuthenticator':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'nl.rsg.security.idms.providers.authentication.IdmsAuthenticator'
+  #   attributes:         'Endpoint;RequestTimeout;ConnectTimeout'
+  #   attributesvalues:   'http://xxxx.com/MSL/4/AccountService;60000;5000'
+  #   # order:              '1'
+  #   before:             Wls_domain[Wls11gSetting/Wls11g]
   'DefaultAuthenticator':
     ensure:             'present'
     control_flag:       'SUFFICIENT'
-    # order:              '0'
+    order:              '0'
     before:             Wls_domain[Wls1036]
   'ldap':
     ensure:             'present'
@@ -176,16 +184,13 @@ authentication_provider_instances:
   #   attributes:         'Credential;GroupBaseDN;GroupFromNameFilter;GroupMembershipSearching;Host;MaxGroupMembershipSearchLevel;Principal;UserBaseDN;UserFromNameFilter;UserNameAttribute;Port'
   #   attributesvalues:   'password;DC=ad,DC=company,DC=org;(&(sAMAccountName=%g)(objectclass=group));limited;ad.company.org;0;CN=SER_WASadmin,OU=Service Accounts,DC=ad,DC=company,DC=org;DC=ad,DC=company,DC=org;(&(sAMAccountName=%u)(objectclass=user));sAMAccountName;389'
   #   order:              '1'
-  # 'Wls11gSetting/IdmsAuthenticator':
-  #   ensure:             'present'
-  #   control_flag:       'SUFFICIENT'
-  #   providerclassname:  'nl.rsg.security.idms.providers.authentication.IdmsAuthenticator'
-  #   attributes:         'Endpoint;RequestTimeout;ConnectTimeout'
-  #   attributesvalues:   'http://xxxx.com/MSL/4/AccountService;60000;5000'
-  #   order:              '0'
-  #   before:             Wls_domain[Wls11gSetting/Wls11g]
 
 identity_asserter_instances:
+  'Wls11gSetting/IdmsIdentityAsserter':
+    ensure:             'present'
+    providerclassname:  'nl.rsg.security.idms.providers.identity.IdmsIdentityAsserter'
+    before:             Wls_domain[Wls11gSetting/Wls11g]
+    order:              0
   'DefaultIdentityAsserter':
     ensure:             'present'
     providerclassname:  'weblogic.security.providers.authentication.DefaultIdentityAsserter'
