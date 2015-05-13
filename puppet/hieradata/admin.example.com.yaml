@@ -803,6 +803,12 @@ file_persistence_store_instances:
       - File[/opt/oracle/wlsdomains/domains/Wls1036/persistenceSaf1]
 
 jmsserver_instances:
+   'jmsServerAdmin':
+     ensure:              'present'
+     target:
+       - 'AdminServer'
+     targettype:
+       - 'Server'
    'jmsServer1':
      ensure:              'present'
      target:
@@ -836,6 +842,12 @@ jmsserver_instances:
        - 'Server'
 
 jms_module_instances:
+   'jmsAdminModule':
+     ensure:      'present'
+     target:
+       - 'AdminServer'
+     targettype:
+       - 'Server'
    'jmsClusterModule':
      ensure:      'present'
      target:
@@ -868,6 +880,18 @@ jms_quota_instances:
       # require:          Wls_jms_module[jmsClusterModule]
 
 jms_subdeployment_instances:
+   'jmsAdminModule:jmsServers':
+      ensure:     'present'
+      target:
+        - 'jmsServerAdmin'
+      targettype:
+        - 'JMSServer'
+   'jmsAdminModule:wlsServers':
+      ensure:     'present'
+      target:
+        - 'AdminServer'
+      targettype:
+        - 'Server'
    'jmsClusterModule:jmsServers':
       ensure:     'present'
       target:
@@ -947,6 +971,27 @@ jms_connection_factory_instances:
       xaenabled:          '0'
 
 jms_queue_instances:
+   'jmsAdminModule:ErrorQueue':
+     ensure:                   'present'
+     expirationpolicy:         'Discard'
+     jndiname:                 'jms/ErrorQueue'
+     redeliverydelay:          '-1'
+     redeliverylimit:          '-1'
+     subdeployment:            'jmsServers'
+     defaulttargeting:         '0'
+     timetodeliver:            '-1'
+     timetolive:               '-1'
+   'jmsAdminModule:Queue1':
+     ensure:                   'present'
+     errordestination:         'ErrorQueue'
+     expirationpolicy:         'Redirect'
+     jndiname:                 'jms/Queue1'
+     redeliverydelay:          '2000'
+     redeliverylimit:          '3'
+     subdeployment:            'jmsServers'
+     defaulttargeting:         '0'
+     timetodeliver:            '-1'
+     timetolive:               '300000'
    'jmsClusterModule:ErrorQueue':
      ensure:                   'present'
      distributed:              '1'
