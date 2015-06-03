@@ -88,6 +88,7 @@ Dependency with
 - [wls_workmanager](#wls_workmanager)
 - [wls_datasource](#wls_datasource)
 - [wls_file_persistence_store](#wls_file_persistence_store)
+- [wls_jdbc_persistence_store](#wls_jdbc_persistence_store)
 - [wls_jmsserver](#wls_jmsserver)
 - [wls_safagent](#wls_safagent)
 - [wls_jms_module](#wls_jms_module)
@@ -96,6 +97,7 @@ Dependency with
 - [wls_jms_queue](#wls_jms_queue)
 - [wls_jms_topic](#wls_jms_topic)
 - [wls_jms_connection_factory](#wls_jms_connection_factory)
+- [wls_jms_template](#wls_jms_template)
 - [wls_saf_remote_context](#wls_saf_remote_context)
 - [wls_saf_error_handler](#wls_saf_error_handler)
 - [wls_saf_imported_destination](#wls_saf_imported_destination)
@@ -210,6 +212,17 @@ just generates all the certificates and set the following hiera variables.
     wls_trust_keystore_file:           &wls_trust_keystore_file       '/vagrant/truststore.jks'
     wls_trust_keystore_passphrase:     &wls_trust_keystore_passphrase 'welcome'
 
+    wls_setting_instances:
+      'default':
+        user:                      oracle
+        weblogic_home_dir:         '/opt/oracle/middleware11g/wlserver_10.3'
+        connect_url:               't3s://10.10.10.10:7002'
+        weblogic_user:             'weblogic'
+        weblogic_password:         'Welcome01'
+        custom_trust:              *wls_custom_trust
+        trust_keystore_file:       *wls_trust_keystore_file
+        trust_keystore_passphrase: *wls_trust_keystore_passphrase
+
     # create a standard domain with custom identity for the adminserver
     domain_instances:
       'Wls1036':
@@ -232,25 +245,25 @@ just generates all the certificates and set the following hiera variables.
         custom_identity_privatekey_passphrase: 'welcome'
         nodemanager_address:                   *domain_adminserver_address
 
-        server_instances:
-          'wlsServer1':
-            ensure:                                'present'
-            arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
-            listenaddress:                         '10.10.10.100'
-            listenport:                            '8001'
-            logfilename:                           '/var/log/weblogic/wlsServer1.log'
-            machine:                               'Node1'
-            sslenabled:                            '1'
-            ssllistenport:                         '8201'
-            sslhostnameverificationignored:        '1'
-            jsseenabled:                           '1'
-            custom_identity:                       '1'
-            custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
-            custom_identity_keystore_passphrase:   'welcome'
-            custom_identity_alias:                 'node1'
-            custom_identity_privatekey_passphrase: 'welcome'
-            trust_keystore_file:                   *wls_trust_keystore_file
-            trust_keystore_passphrase:             *wls_trust_keystore_passphrase
+    server_instances:
+      'wlsServer1':
+        ensure:                                'present'
+        arguments:                             '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out'
+        listenaddress:                         '10.10.10.100'
+        listenport:                            '8001'
+        logfilename:                           '/var/log/weblogic/wlsServer1.log'
+        machine:                               'Node1'
+        sslenabled:                            '1'
+        ssllistenport:                         '8201'
+        sslhostnameverificationignored:        '1'
+        jsseenabled:                           '1'
+        custom_identity:                       '1'
+        custom_identity_keystore_filename:     '/vagrant/identity_node1.jks'
+        custom_identity_keystore_passphrase:   'welcome'
+        custom_identity_alias:                 'node1'
+        custom_identity_privatekey_passphrase: 'welcome'
+        trust_keystore_file:                   *wls_trust_keystore_file
+        trust_keystore_passphrase:             *wls_trust_keystore_passphrase
 
 
 ## <a name="urandom">Linux low on entropy or urandom fix</a>
@@ -1581,10 +1594,6 @@ Global timeout parameter for WebLogic resource types. use timeout and value in s
 
 required for all the weblogic type/providers, this is a pointer to an WebLogic AdminServer.
 
-For suppressing the passwords in the puppet log output you can set the loglevel to debug, this way it will only show up when you set puppet agent or apply loglevel to debug and off course when the wls_setting is created or updated. in other cases you won't see a thing in the output.
-
-in hiera loglevel: 'debug' or loglevel => 'debug'
-
     wls_setting { 'default':
       user               => 'oracle',
       weblogic_home_dir  => '/opt/oracle/middleware11g/wlserver_10.3',
@@ -1613,6 +1622,25 @@ or in hiera
         weblogic_user:      'weblogic'
         weblogic_password:  'weblogic1'
         post_classpath:     '/opt/oracle/middleware12c/oracle_common/modules/internal/features/jrf_wlsFmw_oracle.jrf.wlst_12.1.3.jar'
+
+With t3s and custom trust
+
+    wls_setting_instances:
+      'default':
+        user:                      oracle'
+        weblogic_home_dir:         '/opt/oracle/middleware12c/wlserver'
+        connect_url:               "t3s://10.10.10.21:7002"
+        weblogic_user:             'weblogic'
+        weblogic_password:         'weblogic1'
+        custom_trust:              true
+        trust_keystore_file:       '/vagrant/truststore.jks'
+        trust_keystore_passphrase: 'welcome'
+      'plain':
+        user:                      oracle'
+        weblogic_home_dir:         '/opt/oracle/middleware12c/wlserver'
+        connect_url:               "t3://10.10.10.21:7101"
+        weblogic_user:             'weblogic'
+        weblogic_password:         'weblogic1'
 
 
 ### wls_domain
@@ -2132,6 +2160,7 @@ or use puppet resource wls_server
       jsseenabled                       => '0',
       listenaddress                     => '10.10.10.100',
       listenport                        => '8001',
+      listenportenabled                 => '1',
       machine                           => 'Node1',
       sslenabled                        => '0',
       tunnelingenabled                  => '0',
@@ -2147,6 +2176,7 @@ or with log parameters, default file store and ssl
       jsseenabled                       => '0',
       listenaddress                     => '10.10.10.200',
       listenport                        => '8001',
+      listenportenabled                 => '1',
       log_file_min_size                 => '2000',
       log_filecount                     => '10',
       log_number_of_files_limited       => '1',
@@ -2184,6 +2214,7 @@ or with JSSE with custom identity and trust
       arguments                             => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer2.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer2_err.out',
       listenaddress                         => '10.10.10.200',
       listenport                            => '8001',
+      listenportenabled                     => '1',
       log_file_min_size                     => '2000',
       log_filecount                         => '10',
       log_number_of_files_limited           => '1',
@@ -2217,6 +2248,7 @@ in hiera
          arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'
          listenaddress:                  '10.10.10.100'
          listenport:                     '8001'
+         listenportenabled:              '1'
          logfilename:                    '/data/logs/wlsServer1.log'
          machine:                        'Node1'
          sslenabled:                     '1'
@@ -2235,6 +2267,7 @@ or with log parameters
         arguments:                      '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/data/logs/wlsServer1.out -Dweblogic.Stderr=/data/logs/wlsServer1_err.out'
         listenaddress:                         '10.10.10.100'
         listenport:                            '8001'
+        listenportenabled:                     '1'
         logfilename:                           '/var/log/weblogic/wlsServer1.log'
         log_file_min_size:                     '2000'
         log_filecount:                         '10'
@@ -2712,9 +2745,12 @@ in hiera
           - 'Cluster'
 
 
+### wls_jdbc_persistence_store
+it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_jdbc_persistence_store
 
 ### wls_file_persistence_store
-
 it needs wls_setting and when identifier is not provided it will use the 'default'.
 
 or use puppet resource wls_file_persistence_store
