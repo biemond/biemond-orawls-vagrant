@@ -1,5 +1,15 @@
 # History
 
+## 1.0.36
+- support for FMW installation which has 3 install files like oim/oam 11.1.2.3
+- Webtier configuration for OAM
+- wls_server_channel added keystore attributes
+- wls_jms_queue ForwardDelay bug plus new attribute templatename
+- wls_datasource new attributes row prefetch and initsql
+- wls_workmanager new attribute fairshare
+- wls_coherence_template new attribute classpath
+- wls_deployment bug when version is none
+
 ## 1.0.35
 - custom wls resource types now also supports t3s with customtrust done by wls_settings
 - adminserver_ssl_port parameter on the domain.pp manifest
@@ -9,7 +19,7 @@
 - wls_deployment planpath fixes
 - wls_datasource fixes
 - removed default value -1 on forward delay on wls_jms_queue
-- wls_server new attribute listenportenabled
+- wls_server, new attribute listenportenabled
 - wls_jms_connection_factory, xa fix plus new attributes localjndiname, defaultdeliverymode, defaultredeliverydelay
 - wls_workmanager_constraint, Add the ability to manage fairshare class.
 

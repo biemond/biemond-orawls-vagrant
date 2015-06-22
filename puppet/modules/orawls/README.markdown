@@ -1519,6 +1519,19 @@ hiera configuration
           instance_name:         'ohs1'
           machine_name:          'Node1'
 
+Webtier for OAM
+
+    webtier_instances:
+      'ohs1':
+        action_name:            'create'
+        instance_name:          'ohs1'
+        webgate_configure:      true
+        webgate_agentname:      'ohs1'
+        webgate_hostidentifier: 'host1'
+        oamadminserverhostname: 'oim1admin.example.com'
+        oamadminserverport:     '7001'
+        log_output:             *logoutput
+
 ### oimconfig
 __orawls::utils::oimconfig__ Configure OIM , oim server, design or remote configuration
 
@@ -2373,28 +2386,69 @@ it needs wls_setting and when identifier is not provided it will use the 'defaul
 or use puppet resource wls_server_channel
 
     # this will use default as wls_setting identifier
-    wls_server_channel { 'wlsServer1:Channel-Cluster':
-      ensure           => 'present',
-      enabled          => '1',
-      httpenabled      => '1',
-      listenaddress    => '10.10.10.100',
-      listenport       => '8003',
-      outboundenabled  => '0',
-      protocol         => 'cluster-broadcast',
-      publicaddress    => '10.10.10.100',
-      tunnelingenabled => '0',
+    wls_server_channel { 'default/wlsServer1:Channel-Cluster':
+      ensure                      => 'present',
+      channel_identity_customized => '0',
+      client_certificate_enforced => '0',
+      custom_identity_alias       => 'node1',
+      enabled                     => '1',
+      httpenabled                 => '1',
+      listenaddress               => '10.10.10.100',
+      listenport                  => '8003',
+      max_message_size            => '25000000',
+      outboundenabled             => '0',
+      protocol                    => 'cluster-broadcast',
+      publicaddress               => '10.10.10.100',
+      publicport                  => '8003',
+      tunnelingenabled            => '0',
+      two_way_ssl                 => '0',
     }
-    # this will use default as wls_setting identifier
-    wls_server_channel { 'wlsServer2:Channel-Cluster':
-      ensure           => 'present',
-      enabled          => '1',
-      httpenabled      => '1',
-      listenport       => '8003',
-      publicport       => '8103',
-      outboundenabled  => '0',
-      protocol         => 'cluster-broadcast',
-      tunnelingenabled => '0',
-      max_message_size => '25000000',
+    wls_server_channel { 'default/wlsServer1:HTTP':
+      ensure                      => 'present',
+      channel_identity_customized => '0',
+      client_certificate_enforced => '0',
+      custom_identity_alias       => 'node1',
+      enabled                     => '1',
+      httpenabled                 => '1',
+      listenport                  => '8004',
+      max_message_size            => '35000000',
+      outboundenabled             => '0',
+      protocol                    => 'http',
+      publicport                  => '8104',
+      tunnelingenabled            => '0',
+      two_way_ssl                 => '0',
+    }
+    wls_server_channel { 'default/wlsServer2:Channel-Cluster':
+      ensure                      => 'present',
+      channel_identity_customized => '0',
+      client_certificate_enforced => '0',
+      custom_identity_alias       => 'node2',
+      enabled                     => '1',
+      httpenabled                 => '1',
+      listenaddress               => '10.10.10.200',
+      listenport                  => '8003',
+      max_message_size            => '25000000',
+      outboundenabled             => '0',
+      protocol                    => 'cluster-broadcast',
+      publicaddress               => '10.10.10.200',
+      publicport                  => '8003',
+      tunnelingenabled            => '0',
+      two_way_ssl                 => '0',
+    }
+    wls_server_channel { 'default/wlsServer2:HTTP':
+      ensure                      => 'present',
+      channel_identity_customized => '0',
+      client_certificate_enforced => '0',
+      custom_identity_alias       => 'node2',
+      enabled                     => '1',
+      httpenabled                 => '1',
+      listenport                  => '8004',
+      max_message_size            => '35000000',
+      outboundenabled             => '0',
+      protocol                    => 'http',
+      publicport                  => '8104',
+      tunnelingenabled            => '0',
+      two_way_ssl                 => '0',
     }
 
 in hiera
@@ -2405,23 +2459,50 @@ in hiera
         ensure:           'present'
         enabled:          '1'
         httpenabled:      '1'
-        listenaddress:    '10.10.10.100'
+        listenaddress:    *domain_node1_address
         listenport:       '8003'
         outboundenabled:  '0'
         protocol:         'cluster-broadcast'
-        publicaddress:    '10.10.10.100'
+        publicaddress:    *domain_node1_address
         tunnelingenabled: '0'
+        # require:
+        #   - Wls_server[wlsServer1]
       'wlsServer2:Channel-Cluster':
         ensure:           'present'
         enabled:          '1'
         httpenabled:      '1'
+        listenaddress:    *domain_node2_address
         listenport:       '8003'
-        publicport:       '8103'
         outboundenabled:  '0'
         protocol:         'cluster-broadcast'
+        publicaddress:    *domain_node2_address
         tunnelingenabled: '0'
-        max_message_size: '25000000'
-
+        # require:
+        #   - Wls_server[wlsServer2]
+      'wlsServer1:HTTP':
+        ensure:           'present'
+        enabled:          '1'
+        httpenabled:      '1'
+        listenport:       '8004'
+        publicport:       '8104'
+        outboundenabled:  '0'
+        protocol:         'http'
+        tunnelingenabled: '0'
+        max_message_size: '35000000'
+        # require:
+        #   - Wls_server[wlsServer1]
+      'wlsServer2:HTTP':
+        ensure:           'present'
+        enabled:          '1'
+        httpenabled:      '1'
+        listenport:       '8004'
+        publicport:       '8104'
+        outboundenabled:  '0'
+        protocol:         'http'
+        tunnelingenabled: '0'
+        max_message_size: '35000000'
+        # require:
+        #   - Wls_server[wlsServer2]
 
 ### wls_cluster
 
@@ -2659,26 +2740,31 @@ it needs wls_setting and when identifier is not provided it will use the 'defaul
 or use puppet resource wls_workmanager_constaint
 
     # this will use default as wls_setting identifier
-    wls_workmanager_constraint { 'default/CapacityConstraint':
+    wls_workmanager_constraint { 'CapacityConstraint':
       ensure          => 'present',
       constrainttype  => 'Capacity',
       constraintvalue => '20',
       target          => ['WebCluster'],
       targettype      => ['Cluster'],
     }
-    # this will use default as wls_setting identifier
-    wls_workmanager_constraint { 'default/MaxThreadsConstraint':
+    wls_workmanager_constraint { 'MaxThreadsConstraint':
       ensure          => 'present',
       constrainttype  => 'MaxThreadsConstraint',
       constraintvalue => '5',
       target          => ['WebCluster'],
       targettype      => ['Cluster'],
     }
-    # this will use default as wls_setting identifier
-    wls_workmanager_constraint { 'default/MinThreadsConstraint':
+    wls_workmanager_constraint { 'MinThreadsConstraint':
       ensure          => 'present',
       constrainttype  => 'MinThreadsConstraint',
       constraintvalue => '2',
+      target          => ['WebCluster'],
+      targettype      => ['Cluster'],
+    }
+    wls_workmanager_constraint { 'FairShareReqClass':
+      ensure          => 'present',
+      constrainttype  => 'FairShareRequestClasses',
+      constraintvalue => '50',
       target          => ['WebCluster'],
       targettype      => ['Cluster'],
     }
@@ -2711,6 +2797,15 @@ in hiera
         targettype:
           - 'Cluster'
         constrainttype:  'MinThreadsConstraint'
+      'FairShareReqClass':
+        ensure:          'present'
+        constrainttype:  'FairShareRequestClasses'
+        constraintvalue: '50'
+        target:
+          - 'WebCluster'
+        targettype:
+          - 'Cluster'
+
 
 ### wls_workmanager
 
@@ -2720,13 +2815,14 @@ or use puppet resource wls_workmanager
 
     # this will use default as wls_setting identifier
     wls_workmanager { 'WorkManagerConstraints':
-      ensure               => 'present',
-      capacity             => 'CapacityConstraint',
-      maxthreadsconstraint => 'MaxThreadsConstraint',
-      minthreadsconstraint => 'MinThreadsConstraint',
-      stuckthreads         => '0',
-      target               => ['WebCluster'],
-      targettype           => ['Cluster'],
+      ensure                => 'present',
+      capacity              => 'CapacityConstraint',
+      maxthreadsconstraint  => 'MaxThreadsConstraint',
+      minthreadsconstraint  => 'MinThreadsConstraint',
+      fairsharerequestclass => 'FairShareReqClass',
+      stuckthreads          => '0',
+      target                => ['WebCluster'],
+      targettype            => ['Cluster'],
     }
 
 in hiera
@@ -2738,6 +2834,7 @@ in hiera
         capacity:              'CapacityConstraint'
         maxthreadsconstraint:  'MaxThreadsConstraint'
         minthreadsconstraint:  'MinThreadsConstraint'
+        fairsharerequestclass: 'FairShareReqClass'
         stuckthreads:          '1'
         target:
           - 'WebCluster'
@@ -2749,6 +2846,25 @@ in hiera
 it needs wls_setting and when identifier is not provided it will use the 'default'.
 
 or use puppet resource wls_jdbc_persistence_store
+
+    wls_jdbc_persistence_store { 'JDBCStoreX':
+      ensure      => 'present',
+      datasource  => 'jmsDS',
+      prefix_name => 'dev_',
+      target      => ['wlsServer1'],
+      targettype  => ['Server'],
+    }
+
+in hiera
+
+    file_jdbc_store_instances:
+      'JDBCStoreX':
+          ensure:      'present'
+          datasource:  'jmsDS'
+          prefix_name: 'dev_'
+          target:      ['wlsServer1']
+          targettype:  ['Server']
+
 
 ### wls_file_persistence_store
 it needs wls_setting and when identifier is not provided it will use the 'default'.
@@ -2861,28 +2977,29 @@ or use puppet resource wls_datasource
     # this will use default as wls_setting identifier
     wls_datasource { 'hrDS':
       ensure                           => 'present',
+      connectioncreationretryfrequency => '0',
       drivername                       => 'oracle.jdbc.xa.client.OracleXADataSource',
-      extraproperties                  => ['SendStreamAsBlob=true','oracle.net.CONNECT_TIMEOUT=10000'],
+      extraproperties                  => ['SendStreamAsBlob=true', 'oracle.net.CONNECT_TIMEOUT=10001'],
+      fanenabled                       => '0',
       globaltransactionsprotocol       => 'TwoPhaseCommit',
-      initialcapacity                  => '1',
-      jndinames                        => ['jdbc/hrDS'],
+      initialcapacity                  => '2',
+      initsql                          => 'None',
+      jndinames                        => ['jdbc/hrDS', 'jdbc/hrDS2'],
       maxcapacity                      => '15',
       mincapacity                      => '1',
+      rowprefetchenabled               => '0',
+      rowprefetchsize                  => '48',
+      secondstotrustidlepoolconnection => '10',
       statementcachesize               => '10',
+      target                           => ['wlsServer1', 'wlsServer2'],
+      targettype                       => ['Server', 'Server'],
       testconnectionsonreserve         => '0',
-      target                           => ['WebCluster','WebCluster2'],
-      targettype                       => ['Cluster','Cluster'],
+      testfrequency                    => '120',
       testtablename                    => 'SQL SELECT 1 FROM DUAL',
       url                              => 'jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com',
       user                             => 'hr',
-      password                         => 'pass',
       usexa                            => '1',
-      xaproperties:                    => 'XaSetTransactionTimeout=1,XaRetryIntervalSeconds=300',
-      connectioncreationretryfrequency => '0',
-      secondstotrustidlepoolconnection => '10',
-      testfrequency                    => '120',
     }
-    # this will use default as wls_setting identifier
     wls_datasource { 'jmsDS':
       ensure                     => 'present',
       drivername                 => 'com.mysql.jdbc.Driver',
@@ -3035,6 +3152,26 @@ in hiera
          targettype:
            - 'Cluster'
 
+### wls_jms_template
+
+it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_jms_template
+
+    wls_jms_template { 'jmsClusterModule:Template-0':
+      ensure          => 'present',
+      redeliverydelay => '-1',
+      redeliverylimit => '-1',
+    }
+
+in hiera
+
+    jms_template_instances:
+      'jmsClusterModule:Template':
+        ensure:          'present'
+        redeliverydelay: '-1'
+        redeliverylimit: '-1'
+
 
 ### wls_connection_factory
 
@@ -3108,6 +3245,7 @@ or use puppet resource wls_jms_queue
       subdeployment    => 'jmsServers',
       timetodeliver    => '-1',
       timetolive       => '-1',
+      templatename     => 'Template',
     }
     wls_jms_queue { 'jmsClusterModule:Queue1':
       ensure           => 'present',
@@ -3151,6 +3289,7 @@ in hiera
          defaulttargeting:         '0'
          timetodeliver:            '-1'
          timetolive:               '-1'
+         templatename:             'Template'
        'jmsClusterModule:Queue1':
          ensure:                   'present'
          distributed:              '1'

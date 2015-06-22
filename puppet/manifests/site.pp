@@ -389,6 +389,9 @@ class jms{
   $jms_subdeployment_instances = hiera('jms_subdeployment_instances', {})
   create_resources('wls_jms_subdeployment',$jms_subdeployment_instances, $default_params)
 
+  $jms_template_instances = hiera('jms_template_instances', {})
+  create_resources('wls_jms_template',$jms_template_instances, $default_params)
+
   $jms_quota_instances = hiera('jms_quota_instances', {})
   create_resources('wls_jms_quota',$jms_quota_instances, $default_params)
 

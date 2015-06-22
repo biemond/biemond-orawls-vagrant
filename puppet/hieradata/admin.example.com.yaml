@@ -862,6 +862,13 @@ jms_module_instances:
      targettype:
        - 'Cluster'
 
+
+jms_template_instances:
+  'jmsClusterModule:Template':
+    ensure:          'present'
+    redeliverydelay: '-1'
+    redeliverylimit: '-1'
+
 # create jms quotas for the jms module
 jms_quota_instances:
    'jmsClusterModule:QuotaBig':
@@ -1003,6 +1010,7 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '-1'
+     templatename:             'Template'
      # require:
      #   - Wls_jms_module[jmsClusterModule]
      #   - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
@@ -1253,6 +1261,7 @@ workmanager_instances:
     capacity:              'CapacityConstraint'
     maxthreadsconstraint:  'MaxThreadsConstraint'
     minthreadsconstraint:  'MinThreadsConstraint'
+    fairsharerequestclass: 'FairShareReqClass'
     stuckthreads:          '0'
     target:
       - 'WebCluster'
@@ -1262,6 +1271,7 @@ workmanager_instances:
       - Wls_workmanager_constraint[CapacityConstraint]
       - Wls_workmanager_constraint[MaxThreadsConstraint]
       - Wls_workmanager_constraint[MinThreadsConstraint]
+      - Wls_workmanager_constraint[FairShareReqClass]
       - Wls_cluster[WebCluster]
 
 workmanager_constraint_instances:
@@ -1292,5 +1302,12 @@ workmanager_constraint_instances:
       - 'Cluster'
     constrainttype:  'MinThreadsConstraint'
     # require:         Wls_cluster[WebCluster]
-
+  'FairShareReqClass':
+    ensure:          'present'
+    constrainttype:  'FairShareRequestClasses'
+    constraintvalue: '50'
+    target:
+      - 'WebCluster'
+    targettype:
+      - 'Cluster'
 
