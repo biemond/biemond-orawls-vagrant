@@ -53,6 +53,7 @@ Dependency with
 - [Startup a nodemanager](#nodemanager)
 - [start or stop AdminServer, Managed or a Cluster](#control)
 - [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
+- [Dynamic targetting](#Dynamictargetting) by using the notes field in WebLogic for resource targetting
 
 ### Fusion Middleware Features 11g & 12.1.3
 - installs [FMW](#fmw) software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
@@ -1026,6 +1027,10 @@ When using ssh (use_ssh = true) you need to setup ssh so you won't need to provi
       adminserver_port       => 7001,
       weblogic_user          => "weblogic",
       weblogic_password      => "weblogic1",
+      setinternalappdeploymentondemandenable => false,
+      setconfigbackupenabled                 => true,
+      setarchiveconfigurationcount           => 10,
+      setconfigurationaudittype              => 'logaudit',
     }
 
 Configuration with Hiera ( need to have puppet > 3.0 )
@@ -1317,6 +1322,77 @@ when you just have one WebLogic domain on a server
       'Wls12c':
          log_output:           true
          user_config_dir:      '/home/oracle'
+
+### Dynamictargetting
+Sometimes you do not know how many managed services you will have,  
+due to application scaling or other use cases. Since you do specify resources
+like clusters and datasources in a more 'static' way, there should be a way to
+qualify a managed server as a target for such resources.
+
+We use the notes field in WebLogic Server to accomplish this. Currently implemented
+for the following resource types:
+
+- wls_cluster
+- wls_datasource
+- wls_mail_session
+
+The way you use this, is by entering the resource name in the server_parameter  
+field on the wls_server type, and put the servers field to 'inherited' on the
+resource to be targeted.
+
+Example:
+
+    wls_server { 'wlsServer1':
+      ensure                            => 'present',
+      arguments                         => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out',
+      jsseenabled                       => '0',
+      listenaddress                     => '10.10.10.100',
+      listenport                        => '8001',
+      listenportenabled                 => '1',
+      machine                           => 'Node1',
+      sslenabled                        => '0',
+      tunnelingenabled                  => '0',
+      max_message_size                  => '10000000',
+      server_parameter                  => 'WebCluster, hrDs',
+    }
+
+    wls_cluster { 'WebCluster':
+      ensure           => 'present',
+      messagingmode    => 'unicast',
+      migrationbasis   => 'consensus',
+      servers          => ['inherited'],
+      multicastaddress => '239.192.0.0',
+      multicastport    => '7001',
+    }
+
+    wls_datasource { 'hrDS':
+      ensure                           => 'present',
+      connectioncreationretryfrequency => '0',
+      drivername                       => 'oracle.jdbc.xa.client.OracleXADataSource',
+      extraproperties                  => ['SendStreamAsBlob=true', 'oracle.net.CONNECT_TIMEOUT=10001'],
+      fanenabled                       => '0',
+      globaltransactionsprotocol       => 'TwoPhaseCommit',
+      initialcapacity                  => '2',
+      initsql                          => 'None',
+      jndinames                        => ['jdbc/hrDS', 'jdbc/hrDS2'],
+      maxcapacity                      => '15',
+      mincapacity                      => '1',
+      rowprefetchenabled               => '0',
+      rowprefetchsize                  => '48',
+      secondstotrustidlepoolconnection => '10',
+      statementcachesize               => '10',
+      target                           => ['inherited'],
+      targettype                       => ['inherited'],
+      testconnectionsonreserve         => '0',
+      testfrequency                    => '120',
+      testtablename                    => 'SQL SELECT 1 FROM DUAL',
+      url                              => 'jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com',
+      user                             => 'hr',
+      usexa                            => '0',
+    }
+
+In the case of the wls_datasource type, the jdbc connection will be targetted on
+the cluster if the managed server is in a cluster.
 
 ### fmwlogdir
 __orawls::fmwlogdir__ Change a log folder location of a FMW server
@@ -2220,7 +2296,23 @@ or with log parameters, default file store and ssl
       weblogic_plugin_enabled           => '1',
     }
 
+If you want automatic restart when the server crashes, or automatically kill when the server hangs
 
+    # this will use default as wls_setting identifier
+    wls_server { 'wlsServer1':
+      ensure                            => 'present',
+      arguments                         => '-XX:PermSize=256m -XX:MaxPermSize=256m -Xms752m -Xmx752m -Dweblogic.Stdout=/var/log/weblogic/wlsServer1.out -Dweblogic.Stderr=/var/log/weblogic/wlsServer1_err.out',
+      jsseenabled                       => '0',
+      listenaddress                     => '10.10.10.100',
+      listenport                        => '8001',
+      listenportenabled                 => '1',
+      machine                           => 'Node1',
+      sslenabled                        => '0',
+      tunnelingenabled                  => '0',
+      max_message_size                  => '10000000',
+      auto_restart                      => '1',
+      autokillwfail                     => '1',
+    }
 
 or with JSSE with custom identity and trust
 
@@ -3251,6 +3343,7 @@ or use puppet resource wls_jms_queue
       timetodeliver    => '-1',
       timetolive       => '-1',
       templatename     => 'Template',
+      messagelogging   => '1',
     }
     wls_jms_queue { 'jmsClusterModule:Queue1':
       ensure           => 'present',
@@ -3265,6 +3358,7 @@ or use puppet resource wls_jms_queue
       subdeployment    => 'jmsServers',
       timetodeliver    => '-1',
       timetolive       => '300000',
+      messagelogging   => '1',
     }
     wls_jms_queue { 'jmsClusterModule:Queue2':
       ensure                  => 'present',
@@ -3278,6 +3372,7 @@ or use puppet resource wls_jms_queue
       subdeployment           => 'jmsServers',
       timetodeliver           => '-1',
       timetolive              => '300000',
+      messagelogging          => '1',
     }
 
 in hiera
@@ -3295,6 +3390,7 @@ in hiera
          timetodeliver:            '-1'
          timetolive:               '-1'
          templatename:             'Template'
+         messagelogging:           '1'
        'jmsClusterModule:Queue1':
          ensure:                   'present'
          distributed:              '1'
@@ -3308,6 +3404,7 @@ in hiera
          defaulttargeting:         '0'
          timetodeliver:            '-1'
          timetolive:               '300000'
+         messagelogging:           '1'
        'jmsClusterModule:Queue2':
          ensure:                   'present'
          distributed:              '1'
@@ -3320,6 +3417,7 @@ in hiera
          defaulttargeting:         '0'
          timetodeliver:            '-1'
          timetolive:               '300000'
+         messagelogging:           '1'
 
 
 ### wls_jms_topic
@@ -3339,6 +3437,7 @@ or use puppet resource wls_jms_topic
       subdeployment    => 'jmsServers',
       timetodeliver    => '-1',
       timetolive       => '300000',
+      messagelogging   => '1',
     }
 
 in hiera
@@ -3355,7 +3454,7 @@ in hiera
          subdeployment:     'jmsServers'
          timetodeliver:     '-1'
          timetolive:        '300000'
-
+         messagelogging:    '0'
 
 
 ### wls_jms_quota

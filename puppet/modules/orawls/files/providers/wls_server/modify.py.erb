@@ -29,11 +29,11 @@ listenPort        = '<%= listenport %>'
 listenPortEnabled = '<%= listenportenabled %>'
 sslEnabled        = '<%= sslenabled %>'
 sslHostnameVerificationIgnored = '<%= sslhostnameverificationignored %>'
-two_way_ssl       = '<%= two_way_ssl %>'
+two_way_ssl = '<%= two_way_ssl %>'
 client_certificate_enforced = '<%= client_certificate_enforced %>'
-sslListenPort     = '<%= ssllistenport %>'
-
+sslListenPort = '<%= ssllistenport %>'
 logintimeout  = '<%= logintimeout %>'
+
 jsseenabled   = '<%= jsseenabled %>'
 tunnelingenabled  = '<%= tunnelingenabled %>'
 
@@ -48,6 +48,10 @@ trust_keystore_passphrase              = '<%= trust_keystore_passphrase %>'
 default_file_store                     = '<%= default_file_store %>'
 max_message_size                       = '<%= max_message_size %>'
 weblogic_plugin_enabled                = '<%= weblogic_plugin_enabled %>'
+auto_restart                           = '<%= auto_restart %>'
+autokillwfail                          = '<%= autokillwfail %>'
+
+server_parameters		       = '<%= server_parameters %>'
 
 edit()
 startEdit()
@@ -70,6 +74,11 @@ try:
     cd('/Servers/'+name)
     set('Machine',getMBean('/Machines/'+machineName))
 
+    print "Change Notes"
+    if server_parameters and server_parameters != 'None':
+      cmo.setNotes(server_parameters)
+
+    print "Change listenAddress"
     if listenAddress and not listenAddress.isspace():
       set('ListenAddress',listenAddress)
     else:
@@ -123,6 +132,23 @@ try:
     if custom_identity == '0':
       set('KeyStores'                                ,'DemoIdentityAndDemoTrust')
 
+
+    cd('/Servers/'+name)
+    if auto_restart == '0':
+      print "Change AutoRestart"
+      set('AutoRestart','False')
+    else:
+      print "Change AutoRestart"
+      set('AutoRestart','True')
+
+    if autokillwfail == '1':
+      print "Change AutoKillIfFailed"
+      set('AutoKillIfFailed','True')
+    else:
+      print "Change AutoKillIfFailed"
+      set('AutoKillIfFailed','False')
+
+    print "Change SSL"
     cd('/Servers/'+name+'/SSL/'+name)
 
     if sslEnabled and sslEnabled != '-1':
