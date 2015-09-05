@@ -1,10 +1,20 @@
 # History
 
+## 1.0.40
+- BAM only domain option
+- Wls_server new attributes sslHostnameVerifier, useServerCerts
+
+## 1.0.39
+- Works & Tested on puppet 4.2.1
+- Oracle Forms & Reports 11.1.1.7 or 11.1.2 support
+- Wls_server new attributes frontendhost, frontendhttpport and frontendhttpsport
+
 ## 1.0.38
 - wls_server new attributes auto_restart & autokillwfail for automatic restart when the server crashes, or automatically kill when the server hangs
-- wls_jms_queue new attribute messagelogging
+- wls_jms_queue, wls_jms_topic new attribute messagelogging
 - wls_domain new attributes setinternalappdeploymentondemandenable, setconfigbackupenabled, setarchiveconfigurationcount, setconfigurationaudittype
 - Dynamictargetting for wls_cluster, wls_datasource, wls_mail_session
+- wls_datasource new attribute shrinkfrequencyseconds
 
 ## 1.0.37
 - xa properties fix for wls_datasource
