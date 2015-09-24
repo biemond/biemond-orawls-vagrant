@@ -323,6 +323,9 @@ class basic_config{
   $cluster_instances = hiera('cluster_instances', {})
   create_resources('wls_cluster',$cluster_instances, $default_params)
 
+  $migratable_target_instances = hiera('migratable_target_instances', {})
+  create_resources('wls_migratable_target',$migratable_target_instances, $default_params)
+
   $coherence_cluster_instances = hiera('coherence_cluster_instances', {})
   create_resources('wls_coherence_cluster',$coherence_cluster_instances, $default_params)
 

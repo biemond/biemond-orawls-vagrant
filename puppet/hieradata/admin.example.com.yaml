@@ -655,6 +655,26 @@ cluster_instances:
     #   - Wls_server[Wls11gSetting/wlsServer2]
 
 
+# migratable_target_instances:
+#   'wlsServer1 (migratable)':
+#       ensure:                     'present'
+#       cluster:                    'WebCluster'
+#       migration_policy:           'manual'
+#       number_of_restart_attempts: '6'
+#       seconds_between_restarts:   '30'
+#       user_preferred_server:      'wlsServer1'
+#       require:
+#         - Wls_cluster[WebCluster]
+#   'wlsServer2 (migratable)':
+#       ensure:                     'present'
+#       cluster:                    'WebCluster'
+#       migration_policy:           'manual'
+#       number_of_restart_attempts: '3'
+#       seconds_between_restarts:   '40'
+#       user_preferred_server:      'wlsServer2'
+#       require:
+#         - Wls_cluster[WebCluster]
+
 mail_session_instances:
   'myMailSession':
     ensure:   present
@@ -695,8 +715,8 @@ datasource_instances:
         - 'jdbc/hrDS2'
       maxcapacity:                 '15'
       target:
-        - 'wlsServer1'
         - 'wlsServer2'
+        - 'wlsServer1'
       targettype:
         - 'Server'
         - 'Server'
