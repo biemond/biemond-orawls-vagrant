@@ -2670,9 +2670,61 @@ it needs wls_setting and when identifier is not provided it will use the 'defaul
 
 or use puppet resource wls_migratable_target
 
+    wls_migratable_target { 'wlsServer1 (migratable)':
+      ensure                     => 'present',
+      cluster                    => 'WebCluster',
+      migration_policy           => 'manual',
+      number_of_restart_attempts => '6',
+      seconds_between_restarts   => '30',
+      user_preferred_server      => 'wlsServer1',
+    }
+    wls_migratable_target { 'wlsServer2 (migratable)':
+      ensure                     => 'present',
+      cluster                    => 'WebCluster',
+      migration_policy           => 'manual',
+      number_of_restart_attempts => '6',
+      seconds_between_restarts   => '30',
+      user_preferred_server      => 'wlsServer2',
+    }
 
-in hiera
+    wls_migratable_target { 'Wls11gSetting/wlsServer1 (migratable)':
+      ensure                     => 'present',
+      cluster                    => 'WebCluster',
+      migration_policy           => 'manual',
+      number_of_restart_attempts => '6',
+      seconds_between_restarts   => '30',
+      user_preferred_server      => 'wlsServer1',
+    }
+    wls_migratable_target { 'Wls11gSetting/wlsServer2 (migratable)':
+      ensure                     => 'present',
+      cluster                    => 'WebCluster',
+      migration_policy           => 'manual',
+      number_of_restart_attempts => '6',
+      seconds_between_restarts   => '30',
+      user_preferred_server      => 'wlsServer2',
+    }
 
+or in hiera
+
+    migratable_target_instances:
+      'wlsServer1 (migratable)':
+          ensure:                     'present'
+          cluster:                    'WebCluster'
+          migration_policy:           'manual'
+          number_of_restart_attempts: '6'
+          seconds_between_restarts:   '30'
+          user_preferred_server:      'wlsServer1'
+          require:
+            - Wls_cluster[WebCluster]
+      'wlsServer2 (migratable)':
+          ensure:                     'present'
+          cluster:                    'WebCluster'
+          migration_policy:           'manual'
+          number_of_restart_attempts: '6'
+          seconds_between_restarts:   '30'
+          user_preferred_server:      'wlsServer2'
+          require:
+            - Wls_cluster[WebCluster]
 
 ### wls_singleton_service
 
