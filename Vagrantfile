@@ -40,7 +40,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       puppet.options           = "--verbose --trace --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
 
-      #puppet.options           = "--verbose --debug --trace --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
+      # puppet.options           = "--verbose --debug --trace --strict_variables --hiera_config /vagrant/puppet/hiera.yaml"
 
       puppet.facter = {
         "environment"            => "development",

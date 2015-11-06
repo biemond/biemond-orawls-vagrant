@@ -335,6 +335,13 @@ class basic_config{
   $mail_session_instances = hiera('mail_session_instances', {})
   create_resources('wls_mail_session',$mail_session_instances, $default_params)
 
+  $wls_foreign_jndi_provider_instances  = hiera('wls_foreign_jndi_provider_instances', {})
+  create_resources('wls_foreign_jndi_provider',$wls_foreign_jndi_provider_instances, $default_params)
+
+  $wls_foreign_jndi_provider_link_instances  = hiera('wls_foreign_jndi_provider_link_instances', {})
+  create_resources('wls_foreign_jndi_provider_link',$wls_foreign_jndi_provider_link_instances, $default_params)
+
+
 }
 
 class datasources{
@@ -394,6 +401,9 @@ class jms{
 
   $jms_template_instances = hiera('jms_template_instances', {})
   create_resources('wls_jms_template',$jms_template_instances, $default_params)
+
+  $jms_sort_destination_key_instances = hiera('jms_sort_destination_key_instances', {})
+  create_resources('wls_jms_sort_destination_key',$jms_sort_destination_key_instances, $default_params)
 
   $jms_quota_instances = hiera('jms_quota_instances', {})
   create_resources('wls_jms_quota',$jms_quota_instances, $default_params)

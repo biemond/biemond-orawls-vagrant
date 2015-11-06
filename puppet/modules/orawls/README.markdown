@@ -13,20 +13,24 @@ Got the same options as the WLS puppet module but with
 - totally refactored
 - only for Linux and Solaris
 
-Many thanks to Bert Hajee (hajee) for his contributions, help and the his easy_type module
-[![Powered By EasyType](https://raw.github.com/hajee/easy_type/master/powered_by_easy_type.png)](https://github.com/hajee/easy_type)
+If you need support, checkout the [wls_install](https://www.enterprisemodules.com/shop/products/puppet-wls_install-module) and [wls_config](https://www.enterprisemodules.com/shop/products/puppet-wls_config-module) modules from [Enterprise Modules](https://www.enterprisemodules.com/)
 
-Should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86
+[![Enterprise Modules](https://raw.githubusercontent.com/enterprisemodules/public_images/master/banner1.jpg)](https://www.enterprisemodules.com)
+
+This module should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86
 
 Dependency with
 - hajee/easy_type >=0.10.0
 - adrien/filemapper >= 1.1.1
 - reidmv/yamlfile >=0.2.0
 - fiddyspence/sleep => 1.1.2
+- puppetlabs/stdlib => 4.9.0
 
 
 ## Complete examples
 - Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
+- WebLogic 12.2.1 / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
+- WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.2.1-infra](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra)
 - WebLogic 12.1.3 / Puppet 4.2.1 Reference implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-12.1.3](https://github.com/biemond/biemond-orawls-vagrant-12.1.3)
 - WebLogic 12.1.3 infra (JRF), the vagrant test case for full working WebLogic 12.1.3 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.1.3-infra](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra)
 - WebLogic 12.1.3 infra with OSB, the vagrant test case for full working WebLogic 12.1.3 infra OSB cluster example [biemond-orawls-vagrant-12.1.3-infra-osb](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra-osb)
@@ -43,7 +47,7 @@ Dependency with
 
 ## Orawls WebLogic Features
 
-- [Installs WebLogic](#weblogic), version 10g,11g,12c( 12.1.1 & 12.1.2 & 12.1.3 + FMW infra )
+- [Installs WebLogic](#weblogic), version 10g,11g,12c( 12.1.1, 12.1.2, 12.1.3, 12.2.1 + its FMW infrastructure editions )
 - [Apply a BSU patch](#bsu) on a Middleware home ( < 12.1.2 )
 - [Apply a OPatch](#opatch) on a Middleware home ( >= 12.1.2 ) or a Oracle product home
 - [Create a WebLogic domain](#domain)
@@ -57,14 +61,16 @@ Dependency with
 - [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
 - [Dynamic targetting](#Dynamictargetting) by using the notes field in WebLogic for resource targetting
 
-### Fusion Middleware Features 11g & 12.1.3
+### Fusion Middleware Features 11g & 12c
 - installs [FMW](#fmw) software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
 - [WebTier](#webtier) Oracle HTTP server
-- [OSB, SOA Suite](#fmwcluster) with BPM and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate OPSS to the database )
+- [OSB, SOA Suite](#fmwcluster) with BPM and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate 11g OPSS to the database )
 - [ADF/JRF support](#fmwclusterjrf), Assign JRF libraries to a Server or Cluster target
 - [OIM IDM](#oimconfig) / OAM configurations with Oracle OHS OAM WebGate, Also Cluster support for OIM OAM
 - [OUD](#instance) OUD Oracle Unified Directory install, WebLogic domain, instances creation & [OUD control](#oud_control)
-- [Forms/Reports](#forms) Oracle Forms & Reports 11.1.1.7 or 11.1.2
+- [Forms/Reports](#forms) Oracle Forms & Reports 11.1.1.7, 11.1.2 or 12.2.1
+- [WC, WCC](#Webcenter) Webcenter portal, content 11g or 12.2.1
+
 - [Change FMW log](#fmwlogdir) location of a managed server
 - [Resource Adapter](#resourceadapter) plan and entries for AQ, DB and JMS
 
@@ -81,6 +87,7 @@ Dependency with
 - [wls_machine](#wls_machine)
 - [wls_server](#wls_server)
 - [wls_server_channel](#wls_server_channel)
+- [wls_server_tlog](#wls_server_tlog)
 - [wls_cluster](#wls_cluster)
 - [wls_migratable_target](#wls_migratable_target)
 - [wls_singleton_service](#wls_singleton_service)
@@ -94,10 +101,13 @@ Dependency with
 - [wls_datasource](#wls_datasource)
 - [wls_file_persistence_store](#wls_file_persistence_store)
 - [wls_jdbc_persistence_store](#wls_jdbc_persistence_store)
+- [wls_foreign_jndi_provider ](#wls_foreign_jndi_provider )
+- [wls_foreign_jndi_provider _link](#wls_foreign_jndi_provider _link)
 - [wls_jmsserver](#wls_jmsserver)
 - [wls_safagent](#wls_safagent)
 - [wls_jms_module](#wls_jms_module)
 - [wls_jms_quota](#wls_jms_quota)
+- [wls_jms_sort_destination_key](#wls_jms_sort_destination_key)
 - [wls_jms_subdeployment](#wls_jms_subdeployment)
 - [wls_jms_queue](#wls_jms_queue)
 - [wls_jms_topic](#wls_jms_topic)
@@ -118,22 +128,23 @@ Dependency with
 
 all templates creates a WebLogic domain, logs the domain creation output
 
-- domain 'standard'    -> a default WebLogic
-- domain 'adf'         -> JRF + EM + Coherence (12.1.2 & 12.1.3) + OWSM (12.1.2 & 12.1.3) + JAX-WS Advanced + Soap over JMS (12.1.2 & 12.1.3)
-- domain 'osb'         -> OSB + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
-- domain 'osb_soa'     -> OSB + SOA Suite + BAM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
-- domain 'osb_soa_bpm' -> OSB + SOA Suite + BAM + BPM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
-- domain 'soa'         -> SOA Suite + BAM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
-- domain 'soa_bpm'     -> SOA Suite + BAM + BPM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
-- domain 'bam'         -> BAM ( only with soa suite installation)
-- domain 'wc_wcc_bpm'  -> WC (webcenter) + WCC ( Content ) + BPM + JRF + EM + OWSM
-- domain 'wc'          -> WC (webcenter) + JRF + EM + OWSM
-- domain 'oim'         -> OIM (Oracle Identity Manager) + OAM ( Oracle Access Manager)
-- domain 'oud'         -> OUD (Oracle Unified Directory)
+- domain 'standard'       -> a default WebLogic
+- domain 'adf'            -> JRF + EM + Coherence (12.1.2, 12.1.3, 12.2.1) + OWSM (12.1.2, 12.1.3, 12.2.1) + JAX-WS Advanced + Soap over JMS (12.1.2, 12.1.3, 12.2.1)
+- domain 'adf_restricted' -> only for 12.2.1 (no RCU/DB) JRF + EM + Coherence + JAX-WS Advanced + Soap over JMS
+- domain 'osb'            -> OSB + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
+- domain 'osb_soa'        -> OSB + SOA Suite + BAM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
+- domain 'osb_soa_bpm'    -> OSB + SOA Suite + BAM + BPM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
+- domain 'soa'            -> SOA Suite + BAM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
+- domain 'soa_bpm'        -> SOA Suite + BAM + BPM + JRF + EM + OWSM + ESS ( optional with 12.1.3 )
+- domain 'bam'            -> BAM ( only with soa suite installation)
+- domain 'wc_wcc_bpm'     -> WC (webcenter) + WCC ( Content ) + BPM + JRF + EM + OWSM
+- domain 'wc'             -> WC (webcenter) + JRF + EM + OWSM
+- domain 'oim'            -> OIM (Oracle Identity Manager) + OAM ( Oracle Access Manager)
+- domain 'oud'            -> OUD (Oracle Unified Directory)
 
 
 ## Puppet master with orawls module key points
-it should work on every PE or opensource puppet master, customers and I succesfull tested orawls on PE 3.0, 3.1, 3.2, 3.3. See also the puppet master vagrant box
+it should work on every PE or opensource puppet master, customers and I successfully tested orawls on PE 3.0, 3.1, 3.2, 3.3. See also the puppet master vagrant box
 
 But when it fails you can do the following actions.
 - Check the time difference/timezone between all the puppet master and agent machines.
@@ -181,16 +192,29 @@ or hiera parameters of weblogic.pp
 
 Requires the JDK 7 or 8 JCE extension
 
+    jdk7::install7{ 'jdk-8u45-linux-x64':
+        version                     => "8u45" ,
+        full_version                => "jdk1.8.0_45",
+        alternatives_priority       => 18000,
+        x64                         => true,
+        download_dir                => "/var/tmp/install",
+        urandom_java_fix            => true,
+        rsa_key_size_fix            => true,
+        cryptography_extension_file => "jce_policy-8.zip",
+        source_path                 => "/software",
+    }
+
+
     jdk7::install7{ 'jdk1.7.0_51':
-        version                   => "7u51" ,
-        fullVersion               => "jdk1.7.0_51",
-        alternativesPriority      => 18000,
-        x64                       => true,
-        downloadDir               => "/data/install",
-        urandomJavaFix            => true,
-        rsakeySizeFix             => true,                          <!--
-        cryptographyExtensionFile => "UnlimitedJCEPolicyJDK7.zip",  <!---
-        sourcePath                => "/software",
+        version                     => "7u51" ,
+        full_version                => "jdk1.7.0_51",
+        alternatives_priority       => 18000,
+        x64                         => true,
+        download_dir                => "/data/install",
+        urandom_java_fix            => true,
+        rsa_key_size_fix            => true,                          <!--
+        cryptography_extension_file => "UnlimitedJCEPolicyJDK7.zip",  <!---
+        source_path                 => "/software",
     }
 
 To enable this in orawls you can set the jsse_enabled on the following manifests
@@ -414,7 +438,21 @@ common.yaml
 ## WebLogic Module Usage
 
 ### weblogic
-__orawls::weblogic__ installs WebLogic 10.3.[0-6], 12.1.1, 12.1.2 & 12.1.3
+__orawls::weblogic__ installs WebLogic 10.3.[0-6], 12.1.1, 12.1.2, 12.1.3, 12.2.1
+
+    class{'orawls::weblogic':
+      version              => 1221,                       # 1036|1211|1212|1213|1221
+      filename             => 'fmw_12.2.1.0.0_wls.jar',   # wls1036_generic.jar|wls1211_generic.jar|wls_121200.jar
+      jdk_home_dir         => '/usr/java/jdk1.8.0_45',
+      oracle_base_home_dir => "/opt/oracle",
+      middleware_home_dir  => "/opt/oracle/middleware12c",
+      weblogic_home_dir    => "/opt/oracle/middleware12c/wlserver",
+      os_user              => "oracle",
+      os_group             => "dba",
+      download_dir         => "/data/install",
+      source               => "/vagrant",                 # puppet:///modules/orawls/ | /mnt |
+      log_output           => true,
+    }
 
     class{'orawls::weblogic':
       version              => 1212,                       # 1036|1211|1212|1213
@@ -539,8 +577,6 @@ common.yaml
          source:                   "/vagrant"
          log_output:               true
 
-
-
 or when you set the defaults hiera variables
 
     ---
@@ -664,6 +700,48 @@ Same configuration but then with Hiera ( need to have puppet > 3.0 )
 common.yaml
 
 when you set the defaults hiera variables
+
+    # FMW installation on top of WebLogic 12.2.1
+    fmw_installations:
+      'soa1221':
+        version:                 1221
+        fmw_product:             "soa"
+        fmw_file1:               "fmw_12.2.1.0.0_soa_Disk1_1of1.zip"
+        bpm:                     true
+        log_output:              true
+        remote_file:             false
+      'osb1221':
+        version:                 1221
+        fmw_product:             "osb"
+        fmw_file1:               "fmw_12.2.1.0.0_osb_Disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+      'webtier1221':
+        version:                 1221
+        fmw_product:             "web"
+        fmw_file1:               "fmw_12.2.1.0.0_ohs_linux64_Disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+      'forms1221':
+        version:                 1221
+        fmw_product:             "forms"
+        fmw_file1:               "fmw_12.2.1.0.0_fr_linux64_Disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+      'wcc1221':
+        version:                 1221
+        fmw_product:             "wcc"
+        fmw_file1:               "fmw_12.2.1.0.0_wccontent_Disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+      'wc1221':
+        version:                 1221
+        fmw_product:             "wc"
+        fmw_file1:               "fmw_12.2.1.0.0_wcportal_Disk1_1of1.zip"
+        log_output:              true
+        remote_file:             false
+
+
 
     if ( defined(Orawls::Fmw["b2b1213"])) {
       Orawls::Fmw["soa1213"] -> Orawls::Fmw["b2b1213"]
@@ -1083,6 +1161,7 @@ __orawls::nodemanager__ start the nodemanager of a WebLogic Domain or Middleware
       download_dir                => "/data/install",
       log_output                  => true,
       sleep                       => 20,
+      properties                  => {},
     }
 
 or when you set the defaults hiera variables
@@ -1154,6 +1233,49 @@ or with custom identity and custom truststore
         custom_identity_privatekey_passphrase: 'welcome'
         nodemanager_address:                   *domain_adminserver_address
 
+
+you can also set some extra nodemanager properties by using the properties parameter like this
+
+    nodemanager_instances:
+      'nodemanager12c':
+         version:                     1212
+         weblogic_home_dir:           "/opt/oracle/middleware12c/wlserver"
+         jdk_home_dir:                "/usr/java/jdk1.7.0_45"
+         nodemanager_port:            5556
+         nodemanager_secure_listener: true
+         domain_name:                 "Wls12c"
+         os_user:                     "oracle"
+         os_group:                    "dba"
+         log_dir:                     "/data/logs"
+         download_dir:                "/data/install"
+         log_output:                  true
+         properties:
+          'log_level':                'INFO'
+          'log_count':                '2'
+          'log_append':               true
+          'log_formatter':            'weblogic.nodemanager.server.LogFormatter'
+          'listen_backlog':           60
+
+here is an overview of all the parameters you can set with its defaults
+
+    'log_limit'                          => 0,
+    'domains_dir_remote_sharing_enabled' => false,
+    'authentication_enabled'             => true,
+    'log_level'                          => 'INFO',
+    'domains_file_enabled'               => true,
+    'start_script_name'                  => 'startWebLogic.sh',
+    'native_version_enabled'             => true,
+    'log_to_stderr'                      => true,
+    'log_count'                          => '1',
+    'domain_registration_enabled'        => false,
+    'stop_script_enabled'                => true,
+    'quit_enabled'                       => false,
+    'log_append'                         => true,
+    'state_check_interval'               => 500,
+    'crash_recovery_enabled'             => true,
+    'start_script_enabled'               => true,
+    'log_formatter'                      => 'weblogic.nodemanager.server.LogFormatter',
+    'listen_backlog'                     => 50,
 
 
 ### control
@@ -1724,7 +1846,45 @@ required for all the weblogic type/providers, this is a pointer to an WebLogic A
       post_classpath     => '/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar'
     }
 
+saving the WLST scripts of all the wls types to a temporary folder
+
+archive_path has /tmp/orawls-archive as default folder
+
+    wls_setting { 'default':
+      debug_module              => 'true',
+      archive_path              => '/var/tmp/install/default_domain',
+      connect_url               => 't3s://10.10.10.10:7002',
+      custom_trust              => 'true',
+      trust_keystore_file       => '/vagrant/truststore.jks',
+      trust_keystore_passphrase => 'welcome',
+      user                      => 'oracle',
+      weblogic_home_dir         => '/opt/oracle/middleware12c/wlserver',
+      weblogic_password         => 'weblogic1',
+      weblogic_user             => 'weblogic',
+    }
+    wls_setting { 'plain':
+      debug_module      => 'false',
+      archive_path      => '/tmp/orawls-archive',
+      connect_url       => 't3://10.10.10.10:7101',
+      custom_trust      => 'false',
+      user              => 'oracle',
+      weblogic_home_dir => '/opt/oracle/middleware12c/wlserver',
+      weblogic_password => 'weblogic1',
+      weblogic_user     => 'weblogic',
+    }
+
 or in hiera
+
+    # and for with weblogic infra 12.2.1, use this post_classpath
+    wls_setting_instances:
+      'default':
+        user:               'oracle'
+        weblogic_home_dir:  '/opt/oracle/middleware12c/wlserver'
+        connect_url:        "t3://10.10.10.21:7001"
+        weblogic_user:      'weblogic'
+        weblogic_password:  'weblogic1'
+        post_classpath:     '/opt/oracle/middleware12c/oracle_common/modules/internal/features/jrf_wlsFmw_oracle.jrf.wlst.jar'
+
 
     # and for with weblogic infra 12.1.3, use this post_classpath
     wls_setting_instances:
@@ -1735,6 +1895,30 @@ or in hiera
         weblogic_user:      'weblogic'
         weblogic_password:  'weblogic1'
         post_classpath:     '/opt/oracle/middleware12c/oracle_common/modules/internal/features/jrf_wlsFmw_oracle.jrf.wlst_12.1.3.jar'
+
+    wls_setting_instances:
+      'default':
+        user:                      *wls_os_user
+        weblogic_home_dir:         *wls_weblogic_home_dir
+        connect_url:               "t3s://%{hiera('domain_adminserver_address')}:7002"
+        weblogic_user:             *wls_weblogic_user
+        weblogic_password:         *domain_wls_password
+        custom_trust:              *wls_custom_trust
+        trust_keystore_file:       *wls_trust_keystore_file
+        trust_keystore_passphrase: *wls_trust_keystore_passphrase
+        require:                   Orawls::Domain[Wls1213]
+        debug_module:              true
+        archive_path:              '/var/tmp/install/default_domain'
+      'plain':
+        user:                      *wls_os_user
+        weblogic_home_dir:         *wls_weblogic_home_dir
+        connect_url:               "t3://%{hiera('domain_adminserver_address')}:7101"
+        weblogic_user:             *wls_weblogic_user
+        weblogic_password:         *domain_wls_password
+        require:                   Orawls::Domain[plain_Wls]
+        debug_module:              false
+
+
 
 With t3s and custom trust
 
@@ -2623,6 +2807,66 @@ in hiera
         # require:
         #   - Wls_server[wlsServer2]
 
+### wls_server_tlog
+
+it needs wls_setting and when identifier is not provided it will use the 'default', the title must also contain the server name
+
+or use puppet resource wls_server_tlog
+
+For this you need to configure a non transactional datasource
+
+in hiera
+
+    datasource_instances:
+        'tlogDS':
+          ensure:                      'present'
+          drivername:                  'oracle.jdbc.OracleDriver'
+          globaltransactionsprotocol:  'None'
+          initialcapacity:             '2'
+          jndinames:
+            - 'jdbc/tlogDS'
+          maxcapacity:                 '15'
+          target:
+            - 'WebServer1'
+            - 'JmsWlsServer1'
+          targettype:
+            - 'Server'
+            - 'Server'
+          testtablename:               'SQL SELECT 1 FROM DUAL'
+          url:                         "jdbc:oracle:thin:@wlsdb.example.com:1521/wlsrepos.example.com"
+          user:                        'tlog'
+          password:                    'tlog'
+          usexa:                       '1'
+
+    server_tlog_instances:
+      'JmsWlsServer1':
+          ensure:                      'present'
+          tlog_enabled:                'true'
+          tlog_datasource:             'tlogDS'
+          tlog_datasource_prefix:      'TLOG_JmsWlsServer1_'
+      'WebServer1':
+          ensure:                      'present'
+          tlog_enabled:                'true'
+          tlog_datasource:             'tlogDS'
+          tlog_datasource_prefix:      'TLOG_WebServer1_'
+
+
+Or as manifest
+
+    wls_server_tlog { 'default/JmsWlsServer1':
+      ensure                 => 'present',
+      tlog_datasource        => 'tlogDS',
+      tlog_datasource_prefix => 'TLOG_JmsWlsServer1_',
+      tlog_enabled           => 'true',
+    }
+    wls_server_tlog { 'default/WebServer1':
+      ensure                 => 'present',
+      tlog_datasource        => 'tlogDS',
+      tlog_datasource_prefix => 'TLOG_WebServer1_',
+      tlog_enabled           => 'true',
+    }
+
+
 ### wls_cluster
 
 it needs wls_setting and when identifier is not provided it will use the 'default'.
@@ -3046,6 +3290,100 @@ in hiera
           target:      ['wlsServer1']
           targettype:  ['Server']
 
+## wls_foreign_jndi_provider 
+it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_foreign_jndi_provider 
+
+    wls_foreign_jndi_provider { 'DomainA':
+      ensure                  => 'present',
+      initial_context_factory => 'weblogic.jndi.WLInitialContextFactory',
+      provider_properties     => ['bbb=aaaa', 'xxx=123'],
+      provider_url            => 't3://10.10.10.100:7001',
+      target                  => ['WebCluster'],
+      targettype              => ['Cluster'],
+      user                    => 'weblogic',
+      password                => 'weblogic1',
+    }
+    wls_foreign_jndi_provider { 'default/LDAP':
+      ensure                  => 'present',
+      initial_context_factory => 'com.sun.jndi.ldap.LdapCtxFactory',
+      provider_properties     => ['referral=follow'],
+      provider_url            => 'ldap://:10.10.10.100:389',
+      target                  => ['AdminServer'],
+      targettype              => ['Server'],
+      user                    => 'cn=orcladmin',
+      password                => 'weblogic1',
+    }
+
+in hiera
+
+
+    wls_foreign_jndi_provider_instances:
+      'DomainA':
+        ensure:                  'present'
+        initial_context_factory: 'weblogic.jndi.WLInitialContextFactory'
+        provider_properties:     ['bbb=aaaa', 'xxx=123']
+        provider_url:            't3://10.10.10.100:7001'
+        target:                  ['WebCluster']
+        targettype:              ['Cluster']
+        user:                    'weblogic'
+        password:                'weblogic1'
+      'LDAP':
+        ensure:                  'present'
+        initial_context_factory: 'com.sun.jndi.ldap.LdapCtxFactory'
+        provider_properties:     ['referral=follow']
+        provider_url:            'ldap://:10.10.10.100:389'
+        target:                  ['AdminServer']
+        targettype:              ['Server']
+        user:                    'cn=orcladmin'
+        password:                'weblogic1'
+
+
+## wls_foreign_jndi_provider _link
+it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_foreign_jndi_provider _link
+
+    wls_foreign_jndi_provider_link { 'default/DomainA:aaaa':
+      ensure           => 'present',
+      local_jndi_name  => 'aaaa',
+      remote_jndi_name => 'bbbb',
+    }
+    wls_foreign_jndi_provider_link { 'default/LDAP:aaaaa':
+      ensure           => 'present',
+      local_jndi_name  => 'aaaaa',
+      remote_jndi_name => 'bbbbb',
+    }
+    wls_foreign_jndi_provider_link { 'default/LDAP:ccccc':
+      ensure           => 'present',
+      local_jndi_name  => 'ccccc',
+      remote_jndi_name => 'ddddd',
+    }
+
+in hiera
+
+
+    wls_foreign_jndi_provider_link_instances:
+      'DomainA:aaaa':
+        ensure:                  'present'
+        local_jndi_name:         'aaaa'
+        remote_jndi_name:        'bbbb'
+        require:
+          - Wls_foreign_jndi_provider[DomainA]
+      'LDAP:aaaaa':
+        ensure:                  'present'
+        local_jndi_name:         'aaaaa'
+        remote_jndi_name:        'bbbbb'
+        require:
+          - Wls_foreign_jndi_provider[LDAP]
+      'LDAP:ccccc':
+        ensure:                  'present'
+        local_jndi_name:         'ccccc'
+        remote_jndi_name:        'ddddd'
+        require:
+          - Wls_foreign_jndi_provider[LDAP]
+
 
 ### wls_file_persistence_store
 it needs wls_setting and when identifier is not provided it will use the 'default'.
@@ -3367,6 +3705,52 @@ in hiera
         redeliverydelay: '-1'
         redeliverylimit: '-1'
 
+### wls_jms_sort_destination_key
+
+it needs wls_setting and when identifier is not provided it will use the 'default', title must also contain the jms module name
+
+
+    wls_jms_sort_destination_key { 'jmsClusterModule:JMSPriority':
+      ensure        => 'present',
+      key_type      => 'Int',
+      property_name => 'JMSPriority',
+      sort_order    => 'Ascending',
+    }
+    wls_jms_sort_destination_key { 'default/jmsClusterModule:JMSRedelivered':
+      ensure        => 'present',
+      key_type      => 'Boolean',
+      property_name => 'JMSRedelivered',
+      sort_order    => 'Ascending',
+    }
+    wls_jms_sort_destination_key { 'default/jmsClusterModule:JmsMessageId':
+      ensure        => 'present',
+      key_type      => 'String',
+      property_name => 'JmsMessageId',
+      sort_order    => 'Descending',
+    }
+
+in Hiera
+
+    jms_sort_destination_key_instances:
+       'jmsClusterModule:JmsMessageId':
+          ensure:        'present'
+          key_type:      'String'
+          property_name: 'JmsMessageId'
+          sort_order:    'Descending'
+          require:        Wls_jms_module[jmsClusterModule]
+       'jmsClusterModule:JMSPriority':
+          ensure:        'present'
+          key_type:      'Int'
+          property_name: 'JMSPriority'
+          sort_order:    'Ascending'
+          require:        Wls_jms_module[jmsClusterModule]
+       'jmsClusterModule:JMSRedelivered':
+          ensure:        'present'
+          key_type:      'Boolean'
+          property_name: 'JMSRedelivered'
+          sort_order:    'Ascending'
+          require:        Wls_jms_module[jmsClusterModule]
+
 
 ### wls_connection_factory
 
@@ -3457,6 +3841,7 @@ or use puppet resource wls_jms_queue
       timetodeliver    => '-1',
       timetolive       => '300000',
       messagelogging   => '1',
+      destination_keys => ['JMSPriority', 'JmsMessageId'],
     }
     wls_jms_queue { 'jmsClusterModule:Queue2':
       ensure                  => 'present',
@@ -3496,6 +3881,9 @@ in hiera
          errordestination:         'ErrorQueue'
          expirationpolicy:         'Redirect'
          jndiname:                 'jms/Queue1'
+         destination_keys:
+            - 'JMSPriority'
+            - 'JmsMessageId'
          redeliverydelay:          '2000'
          redeliverylimit:          '3'
          subdeployment:            'jmsServers'
@@ -3526,16 +3914,35 @@ or use puppet resource wls_jms_topic
 
     wls_jms_topic { 'jmsClusterModule:Topic1':
       ensure           => 'present',
+      balancingpolicy  => 'Round-Robin',
       defaulttargeting => '0',
+      deliverymode     => 'No-Delivery',
+      destination_keys => ['JMSPriority', 'JmsMessageId'],
       distributed      => '1',
       expirationpolicy => 'Discard',
+      forwardingpolicy => 'Replicated',
       jndiname         => 'jms/Topic1',
       redeliverydelay  => '2000',
       redeliverylimit  => '2',
       subdeployment    => 'jmsServers',
       timetodeliver    => '-1',
       timetolive       => '300000',
-      messagelogging   => '1',
+    }
+    wls_jms_topic { 'default/jmsClusterModule:Topic2':
+      ensure           => 'present',
+      balancingpolicy  => 'Round-Robin',
+      defaulttargeting => '0',
+      deliverymode     => 'No-Delivery',
+      distributed      => '1',
+      errordestination => 'ErrorQueue',
+      expirationpolicy => 'Redirect',
+      forwardingpolicy => 'Replicated',
+      jndiname         => 'jms/Topic2',
+      redeliverydelay  => '2000',
+      redeliverylimit  => '3',
+      subdeployment    => 'jmsServers',
+      timetodeliver    => '-1',
+      timetolive       => '300000',
     }
 
 in hiera
@@ -3553,6 +3960,9 @@ in hiera
          timetodeliver:     '-1'
          timetolive:        '300000'
          messagelogging:    '0'
+         destination_keys:
+            - 'JMSPriority'
+            - 'JmsMessageId'
 
 
 ### wls_jms_quota

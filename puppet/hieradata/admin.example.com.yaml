@@ -73,20 +73,30 @@ file_domain_libs:
 
 wls_setting_instances:
   'default':
-    user:               *wls_os_user
-    weblogic_home_dir:  *wls_weblogic_home_dir
-    connect_url:        "t3://%{hiera('domain_adminserver_address')}:7001"
-    weblogic_user:      *wls_weblogic_user
-    weblogic_password:  *domain_wls_password
-    loglevel:           'debug'
+    user:                      *wls_os_user
+    weblogic_home_dir:         *wls_weblogic_home_dir
+    connect_url:               "t3://%{hiera('domain_adminserver_address')}:7001"
+    weblogic_user:             *wls_weblogic_user
+    weblogic_password:         *domain_wls_password
+    loglevel:                  'debug'
+    debug_module:              'true'
+    archive_path:              '/var/tmp/install/default_domain'
+    custom_trust:              'true'
+    trust_keystore_file:       '/vagrant/truststore.jks'
+    trust_keystore_passphrase: 'welcome'
   'Wls11gSetting':
-    user:               *wls_os_user
-    weblogic_home_dir:  *wls_weblogic_home_dir
-    connect_url:        "t3://%{hiera('domain_adminserver_address')}:7011"
-    weblogic_user:      *wls_weblogic_user
-    weblogic_password:  *domain_wls_password
-    loglevel:           'debug'
-    post_classpath:     "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
+    user:                      *wls_os_user
+    weblogic_home_dir:         *wls_weblogic_home_dir
+    connect_url:               "t3://%{hiera('domain_adminserver_address')}:7011"
+    weblogic_user:             *wls_weblogic_user
+    weblogic_password:         *domain_wls_password
+    loglevel:                  'debug'
+    debug_module:              'true'
+    archive_path:              '/var/tmp/install/wls11g_domain'
+    custom_trust:              'true'
+    trust_keystore_file:       '/vagrant/truststore.jks'
+    trust_keystore_passphrase: 'welcome'
+    post_classpath:            "/opt/oracle/wlsdomains/domains/Wls11g/lib/idmsSecurityProvider-3.26-SNAPSHOT.jar"
 
 # FMW installation on top of WebLogic 10.3.6
 fmw_installations:
@@ -164,19 +174,19 @@ authentication_provider_instances:
   #   attributesvalues:   'http://xxxx.com/MSL/4/AccountService;60000;5000'
   #   # order:              '1'
   #   before:             Wls_domain[Wls11gSetting/Wls11g]
-  'DefaultAuthenticator':
-    ensure:             'present'
-    control_flag:       'SUFFICIENT'
-    order:              '0'
-    before:             Wls_domain[Wls1036]
-  'ldap':
-    ensure:             'present'
-    control_flag:       'SUFFICIENT'
-    providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
-    attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
-    attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;1'
-    # order:              '1'
-    before:             Wls_domain[Wls1036]
+  # 'DefaultAuthenticator':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   order:              '0'
+  #   before:             Wls_domain[Wls1036]
+  # 'ldap':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+  #   attributes:         'Principal;Host;Port;CacheTTL;CacheSize;MaxGroupMembershipSearchLevel;SSLEnabled'
+  #   attributesvalues:   'ldapuser;ldapserver;389;60;1024;4;1'
+  #   # order:              '1'
+  #   before:             Wls_domain[Wls1036]
   # 'ActiveDirectoryAuthenticator':
   #   ensure:             'present'
   #   control_flag:       'SUFFICIENT'
@@ -186,18 +196,18 @@ authentication_provider_instances:
   #   order:              '1'
 
 identity_asserter_instances:
-  'Wls11gSetting/IdmsIdentityAsserter':
-    ensure:             'present'
-    providerclassname:  'nl.rsg.security.idms.providers.identity.IdmsIdentityAsserter'
-    before:             Wls_domain[Wls11gSetting/Wls11g]
-    order:              0
-  'DefaultIdentityAsserter':
-    ensure:             'present'
-    providerclassname:  'weblogic.security.providers.authentication.DefaultIdentityAsserter'
-    activetypes:        'AuthenticatedUser'
-    defaultmappertype:  'E'
-    # order:              '2'
-    before:             Wls_domain[Wls1036]
+  # 'Wls11gSetting/IdmsIdentityAsserter':
+  #   ensure:             'present'
+  #   providerclassname:  'nl.rsg.security.idms.providers.identity.IdmsIdentityAsserter'
+  #   before:             Wls_domain[Wls11gSetting/Wls11g]
+  #   order:              0
+  # 'DefaultIdentityAsserter':
+  #   ensure:             'present'
+  #   providerclassname:  'weblogic.security.providers.authentication.DefaultIdentityAsserter'
+  #   activetypes:        'AuthenticatedUser'
+  #   defaultmappertype:  'E'
+  #   # order:              '2'
+  #   before:             Wls_domain[Wls1036]
 
 # this will change some domain parameters and will not create or destroy a new domain
 # use orawls::domain to create a new domain
@@ -767,6 +777,46 @@ multi_datasource_instances:
   #    - 'Server'
   #    - 'Server'
 
+wls_foreign_jndi_provider_instances:
+  'DomainA':
+    ensure:                  'present'
+    initial_context_factory: 'weblogic.jndi.WLInitialContextFactory'
+    provider_properties:     ['bbb=aaaa', 'xxx=123']
+    provider_url:            't3://10.10.10.100:7001'
+    target:                  ['WebCluster']
+    targettype:              ['Cluster']
+    user:                    'weblogic'
+    password:                'weblogic1'
+  'LDAP':
+    ensure:                  'present'
+    initial_context_factory: 'com.sun.jndi.ldap.LdapCtxFactory'
+    provider_properties:     ['referral=follow']
+    provider_url:            'ldap://:10.10.10.100:389'
+    target:                  ['AdminServer']
+    targettype:              ['Server']
+    user:                    'cn=orcladmin'
+    password:                'weblogic1'
+
+wls_foreign_jndi_provider_link_instances:
+  'DomainA:aaaa':
+    ensure:                  'present'
+    local_jndi_name:         'aaaa'
+    remote_jndi_name:        'bbbb'
+    require:
+      - Wls_foreign_jndi_provider[DomainA]
+  'LDAP:aaaaa':
+    ensure:                  'present'
+    local_jndi_name:         'aaaaa'
+    remote_jndi_name:        'bbbbb'
+    require:
+      - Wls_foreign_jndi_provider[LDAP]
+  'LDAP:ccccc':
+    ensure:                  'present'
+    local_jndi_name:         'ccccc'
+    remote_jndi_name:        'ddddd'
+    require:
+      - Wls_foreign_jndi_provider[LDAP]
+
 file_persistence_folders:
    '/opt/oracle/wlsdomains/domains/Wls1036/persistence1':
       ensure:     directory
@@ -888,6 +938,27 @@ jms_template_instances:
     ensure:          'present'
     redeliverydelay: '-1'
     redeliverylimit: '-1'
+
+jms_sort_destination_key_instances:
+   'jmsClusterModule:JmsMessageId':
+      ensure:        'present'
+      key_type:      'String'
+      property_name: 'JmsMessageId'
+      sort_order:    'Descending'
+      require:        Wls_jms_module[jmsClusterModule]
+   'jmsClusterModule:JMSPriority':
+      ensure:        'present'
+      key_type:      'Int'
+      property_name: 'JMSPriority'
+      sort_order:    'Ascending'
+      require:        Wls_jms_module[jmsClusterModule]
+   'jmsClusterModule:JMSRedelivered':
+      ensure:        'present'
+      key_type:      'Boolean'
+      property_name: 'JMSRedelivered'
+      sort_order:    'Ascending'
+      require:        Wls_jms_module[jmsClusterModule]
+
 
 # create jms quotas for the jms module
 jms_quota_instances:
@@ -1046,7 +1117,12 @@ jms_queue_instances:
      defaulttargeting:         '0'
      timetodeliver:            '-1'
      timetolive:               '300000'
-     # require:
+     destination_keys:
+         - 'JMSPriority'
+         - 'JmsMessageId'
+     require:
+      - Wls_jms_sort_destination_key[jmsClusterModule:JMSPriority]
+      - Wls_jms_sort_destination_key[jmsClusterModule:JmsMessageId]
      #   - Wls_jms_module[jmsClusterModule]
      #   - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
      #   - Wls_jms_queue[jmsClusterModule:ErrorQueue]
@@ -1101,7 +1177,12 @@ jms_topic_instances:
      subdeployment:        'jmsServers'
      timetodeliver:        '-1'
      timetolive:           '300000'
-     # require:
+     destination_keys:
+         - 'JMSPriority'
+         - 'JmsMessageId'
+     require:
+      - Wls_jms_sort_destination_key[jmsClusterModule:JMSPriority]
+      - Wls_jms_sort_destination_key[jmsClusterModule:JmsMessageId]
      #   - Wls_jms_module[jmsClusterModule]
      #   - Wls_jms_subdeployment[jmsClusterModule:jmsServers]
    'jmsClusterModule:Topic2':
