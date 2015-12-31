@@ -24,6 +24,9 @@ redeliverydelay          = '<%= redeliverydelay %>'
 messagelogging           = '<%= messagelogging %>'
 forwardingpolicy         = '<%= forwardingpolicy %>'
 destination_keys         = '<%= destination_keys %>'
+consumption_paused       = '<%= consumptionpaused %>'
+insertion_paused         = '<%= insertionpaused %>'
+production_paused        = '<%= productionpaused %>'
 
 edit()
 startEdit()
@@ -40,6 +43,27 @@ try:
 
     cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+jmsWlsType+name)
     set('JNDIName',jndiname)
+
+    if consumption_paused:
+      print 'setting consumption_paused to ' + consumption_paused
+      if consumption_paused == '1':
+        set('ConsumptionPausedAtStartup', true)
+      else:
+        set('ConsumptionPausedAtStartup', false)
+
+    if insertion_paused:
+      print 'setting insertion_paused to ' + insertion_paused
+      if insertion_paused == '1':
+        set('InsertionPausedAtStartup',true)
+      else:
+        set('InsertionPausedAtStartup',false)
+
+    if production_paused:
+      print 'setting production_paused to ' + production_paused
+      if production_paused == '1':
+        set('ProductionPausedAtStartup',true)
+      else:
+        set('ProductionPausedAtStartup',false)
 
     if destination_keys:
       print "jms destinationkeys: " + destination_keys

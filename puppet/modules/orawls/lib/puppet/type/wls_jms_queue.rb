@@ -57,6 +57,9 @@ module Puppet
     property :templatename
     property :messagelogging
     property :destination_keys
+    property :insertionpaused
+    property :consumptionpaused
+    property :productionpaused
 
     add_title_attributes(:jmsmodule, :queue_name) do
       /^((.*\/)?(.*):(.*)?)$/

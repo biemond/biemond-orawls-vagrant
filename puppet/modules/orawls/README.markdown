@@ -1,36 +1,44 @@
 # Oracle WebLogic / Fusion Middleware puppet module V2
 [![Build Status](https://travis-ci.org/biemond/biemond-orawls.svg?branch=master)](https://travis-ci.org/biemond/biemond-orawls) [![Coverage Status](https://coveralls.io/repos/biemond/biemond-orawls/badge.png?branch=master)](https://coveralls.io/r/biemond/biemond-orawls?branch=master)
 
-created by Edwin Biemond email biemond at gmail dot com
+Install, configures and manages WebLogic version 10.3 - 12.2.1
+
+This module should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86
+
+## Author
+
+Edwin Biemond email biemond at gmail dot com
+
 [biemond.blogspot.com](http://biemond.blogspot.com)
+
 [Github homepage](https://github.com/biemond/biemond-orawls)
 
-Got the same options as the WLS puppet module but with
-- types & providers instead of wlstexec scripts ( detect changes )
-- more FMW product installations
-- support for FMW clusters ( SOA Suite,OSB & ADF )
-- optimized for Hiera
-- totally refactored
-- only for Linux and Solaris
+## Contributors
+
+Special thanks to all the contributors
+
+More: https://github.com/biemond/biemond-orawls/graphs/contributors
+
+## Support
 
 If you need support, checkout the [wls_install](https://www.enterprisemodules.com/shop/products/puppet-wls_install-module) and [wls_config](https://www.enterprisemodules.com/shop/products/puppet-wls_config-module) modules from [Enterprise Modules](https://www.enterprisemodules.com/)
 
 [![Enterprise Modules](https://raw.githubusercontent.com/enterprisemodules/public_images/master/banner1.jpg)](https://www.enterprisemodules.com)
 
-This module should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86
+## Dependencies
 
-Dependency with
 - hajee/easy_type >=0.10.0
 - adrien/filemapper >= 1.1.1
 - reidmv/yamlfile >=0.2.0
 - fiddyspence/sleep => 1.1.2
 - puppetlabs/stdlib => 4.9.0
 
+## Complete vagrant examples
 
-## Complete examples
 - Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
 - WebLogic 12.2.1 / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
 - WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.2.1-infra](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra)
+- WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra SOA Suite/BAM/OSB cluster example [biemond-orawls-vagrant-12.2.1-infra-soa](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra-soa)
 - WebLogic 12.1.3 / Puppet 4.2.1 Reference implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-12.1.3](https://github.com/biemond/biemond-orawls-vagrant-12.1.3)
 - WebLogic 12.1.3 infra (JRF), the vagrant test case for full working WebLogic 12.1.3 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.1.3-infra](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra)
 - WebLogic 12.1.3 infra with OSB, the vagrant test case for full working WebLogic 12.1.3 infra OSB cluster example [biemond-orawls-vagrant-12.1.3-infra-osb](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra-osb)
@@ -62,6 +70,7 @@ Dependency with
 - [Dynamic targetting](#Dynamictargetting) by using the notes field in WebLogic for resource targetting
 
 ### Fusion Middleware Features 11g & 12c
+
 - installs [FMW](#fmw) software(add-on) to a middleware home, like OSB,SOA Suite, Oracle Identity & Access Management, Oracle Unified Directory, WebCenter Portal + Content
 - [WebTier](#webtier) Oracle HTTP server
 - [OSB, SOA Suite](#fmwcluster) with BPM and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate 11g OPSS to the database )
@@ -72,15 +81,20 @@ Dependency with
 - [WC, WCC](#Webcenter) Webcenter portal, content 11g or 12.2.1
 
 - [Change FMW log](#fmwlogdir) location of a managed server
-- [Resource Adapter](#resourceadapter) plan and entries for AQ, DB and JMS
+- [Resource Adapter](#resourceadapter) plan and entries for AQ, DB, MQ, FTP, File and JMS
 
 ## Wls types and providers
+
+This will use WLST to retrieve the current state and to the changes. With WebLogic 12.2.1 we can also use the rest management api's, it's already working in this module but we will slowly support this for all wls types
+
 - [wls_setting](#wls_setting), set the default wls parameters for the other types and also used by puppet resource
 - [wls_adminserver](#wls_adminserver) control the adminserver or subscribe to changes
 - [wls_managedserver](#wls_managedserver) control the managed server,cluster or subscribe to changes
 - [wls_domain](#wls_domain)
 - [wls_deployment](#wls_deployment)
 - [wls_domain](#wls_domain)
+- [wls_group](#wls_group)
+- [wls_role](#wls_role)
 - [wls_user](#wls_user)
 - [wls_authentication_provider](#wls_authentication_provider)
 - [wls_identity_asserter](#wls_identity_asserter)
@@ -1557,7 +1571,7 @@ or when you set the defaults hiera variables
 
 
 ### resourceadapter
-__orawls::resourceadapter__ Add a Resource adapter plan for File, FTP, Aq , DB or JMS with some entries
+__orawls::resourceadapter__ Add a Resource adapter plan for File, FTP, AQ, MQ, DB or JMS with some entries
 when you set the defaults hiera variables
 
     $default_params = {}
@@ -2296,6 +2310,23 @@ in hiera
         realm:                  'myrealm'
         users:
           - 'testuser2'
+
+### wls_role
+
+it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_role
+
+    # this will use default as wls_setting identifier
+
+in hiera
+
+    $default_params = {}
+    $role_instances = hiera('role_instances', {})
+    create_resources('wls_role',$role_instances, $default_params)
+
+    # this will use default as wls_setting identifier
+    role_instances:
 
 ### wls_authentication_provider
 
@@ -3814,18 +3845,21 @@ it needs wls_setting and when identifier is not provided it will use the 'defaul
 or use puppet resource wls_jms_queue
 
     wls_jms_queue { 'jmsClusterModule:ErrorQueue':
-      ensure           => 'present',
-      defaulttargeting => '0',
-      distributed      => '1',
-      expirationpolicy => 'Discard',
-      jndiname         => 'jms/ErrorQueue',
-      redeliverydelay  => '-1',
-      redeliverylimit  => '-1',
-      subdeployment    => 'jmsServers',
-      timetodeliver    => '-1',
-      timetolive       => '-1',
-      templatename     => 'Template',
-      messagelogging   => '1',
+      ensure            => 'present',
+      defaulttargeting  => '0',
+      distributed       => '1',
+      expirationpolicy  => 'Discard',
+      jndiname          => 'jms/ErrorQueue',
+      redeliverydelay   => '-1',
+      redeliverylimit   => '-1',
+      subdeployment     => 'jmsServers',
+      timetodeliver     => '-1',
+      timetolive        => '-1',
+      templatename      => 'Template',
+      messagelogging    => '1',
+      consumptionpaused => '0',
+      insertionpaused   => '0',
+      productionpaused  => '0',
     }
     wls_jms_queue { 'jmsClusterModule:Queue1':
       ensure           => 'present',
@@ -3874,6 +3908,9 @@ in hiera
          timetolive:               '-1'
          templatename:             'Template'
          messagelogging:           '1'
+         insertionpaused:          '0'
+         productionpaused:         '0'
+         consumptionpaused:        '0'
        'jmsClusterModule:Queue1':
          ensure:                   'present'
          distributed:              '1'
@@ -3913,20 +3950,23 @@ it needs wls_setting and when identifier is not provided it will use the 'defaul
 or use puppet resource wls_jms_topic
 
     wls_jms_topic { 'jmsClusterModule:Topic1':
-      ensure           => 'present',
-      balancingpolicy  => 'Round-Robin',
-      defaulttargeting => '0',
-      deliverymode     => 'No-Delivery',
-      destination_keys => ['JMSPriority', 'JmsMessageId'],
-      distributed      => '1',
-      expirationpolicy => 'Discard',
-      forwardingpolicy => 'Replicated',
-      jndiname         => 'jms/Topic1',
-      redeliverydelay  => '2000',
-      redeliverylimit  => '2',
-      subdeployment    => 'jmsServers',
-      timetodeliver    => '-1',
-      timetolive       => '300000',
+      ensure            => 'present',
+      balancingpolicy   => 'Round-Robin',
+      defaulttargeting  => '0',
+      deliverymode      => 'No-Delivery',
+      destination_keys  => ['JMSPriority', 'JmsMessageId'],
+      distributed       => '1',
+      expirationpolicy  => 'Discard',
+      forwardingpolicy  => 'Replicated',
+      jndiname          => 'jms/Topic1',
+      redeliverydelay   => '2000',
+      redeliverylimit   => '2',
+      subdeployment     => 'jmsServers',
+      timetodeliver     => '-1',
+      timetolive        => '300000',
+      consumptionpaused => '0',
+      insertionpaused   => '0',
+      productionpaused  => '0',
     }
     wls_jms_topic { 'default/jmsClusterModule:Topic2':
       ensure           => 'present',
@@ -3960,6 +4000,9 @@ in hiera
          timetodeliver:     '-1'
          timetolive:        '300000'
          messagelogging:    '0'
+         insertionpaused:   '0'
+         productionpaused:  '1'
+         consumptionpaused: '0'
          destination_keys:
             - 'JMSPriority'
             - 'JmsMessageId'

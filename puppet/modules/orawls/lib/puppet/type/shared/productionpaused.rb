@@ -1,12 +1,14 @@
-newproperty(:messagelogging) do
+newproperty(:productionpaused) do
   include EasyType
   include EasyType::Mungers::Integer
 
-  desc 'Message logging for JMS'
+  desc <<-EOD
+
+  EOD
   newvalues(1, 0)
 
   to_translate_to_resource do | raw_resource|
-    raw_resource['messagelogging']
+    raw_resource['productionpaused']
   end
 
 end

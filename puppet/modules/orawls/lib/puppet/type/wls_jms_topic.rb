@@ -57,6 +57,9 @@ module Puppet
     property :messagelogging
     property :forwardingpolicy
     property :destination_keys
+    property :insertionpaused
+    property :consumptionpaused
+    property :productionpaused
 
     add_title_attributes(:jmsmodule, :topic_name) do
       /^((.*\/)?(.*):(.*)?)$/
