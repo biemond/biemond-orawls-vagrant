@@ -8,21 +8,17 @@ This module should work for all Linux & Solaris versions like RedHat, CentOS, Ub
 ## Author
 
 Edwin Biemond email biemond at gmail dot com
-
 [biemond.blogspot.com](http://biemond.blogspot.com)
-
 [Github homepage](https://github.com/biemond/biemond-orawls)
 
 ## Contributors
 
 Special thanks to all the contributors
-
 More: https://github.com/biemond/biemond-orawls/graphs/contributors
 
 ## Support
 
 If you need support, checkout the [wls_install](https://www.enterprisemodules.com/shop/products/puppet-wls_install-module) and [wls_config](https://www.enterprisemodules.com/shop/products/puppet-wls_config-module) modules from [Enterprise Modules](https://www.enterprisemodules.com/)
-
 [![Enterprise Modules](https://raw.githubusercontent.com/enterprisemodules/public_images/master/banner1.jpg)](https://www.enterprisemodules.com)
 
 ## Dependencies
