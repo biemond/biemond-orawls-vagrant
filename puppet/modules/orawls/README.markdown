@@ -8,12 +8,15 @@ This module should work for all Linux & Solaris versions like RedHat, CentOS, Ub
 ## Author
 
 Edwin Biemond email biemond at gmail dot com
+
 [biemond.blogspot.com](http://biemond.blogspot.com)
+
 [Github homepage](https://github.com/biemond/biemond-orawls)
 
 ## Contributors
 
 Special thanks to all the contributors
+
 More: https://github.com/biemond/biemond-orawls/graphs/contributors
 
 ## Support
