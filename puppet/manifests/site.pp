@@ -17,13 +17,13 @@ node 'admin.example.com' {
   include nodemanager, startwls, userconfig
   include security
   include basic_config
-  # include datasources
-  # include virtual_hosts
-  # include workmanagers
-  # include file_persistence
-  # include jms
-  # include pack_domain
-  # include deployments
+  include datasources
+  include virtual_hosts
+  include workmanagers
+  include file_persistence
+  include jms
+  include pack_domain
+  include deployments
 
   Class[java] -> Class[orawls::weblogic]
 }
