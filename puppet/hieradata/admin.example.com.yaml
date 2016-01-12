@@ -179,37 +179,43 @@ authentication_provider_instances:
   #   control_flag:       'SUFFICIENT'
   #   order:              '0'
   #   before:             Wls_domain[Wls1036]
-  'ldap':
-    ensure:             'present'
-    control_flag:       'SUFFICIENT'
-    providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
-    provider_specific:
-       'Principal':                     'ldapuser'
-       'Host':                          'ldapserver'
-       'Port':                          '389'
-       'CacheTTL':                      '60'
-       'CacheSize':                     '1024'
-       'MaxGroupMembershipSearchLevel': '4'
-       # 'SSLEnabled':                    'true'
-    order:              '1'
-    before:             Wls_domain[Wls1036]
-  'ActiveDirectoryAuthenticator':
-    ensure:             'present'
-    control_flag:       'SUFFICIENT'
-    providerclassname:  'weblogic.security.providers.authentication.ActiveDirectoryAuthenticator'
-    provider_specific:
-      # 'Credential':                     'password'
-      'GroupBaseDN':                    'DC=ad,DC=company,DC=org'
-      'GroupFromNameFilter':            '(&(sAMAccountName=%g)(objectclass=group))'
-      'GroupMembershipSearching':       'limited'
-      'Host':                           'ad.company.org'
-      'MaxGroupMembershipSearchLevel':  0
-      'Principal':                      'CN=SER_WASadmin,OU=Service Accounts,DC=ad,DC=company,DC=org'
-      'UserBaseDN':                     'DC=ad,DC=company,DC=org'
-      'UserFromNameFilter':             '(&(sAMAccountName=%u)(objectclass=user))'
-      'UserNameAttribute':              'sAMAccountName'
-      'Port':                           389
-    order:              '2'
+  # 'ldap':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'weblogic.security.providers.authentication.LDAPAuthenticator'
+  #   provider_specific:
+  #     'Principal':                     'ldapuser'
+  #     'Host':                          'ldapserver'
+  #     'Port':                          389
+  #     'CacheTTL':                      60
+  #     'CacheSize':                     1024
+  #     'MaxGroupMembershipSearchLevel': 4
+  #     'SSLEnabled':                    1
+  #     'ConnectTimeout':                2
+  #     'ConnectionRetryLimit':          2
+  #   # order:              '1'
+  #   before:             Wls_domain[Wls1036]
+  # 'ActiveDirectoryAuthenticator':
+  #   ensure:             'present'
+  #   control_flag:       'SUFFICIENT'
+  #   providerclassname:  'weblogic.security.providers.authentication.ActiveDirectoryAuthenticator'
+  #   provider_specific:
+  #     'Credential':                     'password'
+  #     'GroupBaseDN':                    'DC=ad,DC=company,DC=org'
+  #     'GroupFromNameFilter':            '(&(sAMAccountName=%g)(objectclass=group))'
+  #     'GroupMembershipSearching':       'limited'
+  #     'Host':                           'ad.company.org'
+  #     'MaxGroupMembershipSearchLevel':  4
+  #     'Principal':                      'CN=SER_WASadmin,OU=Service Accounts,DC=ad,DC=company,DC=org'
+  #     'UserBaseDN':                     'DC=ad,DC=company,DC=org'
+  #     'UserFromNameFilter':             '(&(sAMAccountName=%u)(objectclass=user))'
+  #     'UserNameAttribute':              'sAMAccountName'
+  #     'Port':                           389
+  #     'CacheTTL':                       60
+  #     'CacheSize':                      1024
+  #     'ConnectTimeout':                 2
+  #     'ConnectionRetryLimit':           2
+  #   # order:              '2'
 
 identity_asserter_instances:
   # 'Wls11gSetting/IdmsIdentityAsserter':
@@ -749,7 +755,7 @@ datasource_instances:
       testtablename:               'SQL SELECT 1 FROM DUAL'
       url:                         "jdbc:oracle:thin:@dbagent2.alfa.local:1521/test.oracle.com"
       user:                        'hr'
-      password:                    'hr'
+      password:                    'hr2'
       usexa:                       '1'
       # require:
       #   - Wls_server[wlsServer1]
