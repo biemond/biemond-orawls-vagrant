@@ -22,9 +22,9 @@ domain_node2_address: &domain_node2_address "%{hiera('node2_address')}"
 orautils::nodeMgrAddressParam:    *domain_node1_address
 
 # custom trust
-orautils::customTrust:             true
-orautils::trustKeystoreFile:       '/vagrant/truststore.jks'
-orautils::trustKeystorePassphrase: 'welcome'
+orautils::custom_trust:              true
+orautils::trust_keystore_file:       '/vagrant/truststore.jks'
+orautils::trust_keystore_passphrase: 'welcome'
 
 # used by nodemanager, control and domain creation
 wls_custom_trust:                  &wls_custom_trust              true

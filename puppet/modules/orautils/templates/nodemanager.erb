@@ -1,22 +1,13 @@
+<% @version = @version.to_i # in some situations the version comes through as a string. This fixes that. Not quite sure what causes this. -%>
 #!/bin/sh
 #
-### BEGIN INIT INFO
-# Provides:        nodemanager
-# Required-Start:
-# Required-Stop:
-# Default-Start:    2 3 4 5
-# Default-Stop:        0 1 6
-# Short-Description:    WebLogic Nodemanager
-### END INIT INFO
-
 # nodemgr Oracle Weblogic NodeManager service
 #
 # chkconfig:   345 99 15
 # description: Oracle Weblogic NodeManager service
-# 
-
+#
 ### BEGIN INIT INFO
-# Provides: nodemgr
+# Provides: nodemgr nodemanager
 # Required-Start: $network $local_fs
 # Required-Stop:
 # Should-Start:
@@ -26,6 +17,7 @@
 # Short-Description: Oracle Weblogic NodeManager service.
 # Description: Starts and stops Oracle Weblogic NodeManager.
 ### END INIT INFO
+
 
 # Source function library.
 if test -f /lib/lsb/init-functions; then
@@ -46,7 +38,7 @@ exec=<%= @nodeMgrBinPath %>/startNodeManager.sh
 prog='nodemanager'
 user='<%= @user %>'
 
-<% if @jsseEnabled == true %>
+<% if @jsse_enabled == true %>
 JSEE_OPTIONS="-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true"
 <% else %>
 JSEE_OPTIONS="-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false"
@@ -58,6 +50,9 @@ is_nodemgr_running() {
     local nodemgr_cnt=`ps -ef        | \
         grep -i 'java '                  | \
         grep -i ' weblogic.NodeManager '  | \
+<% if @version == 1212 or @version == 1213 -%>
+        grep -i 'Dweblogic.RootDirectory=<%= @domain_path -%>' | \
+<% end -%>
         grep -v grep                  | \
         wc -l`
     echo $nodemgr_cnt
@@ -69,6 +64,9 @@ get_nodemgr_pid() {
         nodemgr_pid=`ps -ef             | \
             grep -i 'java '                 | \
             grep -i ' weblogic.NodeManager ' | \
+<% if @version == 1212 or @version == 1213 -%>
+            grep -i 'Dweblogic.RootDirectory=<%= @domain_path -%>' | \
+<% end -%>
             grep -v grep                 | \
             tr -s ' '                    | \
             cut -d' ' -f2`

@@ -22,16 +22,17 @@ domain_user_key_file:       "/home/wls/wls-Wls1036-WebLogicKey.properties"
 domain_node1_address: &domain_node1_address "%{hiera('node1_address')}"
 domain_node2_address: &domain_node2_address "%{hiera('node2_address')}"
 
-orautils::osDomainParam:          *domain_name
-orautils::osDomainPathParam:      "/opt/oracle/wlsdomains/domains/Wls1036"
-orautils::nodeMgrAddressParam:    *domain_adminserver_address
-orautils::wlsPasswordParam:       *domain_wls_password
-orautils::wlsAdminServerParam:    *domain_adminserver
+orautils::os_domain:          *domain_name
+orautils::os_domain_path:     "/opt/oracle/wlsdomains/domains/Wls1036"
+orautils::node_mgr_address:   *domain_adminserver_address
+orautils::wls_password:       *domain_wls_password
+orautils::wls_adminserver:    *domain_adminserver
 
 # custom trust
-orautils::customTrust:             true
-orautils::trustKeystoreFile:       '/vagrant/truststore.jks'
-orautils::trustKeystorePassphrase: 'welcome'
+orautils::custom_trust:              true
+orautils::trust_keystore_file:       '/vagrant/truststore.jks'
+orautils::trust_keystore_passphrase: 'welcome'
+
 
 # used by nodemanager, control and domain creation
 wls_custom_trust:                  &wls_custom_trust              true

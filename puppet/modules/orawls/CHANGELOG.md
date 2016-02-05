@@ -1,5 +1,8 @@
 # History
 
+## 1.0.47
+- option to override the default machine in the domain
+
 ## 1.0.46
 - added support for 12.2.1 fast rest management interface, requires 12.2.1 or higher & only works for now on wls_cluster (lib/puppet/type/wls_server.rb plus wls_setting must contain a http connect url)
 - added MQ adapter for resourceadapter
@@ -9,6 +12,7 @@
 - be able to change the password on wls_datasource
 - fix for wls_clusters without servers
 - new log_date_pattern attribute for wls_server, wls_domain
+- fmwcluster manifest with trust parameters
 
 ## 1.0.45
 - wls_migratable_target fixes with constrained_candidate_servers
