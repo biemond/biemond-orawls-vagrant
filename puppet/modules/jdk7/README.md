@@ -11,7 +11,8 @@ installs only the java tar.gz files
 this is because rpm post install fails with some pack error
 
 installs jdk on linux based systems with x64 or 32 bits
-add the jdk-7u25-linux-x64.tar.gz (downloaded from Oracle website) to the files folder of this jdk7 module
+add the jdk-7u25-linux-x64.tar.gz (downloaded from Oracle website) to the source_path folder,
+which defaults to the "files" folder of this module.
 
 - download the tar.gz to the download folder of the puppet agent server
 - unpack the java tar.gz
@@ -34,7 +35,9 @@ example usage
 	    x64                   => true,
 	    download_dir          => "/install",
 	    urandom_java_fix      => false,
-	    source_path           => "puppet:///modules/jdk7/"
+	    source_path           => "puppet:///modules/jdk7/",
+        default_links         => true,
+        install_alternatives  => true,
 	  }
 
 or Java 8 and with rsa keySize Fix
@@ -66,5 +69,6 @@ or with cryptography Extension File US export
 
 	  class { 'jdk7::urandomfix' :}
 
+Note: The cryptography_extension_file needs to be stored in the source_path folder as above.
 
 

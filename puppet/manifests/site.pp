@@ -8,7 +8,7 @@ node 'admin.example.com' {
 
   include os
   include ssh
-  include java, orawls::urandomfix
+  include java, jdk7::urandomfix
   include orawls::weblogic, orautils
   include bsu
   include fmw
