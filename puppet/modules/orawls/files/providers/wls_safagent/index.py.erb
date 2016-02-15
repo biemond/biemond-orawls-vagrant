@@ -8,7 +8,14 @@ for token in m:
 
         serviceType = get('ServiceType')
 
-        target, targetType = retrieve_target_list('/SAFAgents/'+token)
+        n = ls('/SAFAgents/'+token+'/Targets',returnMap='true')
+        target     = ''
+        targetType = ''
+
+        for token2 in n:
+                target     = token2
+                cd('/SAFAgents/'+token+'/Targets/'+token2)
+                targetType = get('Type')
 
         l = ls('/SAFAgents/'+token+'/Store',returnMap='true')
 
