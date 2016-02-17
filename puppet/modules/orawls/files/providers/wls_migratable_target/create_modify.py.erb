@@ -22,8 +22,13 @@ startEdit()
 
 try:
     cd('/')
-    migratableTarget = cmo.createMigratableTarget(migratable_target_name)
+    if wlst_action == 'create':
+        migratableTarget = cmo.createMigratableTarget(migratable_target_name)
+    else:
+        migratableTarget = cmo.lookupMigratableTarget(migratable_target_name)
+
     targetCluster = cmo.lookupCluster(cluster)
+
     migratableTarget.setCluster(targetCluster)
     migratableTarget.setNumberOfRestartAttempts(number_of_restart_attempts)
     migratableTarget.setSecondsBetweenRestarts(seconds_between_restarts)
@@ -31,9 +36,10 @@ try:
 
     preferredServer = cmo.lookupServer(user_preferred_server)
     preferredServerCluster = preferredServer.getCluster()
-    if preferredServerCluster.getName() != cluster:
+    if preferredServerCluster is None or preferredServerCluster.getName() != cluster:
         raise RuntimeError, 'Preferred server is not part of the cluster the migratable target will run in.'
     migratableTarget.setUserPreferredServer(preferredServer)
+
     migratableTarget.setConstrainedCandidateServers(map(lambda serverName: cmo.lookupServer(serverName), constrained_candidate_servers))
 
     save()

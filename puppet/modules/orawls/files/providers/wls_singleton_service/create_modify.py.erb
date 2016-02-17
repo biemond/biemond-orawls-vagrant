@@ -17,7 +17,11 @@ startEdit()
 
 try:
     cd('/')
-    singletonService = cmo.createSingletonService(singleton_service_name)
+    if wlst_action == 'create':
+        singletonService = cmo.createSingletonService(singleton_service_name)
+    else:
+        singletonService = cmo.lookupSingletonService(singleton_service_name)
+
     targetCluster = cmo.lookupCluster(cluster)
 
     singletonService.setCluster(targetCluster)
@@ -28,7 +32,7 @@ try:
 
     preferredServer = cmo.lookupServer(user_preferred_server)
     preferredServerCluster = preferredServer.getCluster()
-    if preferredServerCluster.getName() != cluster:
+    if preferredServerCluster is None or preferredServerCluster.getName() != cluster:
         raise RuntimeError, 'Preferred server is not part of the cluster the singleton service will run in.'
     singletonService.setUserPreferredServer(preferredServer)
 

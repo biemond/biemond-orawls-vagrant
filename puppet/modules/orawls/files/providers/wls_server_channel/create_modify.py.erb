@@ -29,7 +29,8 @@ startEdit()
 try:
 
     cd('/Servers/'+server)
-    cmo.createNetworkAccessPoint(name)
+    if wlst_action == 'create':
+      cmo.createNetworkAccessPoint(name)
 
     cd('/Servers/'+server+'/NetworkAccessPoints/'+name)
     cmo.setProtocol(protocol)

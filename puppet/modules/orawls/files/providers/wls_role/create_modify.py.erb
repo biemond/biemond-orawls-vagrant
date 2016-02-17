@@ -12,7 +12,11 @@ try:
 
     realmName = cmo.getSecurityConfiguration().getDefaultRealm()
     mapper    = realmName.lookupRoleMapper('XACMLRoleMapper');
-    mapper.createRole('', name, expression)
+    if wlst_action == 'create':
+        mapper.createRole('', name, expression)
+    else:
+        mapper.setRoleExpression('', name, expression)
+
     print "~~~~COMMAND SUCCESFULL~~~~"
 
 except:

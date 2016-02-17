@@ -17,7 +17,9 @@ startEdit()
 try:
 
     cd('/')
-    cmo.createMailSession(name)
+    if wlst_action == 'create':
+        cmo.createMailSession(name)
+
     cd('/MailSessions/' + name)
 
     cmo.setJNDIName(jndiname)
@@ -27,6 +29,9 @@ try:
 
         final_properties = "{" + ",".join(properties) + "}"
         set('Properties', final_properties)
+
+    else:
+        set('Properties', None)
 
     targets     = String(target).split(",")
     targettypes = String(targettype).split(",")
@@ -73,5 +78,3 @@ except:
     stopEdit('y')
     print "~~~~COMMAND FAILED~~~~"
     raise
-
-

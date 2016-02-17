@@ -1,7 +1,7 @@
 # check the domain else we need to skip this (done in wls_access.rb)
 real_domain='<%= domain %>'
 
-
+wlst_action = '<%= wlst_action %>'
 
 name                   = '<%= imported_destination_name %>'
 jmsmodule              = '<%= jmsmodule %>'
@@ -19,6 +19,10 @@ startEdit()
 try:
 
     cd('/')
+
+    cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule)
+    if wlst_action == 'create':
+      cmo.createSAFImportedDestinations(name)
 
     cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+'/SAFImportedDestinations/'+name)
     cmo.setSAFRemoteContext(getMBean('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+'/SAFRemoteContexts/'+remotecontext))

@@ -1,7 +1,7 @@
 # check the domain else we need to skip this (done in wls_access.rb)
 real_domain='<%= domain %>'
 
-
+wlst_action = '<%= wlst_action %>'
 
 name               = '<%= error_handler_name %>'
 jmsmodule          = '<%= jmsmodule %>'
@@ -15,6 +15,10 @@ startEdit()
 try:
 
     cd('/')
+    cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule)
+    if wlst_action == 'create':
+        cmo.createSAFErrorHandling(name)
+
     cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+'/SAFErrorHandlings/'+name)
 
     # if errordestination:
