@@ -417,6 +417,9 @@ class jms{
   $jms_topic_instances = hiera('jms_topic_instances', {})
   create_resources('wls_jms_topic',$jms_topic_instances, $default_params)
 
+  $jms_security_policy_instances = hiera('jms_security_policy_instances', {})
+  create_resources('wls_jms_security_policy',$jms_security_policy_instances, $default_params)
+
   $foreign_server_instances = hiera('foreign_server_instances', {})
   create_resources('wls_foreign_server',$foreign_server_instances, $default_params)
 

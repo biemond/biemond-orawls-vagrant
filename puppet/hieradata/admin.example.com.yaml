@@ -1227,6 +1227,17 @@ jms_topic_instances:
      #   - Wls_jms_queue[jmsClusterModule:ErrorQueue]
 
 
+jms_security_policy_instances:
+  'jmsClusterModule:Topic1:receive':
+      ensure:           'present'
+      destinationtype:  'topic'
+      policyexpression: 'Usr(testuser1)'
+  'jmsClusterModule:Queue1:receive':
+      ensure:           'present'
+      destinationtype:  'queue'
+      policyexpression: 'Usr(testuser1)'
+
+
 foreign_server_instances:
     'jmsClusterModule:AQForeignServer':
         ensure:                'present'

@@ -7,8 +7,12 @@
 # description: Oracle Weblogic NodeManager service
 #
 ### BEGIN INIT INFO
+<% if @version == 1036 or @version == 1211 -%>
 # Provides: nodemgr nodemanager
-# Required-Start: $network $local_fs
+<% else %>
+# Provides: nodemgr_<%= @domain %> nodemanager_<%= @domain %>
+<% end %>
+# Required-Start: $network $local_fs $remote_fs
 # Required-Stop:
 # Should-Start:
 # Should-Stop:
@@ -97,7 +101,7 @@ start() {
     [ -x $exec ] || exit 5
     echo -n $"Starting $prog: "
     sleep 10
-    su $user -c "export JAVA_OPTIONS='${JSEE_OPTIONS} ${TRUST_OPTIONS}';$exec &"
+    su - $user -c "export JAVA_OPTIONS='${JSEE_OPTIONS} ${TRUST_OPTIONS}';$exec &"
     retval=$?
     echo
     return $retval

@@ -26,7 +26,7 @@ define orautils::nodemanagerautostart(
       } else {
         $nodeMgrLckFile = "${log_dir}/nodemanager.log.lck"
       }
-    } 
+    }
     1212, 1213 : {
       $nodeMgrPath    = "${domain_path}/nodemanager"
       $nodeMgrBinPath = "${domain_path}/bin"
@@ -41,6 +41,7 @@ define orautils::nodemanagerautostart(
     default: {
       $nodeMgrPath    = "${wl_home}/common/nodemanager"
       $nodeMgrBinPath = "${wl_home}/server/bin"
+      $scriptName     = 'nodemanager'
 
       if $log_dir == undef {
         $nodeMgrLckFile = "${nodeMgrPath}/nodemanager.log.lck"
@@ -108,7 +109,17 @@ define orautils::nodemanagerautostart(
         }
       }
     }
-    'Ubuntu', 'Debian', 'SLES':{
+    'SLES':{
+        exec { "chkconfig ${scriptName}":
+          command   => "chkconfig --add ${scriptName}",
+          require   => File[$location],
+          user      => 'root',
+          unless    => "chkconfig | /bin/grep '${scriptName}'",
+          path      => $execPath,
+          logoutput => true,
+        }
+    }
+    'Ubuntu', 'Debian':{
       exec { "update-rc.d ${scriptName}":
         command   => "update-rc.d ${scriptName} defaults",
         require   => File[$location],
