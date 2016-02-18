@@ -17,18 +17,18 @@ try:
         cmo.createFileStore(name)
 
     cd('/FileStores/'+name)
-    cmo.setDirectory(directory)
+    set_attribute_value('Directory', directory)
     set('Targets', jarray.array([ObjectName('com.bea:Name='+target+',Type='+targettype)], ObjectName))
 
     save()
     activate()
-    print "~~~~COMMAND SUCCESFULL~~~~"
+    report_back_success()
 
 except:
     print "Unexpected error:", sys.exc_info()[0]
     undo('true','y')
     stopEdit('y')
-    print "~~~~COMMAND FAILED~~~~"
+    report_back_error()
     raise
 
 

@@ -31,28 +31,22 @@ try:
             cmo.createSAFTopic(name)
         cd('/JMSSystemResources/'+jmsmodule+'/JMSResource/'+jmsmodule+'/SAFImportedDestinations/'+imported_destination+'/SAFTopics/'+name)
 
-    cmo.setRemoteJNDIName(remotejndiname)
-    cmo.setNonPersistentQos(nonpersistentqos)
-    cmo.setLocalJNDIName(localjndiname)
-    cmo.setUnitOfOrderRouting(unitoforderrouting)
+    set_attribute_value('RemoteJNDIName', remotejndiname)
+    set_attribute_value('NonPersistentQos', nonpersistentqos)
+    set_attribute_value('LocalJNDIName', localjndiname)
+    set_attribute_value('UnitOfOrderRouting', unitoforderrouting)
 
     if timetolivedefault:
-      cmo.setTimeToLiveDefault(long(timetolivedefault))
-    else:
-      cmo.setTimeToLiveDefault(0)
-
-    if usetimetolivedefault == '1':
-      cmo.setUseSAFTimeToLiveDefault(true)
-    else:
-      cmo.setUseSAFTimeToLiveDefault(false)
+        set_attribute_value('TimeToLiveDefault', long(timetolivedefault))
+    set_attribute_value('UseSAFTimeToLiveDefault', usetimetolivedefault)
 
     save()
     activate()
-    print "~~~~COMMAND SUCCESFULL~~~~"
+    report_back_success()
 
 except:
     print "Unexpected error:", sys.exc_info()[0]
-    print "~~~~COMMAND FAILED~~~~"
+    report_back_error()
     dumpStack()
     undo('true','y')
     stopEdit('y')

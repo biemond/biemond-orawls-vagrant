@@ -27,17 +27,17 @@ try:
       cmo.setStore(getMBean('/JDBCStores/'+persistentstore))
 
     set('Targets', jarray.array([ObjectName('com.bea:Name='+target+',Type='+targettype)], ObjectName))
-    cmo.setServiceType(servicetype)
+    set_attribute_value('ServiceType', servicetype)
 
     save()
     activate()
-    print "~~~~COMMAND SUCCESFULL~~~~"
+    report_back_success()
 
 except:
     print "Unexpected error:", sys.exc_info()[0]
     undo('true','y')
     stopEdit('y')
-    print "~~~~COMMAND FAILED~~~~"
+    report_back_error()
     raise
 
 

@@ -22,9 +22,8 @@ try:
 
     cd('/ServerTemplates/'+name)
 
-    set('ListenPort', listenPort)
-    if listenAddress:
-        set('ListenAddress',listenAddress)
+    set_attribute_value('ListenPort', listenPort)
+    set_attribute_value('ListenAddress', listenAddress)
 
     if classpath:
         set('ServerStart/'+name+'/ClassPath', classpath)
@@ -33,19 +32,18 @@ try:
         set('ServerStart/'+name+'/Arguments', arguments)
 
     cd('/ServerTemplates/'+name+'/SSL/'+name)
-
-    set('Enabled', format_boolean(sslEnabled))
-    set('ListenPort', sslListenPort)
+    set_attribute_value('Enabled', sslEnabled)
+    set_attribute_value('ListenPort', sslListenPort)
 
     cd('/')
 
     save()
     activate()
-    print "~~~~COMMAND SUCCESFULL~~~~"
+    report_back_success()
 
 except:
     print "Unexpected error:", sys.exc_info()[0]
     undo('true','y')
     stopEdit('y')
-    print "~~~~COMMAND FAILED~~~~"
+    report_back_error()
     raise
