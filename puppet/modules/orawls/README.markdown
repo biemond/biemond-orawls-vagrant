@@ -3768,8 +3768,8 @@ in hiera
    jms_security_policy_instances:
       'jmsClusterModule:Topic1:receive':
           ensure:           'present'
-          destinationtype:  'topic'
-          policyexpression: 'Usr(testuser1)'
+          destinationtype:  'topic',
+          policyexpression: 'Usr(testuser1)',
 
 ### wls_jms_template
 
