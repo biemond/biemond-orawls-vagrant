@@ -35,7 +35,7 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 ## Complete vagrant examples
 
 - Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
-- WebLogic 12.2.1 / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
+- WebLogic 12.2.1 MT multi tenancy / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
 - WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.2.1-infra](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra)
 - WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra SOA Suite/BAM/OSB cluster example [biemond-orawls-vagrant-12.2.1-infra-soa](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra-soa)
 - WebLogic 12.1.3 / Puppet 4.2.1 Reference implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-12.1.3](https://github.com/biemond/biemond-orawls-vagrant-12.1.3)
@@ -67,6 +67,7 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 - [start or stop AdminServer, Managed or a Cluster](#control)
 - [StoreUserConfig](#storeuserconfig) for storing WebLogic Credentials and using in WLST
 - [Dynamic targetting](#Dynamictargetting) by using the notes field in WebLogic for resource targetting
+- 12.2.1 Multi Tenancy features
 
 ### Fusion Middleware Features 11g & 12c
 
@@ -142,6 +143,10 @@ This will use WLST to retrieve the current state and to the changes. With WebLog
 
 12.2.1 Multitenancy
 - [wls_virtual_target](#wls_virtual_target)
+- [wls_resource_group](#wls_resource_group)
+- [wls_resource_group_template](#wls_resource_group_template)
+- [wls_domain_partition](#wls_domain_partition)
+- [wls_domain_partition_resource_group](#wls_domain_partition_resource_group)
 
 
 ## Domain creation options (Dev or Prod mode)
@@ -1858,21 +1863,27 @@ Global timeout parameter for WebLogic resource types. use timeout and value in s
 required for all the weblogic type/providers, this is a pointer to an WebLogic AdminServer.
 
     wls_setting { 'default':
-      user               => 'oracle',
-      weblogic_home_dir  => '/opt/oracle/middleware11g/wlserver_10.3',
-      connect_url        => "t3://localhost:7001",
-      weblogic_user      => 'weblogic',
-      weblogic_password  => 'weblogic1',
+      user                         => 'oracle',
+      weblogic_home_dir            => '/opt/oracle/middleware11g/wlserver_10.3',
+      connect_url                  => "t3://localhost:7001",
+      weblogic_user                => 'weblogic',
+      weblogic_password            => 'weblogic1',
+      use_default_value_when_empty => true
     }
 
     wls_setting { 'domain2':
-      user               => 'oracle',
-      weblogic_home_dir  => '/opt/oracle/middleware11g/wlserver_10.3',
-      connect_url        => "t3://localhost:7011",
-      weblogic_user      => 'weblogic',
-      weblogic_password  => 'weblogic1',
-      post_classpath     => '/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar'
+      user                         => 'oracle',
+      weblogic_home_dir            => '/opt/oracle/middleware11g/wlserver_10.3',
+      connect_url                  => "t3://localhost:7011",
+      weblogic_user                => 'weblogic',
+      weblogic_password            => 'weblogic1',
+      post_classpath               => '/opt/oracle/wlsdomains/domains/Wls1036/lib/aa.jar',
+      use_default_value_when_empty => false
     }
+
+use_default_value_when_empty = true when you want to make sure the wls type properties will set its default mbean values when it is not provided by your puppet configuration.
+So when you set a wls type properties and remove it again it will set it back to its original value ( off course only when it has one)
+
 
 saving the WLST scripts of all the wls types to a temporary folder
 
@@ -4522,22 +4533,40 @@ Only for 12.2.1 and higher, it needs wls_setting and when identifier is not prov
 
 or use puppet resource wls_virtual_target
 
-    wls_virtual_target { 'default/CustomerA':
+    wls_virtual_target { 'default/VT_AdminServer':
       ensure             => 'present',
-      channel            => 'aaaa',
+      channel            => 'PartitionChannel',
+      port               => '7011',
+      target             => ['AdminServer'],
+      targettype         => ['Server'],
+      uriprefix          => '/adminserver',
+      virtual_host_names => ['10.10.10.10'],
+    }
+    wls_virtual_target { 'default/VT_CustomerA':
+      ensure             => 'present',
+      channel            => 'PartitionChannel',
       port               => '8011',
       target             => ['WebCluster'],
       targettype         => ['Cluster'],
       uriprefix          => '/customer_a',
       virtual_host_names => ['10.10.10.100', '10.10.10.200'],
     }
-    wls_virtual_target { 'default/CustomerB':
+    wls_virtual_target { 'default/VT_CustomerB':
       ensure             => 'present',
       channel            => 'PartitionChannel',
-      portoffset         => '5',
+      port               => '8001',
       target             => ['WebCluster'],
       targettype         => ['Cluster'],
       uriprefix          => '/customer_b',
+      virtual_host_names => ['10.10.10.100', '10.10.10.200'],
+    }
+    wls_virtual_target { 'default/VT_Global':
+      ensure             => 'present',
+      channel            => 'PartitionChannel',
+      port               => '8021',
+      target             => ['WebCluster'],
+      targettype         => ['Cluster'],
+      uriprefix          => '/global',
       virtual_host_names => ['10.10.10.100', '10.10.10.200'],
     }
 
@@ -4545,23 +4574,178 @@ in hiera
 
     # this will use default as wls_setting identifier
     virtual_target_instances:
-      'CustomerA':
+      'VT_CustomerA':
         ensure:             'present'
-        channel:            'PartitionChannel'
         port:               '8011'
+        # portoffset:         '6'
         target:             'WebCluster'
         targettype:         'Cluster'
         uriprefix:          '/customer_a'
         virtual_host_names:
           - '10.10.10.100'
           - '10.10.10.200'
-      'CustomerB':
+      'VT_CustomerB':
         ensure:             'present'
         channel:            'PartitionChannel'
-        portoffset:         '5'
+        port:               '8001'
         target:             'WebCluster'
         targettype:         'Cluster'
         uriprefix:          '/customer_b'
         virtual_host_names:
           - '10.10.10.100'
           - '10.10.10.200'
+      'VT_Global':
+        ensure:             'present'
+        channel:            'PartitionChannel'
+        port:               '8021'
+        target:             'WebCluster'
+        targettype:         'Cluster'
+        uriprefix:          '/global'
+        virtual_host_names:
+          - '10.10.10.100'
+          - '10.10.10.200'
+      'VT_AdminServer':
+        ensure:             'present'
+        channel:            'PartitionChannel'
+        port:               '7011'
+        target:             'AdminServer'
+        targettype:         'Server'
+        uriprefix:          '/adminserver'
+        virtual_host_names:
+          - '10.10.10.10'
+
+
+### wls_resource_group_template
+
+Resource group templates for resource groups or used in a partition resource group.
+Only for 12.2.1 and higher, it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_resource_group_template
+
+    wls_resource_group_template { 'default/AppTemplate1':
+      ensure => 'present',
+    }
+    wls_resource_group_template { 'default/AppTemplate2':
+      ensure => 'present',
+    }
+
+in hiera
+
+    # this will use default as wls_setting identifier
+    resource_group_template_instances:
+      'AppTemplate1':
+        ensure: 'present'
+      'AppTemplate2':
+        ensure: 'present'
+
+### wls_resource_group
+
+For making global resource groups or for just 1 or more virtual targets, only for 12.2.1 and higher, it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_resource_group
+
+    wls_resource_group { 'default/ResourceGroup':
+      ensure => 'present',
+    }
+    wls_resource_group { 'default/ResourceGroupForAll':
+      ensure                  => 'present',
+      resource_group_template => 'AppTemplate2',
+      virtual_target          => ['VT_AdminServer', 'VT_Global'],
+    }
+
+in hiera
+
+    resource_group_instances:
+      'ResourceGroup':
+        ensure:                   'present'
+      'ResourceGroupForAll':
+        ensure:                   'present'
+        resource_group_template:  'AppTemplate2'
+        virtual_target:
+          - 'VT_Global'
+          - 'VT_AdminServer'
+
+### wls_domain_partition
+
+For making domain partitions or for just 1 or more virtual targets, only for 12.2.1 and higher, it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+You need to restart the AdminServer when somethings changes on the domain partition level, see wls_adminserver type
+
+or use puppet resource wls_domain_partition
+
+    wls_domain_partition { 'default/CustomerA_Partition':
+      ensure           => 'present',
+      root_file_system => '/opt/oracle/wlsdomains/domains/Wls1221/partitions/CustomerAPartition/system',
+      virtual_target   => ['VT_CustomerA'],
+    }
+    wls_domain_partition { 'default/CustomerB_Partition':
+      ensure           => 'present',
+      root_file_system => '/opt/oracle/wlsdomains/domains/Wls1221/partitions/CustomerBPartition/system',
+      virtual_target   => ['VT_CustomerB'],
+    }
+    wls_domain_partition { 'default/Global_Partition':
+      ensure           => 'present',
+      root_file_system => '/opt/oracle/wlsdomains/domains/Wls1221/partitions/GlobalPartition/system',
+      virtual_target   => ['VT_AdminServer', 'VT_Global'],
+    }
+
+in hiera
+
+    wls_domain_partition_instances:
+      'Global_Partition':
+        ensure:           'present'
+        root_file_system: '/opt/oracle/wlsdomains/domains/Wls1221/partitions/GlobalPartition/system'
+        virtual_target:
+          - 'VT_AdminServer'
+          - 'VT_Global'
+      'CustomerA_Partition':
+        ensure:           'present'
+        root_file_system: '/opt/oracle/wlsdomains/domains/Wls1221/partitions/CustomerAPartition/system'
+        virtual_target:
+          - 'VT_CustomerA'
+      'CustomerB_Partition':
+        ensure:           'present'
+        root_file_system: '/opt/oracle/wlsdomains/domains/Wls1221/partitions/CustomerBPartition/system'
+        virtual_target:
+          - 'VT_CustomerB'
+
+### wls_domain_partition_resource_group
+
+For making resource groups inside a domain partition, only for 12.2.1 and higher, it needs wls_setting and when identifier is not provided it will use the 'default'.
+
+or use puppet resource wls_domain_partition_resource_group
+
+
+    wls_domain_partition_resource_group { 'default/CustomerA_Partition:PartitionResourceGroupProducts':
+      ensure                  => 'present',
+      resource_group_template => 'AppTemplate1',
+      virtual_target          => ['VT_CustomerA'],
+    }
+    wls_domain_partition_resource_group { 'default/CustomerB_Partition:PartitionResourceGroupProducts':
+      ensure                  => 'present',
+      resource_group_template => 'AppTemplate1',
+      virtual_target          => ['VT_CustomerB'],
+    }
+    wls_domain_partition_resource_group { 'default/Global_Partition:PartitionResourceGroup1':
+      ensure         => 'present',
+      virtual_target => ['VT_AdminServer', 'VT_Global'],
+    }
+
+in hiera
+
+    wls_domain_partition_resource_group_instances:
+      'CustomerA_Partition:PartitionResourceGroupProducts':
+        ensure:                  'present'
+        resource_group_template: 'AppTemplate1'
+        virtual_target:
+          - 'VT_CustomerA'
+      'CustomerB_Partition:PartitionResourceGroupProducts':
+        ensure:                  'present'
+        resource_group_template: 'AppTemplate1'
+        virtual_target:
+          - 'VT_CustomerB'
+      'Global_Partition:PartitionResourceGroup1':
+        ensure:                  'present'
+        virtual_target:
+          - 'VT_AdminServer'
+          - 'VT_Global'
