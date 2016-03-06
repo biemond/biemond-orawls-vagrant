@@ -1,11 +1,15 @@
 # History
 
 ## 1.0.48
+- opatch manifest also works for removing patches
 - wls types fix for 12.2.1 and which got passwords attributes
 - wls_resource_group_template new MT type but only for WebLogic 12.2.1
 - wls_resource_group new MT type but only for WebLogic 12.2.1
 - wls_domain_partition new MT type but only for WebLogic 12.2.1
 - wls_domain_partition_resource_group new MT type but only for WebLogic 12.2.1
+- wls_resource_group_template_deployment new MT type but only for WebLogic 12.2.1
+- wls_domain_partition_resource_group_deployment new MT type but only for WebLogic 12.2.1
+- wls_domain_partition_control new MT type but only for WebLogic 12.2.1
 - wls_setting new attribute use_default_value_when_empty, when you want to make sure the wls type properties will set its default mbean values when it is not provided by your puppet configuration.
 
 ## 1.0.47

@@ -8,12 +8,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "admin" , primary: true do |admin|
 
-    admin.vm.box = "centos-6.6-x86_64"
-    admin.vm.box_url = "https://dl.dropboxusercontent.com/s/ijt3ppej789liyp/centos-6.6-x86_64.box"
+    admin.vm.box = "centos-6.7-x86_64"
+    admin.vm.box_url = "https://dl.dropboxusercontent.com/s/m2pr3ln3iim1lzo/centos-6.7-x86_64.box"
 
     admin.vm.provider :vmware_fusion do |v, override|
-      override.vm.box = "centos-6.6-x86_64-vmware"
-      override.vm.box_url = "https://dl.dropboxusercontent.com/s/7ytmqgghoo1ymlp/centos-6.6-x86_64-vmware.box"
+      override.vm.box = "centos-6.7-x86_64-vmware"
+      override.vm.box_url = "https://dl.dropboxusercontent.com/s/pr6kdd0nvzcuqg5/centos-6.7-x86_64-vmware.box"
     end
 
     admin.vm.hostname = "admin.example.com"
@@ -54,12 +54,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "node1" do |node1|
 
-    node1.vm.box = "centos-6.6-x86_64"
-    node1.vm.box_url = "https://dl.dropboxusercontent.com/s/ijt3ppej789liyp/centos-6.6-x86_64.box"
+    node1.vm.box = "centos-6.7-x86_64"
+    node1.vm.box_url = "https://dl.dropboxusercontent.com/s/m2pr3ln3iim1lzo/centos-6.7-x86_64.box"
 
     node1.vm.provider :vmware_fusion do |v, override|
-      override.vm.box = "centos-6.6-x86_64-vmware"
-      override.vm.box_url = "https://dl.dropboxusercontent.com/s/7ytmqgghoo1ymlp/centos-6.6-x86_64-vmware.box"
+      override.vm.box = "centos-6.7-x86_64-vmware"
+      override.vm.box_url = "https://dl.dropboxusercontent.com/s/pr6kdd0nvzcuqg5/centos-6.7-x86_64-vmware.box"
     end
 
     node1.vm.hostname = "node1.example.com"
@@ -97,12 +97,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "node2" do |node2|
 
-    node2.vm.box = "centos-6.6-x86_64"
-    node2.vm.box_url = "https://dl.dropboxusercontent.com/s/ijt3ppej789liyp/centos-6.6-x86_64.box"
+    node2.vm.box = "centos-6.7-x86_64"
+    node2.vm.box_url = "https://dl.dropboxusercontent.com/s/m2pr3ln3iim1lzo/centos-6.7-x86_64.box"
 
     node2.vm.provider :vmware_fusion do |v, override|
-      override.vm.box = "centos-6.6-x86_64-vmware"
-      override.vm.box_url = "https://dl.dropboxusercontent.com/s/7ytmqgghoo1ymlp/centos-6.6-x86_64-vmware.box"
+      override.vm.box = "centos-6.7-x86_64-vmware"
+      override.vm.box_url = "https://dl.dropboxusercontent.com/s/pr6kdd0nvzcuqg5/centos-6.7-x86_64-vmware.box"
     end
 
     node2.vm.hostname = "node2.example.com"

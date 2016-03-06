@@ -43,3 +43,17 @@ vagrant up node1
 
 ###node2
 vagrant up node2
+
+
+##docker
+```bash
+vagrant ssh admin
+sudo -i
+yum install -y epel-release
+yum install -y docker-io
+
+wget https://get.docker.com/builds/Linux/x86_64/docker-latest -O docker --no-check-certificate
+chmod +x docker
+mv docker /usr/bin
+```
+Add “-s btrfs” in other_args environment variable in docker config file: /etc/sysconfig/docker
