@@ -45,7 +45,8 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 - WebLogic 12.1.2 Reference implementation, the vagrant test case for full working WebLogic 12.1.2 cluster example [biemond-orawls-vagrant-12.1.2](https://github.com/biemond/biemond-orawls-vagrant-12.1.2)
 - WebLogic 12.1.2 infra (JRF) with WebTier, the vagrant test case for full working WebLogic 12.1.2 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.1.2-infra](https://github.com/biemond/biemond-orawls-vagrant-12.1.2-infra)
 - Reference Solaris implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-solaris](https://github.com/biemond/biemond-orawls-vagrant-solaris)
-- Reference OIM / OAM with WebTier, Webgate & Oracle Unified Directory, the vagrant test case for Oracle Identity Manager & Oracle Access Manager 11.1.2.2 example [biemond-orawls-vagrant-oim_oam](https://github.com/biemond/biemond-orawls-vagrant-oim_oam)
+- Reference OIM / OAM with WebTier, Webgate & Oracle Unified Directory, the vagrant test case for Oracle Identity Manager & Oracle Access Manager 11.1.2.3 example [biemond-orawls-vagrant-oim_oam](https://github.com/biemond/biemond-orawls-vagrant-oim_oam)
+- Reference OIM / OAM Cluster, the vagrant test case for Oracle Identity Manager & Oracle Access Manager 11.1.2.3 cluster example [biemond-orawls-vagrant-oim_oam_cluster](https://github.com/biemond/biemond-orawls-vagrant-oim_oam_cluster)
 - WebLogic 11g Reference implementation, the vagrant test case for full working WebLogic 10.3.6 cluster example [biemond-orawls-vagrant](https://github.com/biemond/biemond-orawls-vagrant)
 - Reference Oracle SOA Suite, the vagrant test case for full working WebLogic 10.3.6 SOA Suite + OSB cluster example [biemond-orawls-vagrant-solaris-soa](https://github.com/biemond/biemond-orawls-vagrant-solaris-soa)
 - Example of Opensource Puppet 3.4.3 Puppet master configuration in a vagrant box [vagrant-puppetmaster](https://github.com/biemond/vagrant-puppetmaster)
@@ -75,11 +76,10 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 - [WebTier](#webtier) Oracle HTTP server
 - [OSB, SOA Suite](#fmwcluster) with BPM and BAM Cluster configuration support ( convert single osb/soa/bam servers to clusters and migrate 11g OPSS to the database )
 - [ADF/JRF support](#fmwclusterjrf), Assign JRF libraries to a Server or Cluster target
-- [OIM IDM](#oimconfig) / OAM configurations with Oracle OHS OAM WebGate, Also Cluster support for OIM OAM
+- [OIM IDM](#oimconfig) / OAM 11.1.2.3 configurations with Oracle OHS OAM WebGate, Also it has Cluster support for OIM OAM
 - [OUD](#instance) OUD Oracle Unified Directory install, WebLogic domain, instances creation & [OUD control](#oud_control)
 - [Forms/Reports](#forms) Oracle Forms & Reports 11.1.1.7, 11.1.2 or 12.2.1
 - [WC, WCC](#Webcenter) Webcenter portal, content 11g or 12.2.1
-
 - [Change FMW log](#fmwlogdir) location of a managed server
 - [Resource Adapter](#resourceadapter) plan and entries for AQ, DB, MQ, FTP, File and JMS
 
@@ -170,7 +170,7 @@ For all WebLogic or FMW versions
 - domain 'wc'             -> WC (webcenter) + JRF + EM + OWSM
 
 11gR2
-- domain 'oim'            -> OIM (Oracle Identity Manager) + OAM ( Oracle Access Manager)
+- domain 'oim'            -> IDM, OIM (Oracle Identity Manager) + OAM ( Oracle Access Manager)
 - domain 'oud'            -> OUD (Oracle Unified Directory)
 
 12.2.1
@@ -1145,10 +1145,7 @@ When using ssh (use_ssh = true) you need to setup ssh so you won't need to provi
       adminserver_port       => 7001,
       weblogic_user          => "weblogic",
       weblogic_password      => "weblogic1",
-      setinternalappdeploymentondemandenable => false,
-      setconfigbackupenabled                 => true,
-      setarchiveconfigurationcount           => 10,
-      setconfigurationaudittype              => 'logaudit',
+      server_start_mode      => 'dev',
     }
 
 Configuration with Hiera ( need to have puppet > 3.0 )
@@ -1734,6 +1731,21 @@ hiera configuration
         ess_enabled:          true
         repository_prefix:    "DEV"
 
+    # OIM 11.1.2.3 cluster
+    fmw_cluster_instances:
+      'oimCluster':
+        domain_name:          *domain_name
+        soa_cluster_name:     "SoaCluster"
+        oim_cluster_name:     "OimCluster"
+        oam_cluster_name:     "OamCluster"
+        bi_cluster_name:      "BiCluster"
+        log_output:           *logoutput
+        soa_enabled:          true
+        oim_enabled:          true
+        oam_enabled:          true
+        bi_enabled:           true
+        repository_prefix:    *rcu_prefix
+
 
 ### fmwclusterjrf
 __orawls::utils::fmwclusterjrf__ convert existing cluster to a ADF/JRF cluster
@@ -1802,13 +1814,17 @@ __orawls::utils::oimconfig__ Configure OIM , oim server, design or remote config
         oim_home:                   '/opt/oracle/middleware11g/Oracle_IDM1'
         server_config:              true
         oim_password:               'Welcome01'
+        bi_cluster_name:            'BiCluster'
+        bi_enabled:                 true
         remote_config:              false
         keystore_password:          'Welcome01'
         design_config:              false
         oimserver_hostname:         'oim1admin.example.com'
         oimserver_port:             '14000'
+        soaserver_name:             'SoaServer1'
+        oimserver_name:             'OimServer1'
         repository_database_url:    "oimdb.example.com:1521:oimrepos.example.com"
-        repository_prefix:          "DEV"
+        repository_prefix:          *rcu_prefix
         repository_password:        "Welcome01"
 
 ### instance
