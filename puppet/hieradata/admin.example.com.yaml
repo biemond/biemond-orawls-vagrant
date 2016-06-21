@@ -44,6 +44,7 @@ domain_instances:
   'Wls1036':
     domain_template:                       "standard"
     development_mode:                      false
+    adminserver_ssl_port:                  7002
     log_output:                            *logoutput
     custom_identity:                       true
     custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
@@ -56,6 +57,7 @@ domain_instances:
     log_output:                            *logoutput
     domain_name:                           'Wls11g'
     adminserver_port:                      7011
+    adminserver_ssl_port:                  7012
     custom_identity:                       true
     custom_identity_keystore_filename:     '/vagrant/identity_admin.jks'
     custom_identity_keystore_passphrase:   'welcome'
@@ -76,7 +78,7 @@ wls_setting_instances:
   'default':
     user:                      *wls_os_user
     weblogic_home_dir:         *wls_weblogic_home_dir
-    connect_url:               "t3://%{hiera('domain_adminserver_address')}:7001"
+    connect_url:               "t3s://%{hiera('domain_adminserver_address')}:7002"
     weblogic_user:             *wls_weblogic_user
     weblogic_password:         *domain_wls_password
     loglevel:                  'debug'
@@ -88,7 +90,7 @@ wls_setting_instances:
   'Wls11gSetting':
     user:                      *wls_os_user
     weblogic_home_dir:         *wls_weblogic_home_dir
-    connect_url:               "t3://%{hiera('domain_adminserver_address')}:7011"
+    connect_url:               "t3s://%{hiera('domain_adminserver_address')}:7012"
     weblogic_user:             *wls_weblogic_user
     weblogic_password:         *domain_wls_password
     loglevel:                  'debug'
@@ -455,7 +457,7 @@ server_instances:
     log_http_format:                       'date time x-XForwardedFor s-ip cs-method cs-uri x-SOAPAction sc-status bytes time-taken x-UserAgent'
     tunnelingenabled:                      '0'
     max_message_size:                      '10000000'
-    sslenabled:                            '0'
+    sslenabled:                            '1'
     ssllistenport:                         '7002'
     sslhostnameverificationignored:        '1'
     two_way_ssl:                           '0'
