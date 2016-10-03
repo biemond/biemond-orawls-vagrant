@@ -1,7 +1,7 @@
 # Oracle WebLogic / Fusion Middleware puppet module V2
 [![Build Status](https://travis-ci.org/biemond/biemond-orawls.svg?branch=master)](https://travis-ci.org/biemond/biemond-orawls) [![Coverage Status](https://coveralls.io/repos/biemond/biemond-orawls/badge.png?branch=master)](https://coveralls.io/r/biemond/biemond-orawls?branch=master)
 
-Install, configures and manages WebLogic version 10.3 - 12.2.1
+Install, configures and manages WebLogic version 10.3 - 12.2.1.1
 
 This module should work for all Linux & Solaris versions like RedHat, CentOS, Ubuntu, Debian, Suse SLES, OracleLinux, Solaris 10,11 sparc / x86
 
@@ -35,9 +35,9 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 ## Complete vagrant examples
 
 - Docker with WebLogic 12.1.3 Cluster [docker-weblogic-puppet](https://github.com/biemond/docker-weblogic-puppet)
-- WebLogic 12.2.1 MT multi tenancy / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
-- WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.2.1-infra](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra)
-- WebLogic 12.2.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra SOA Suite/BAM/OSB cluster example [biemond-orawls-vagrant-12.2.1-infra-soa](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra-soa)
+- WebLogic 12.2.1.1 MT multi tenancy / Puppet 4.2.2 Reference implementation, the vagrant test case for full working WebLogic 12.2.1 cluster example [biemond-orawls-vagrant-12.2.1](https://github.com/biemond/biemond-orawls-vagrant-12.2.1)
+- WebLogic 12.2.1.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.2.1-infra](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra)
+- WebLogic 12.2.1.1 infra (JRF + JRF restricted), the vagrant test case for full working WebLogic 12.2.1 infra SOA Suite/BAM/OSB cluster example [biemond-orawls-vagrant-12.2.1-infra-soa](https://github.com/biemond/biemond-orawls-vagrant-12.2.1-infra-soa)
 - WebLogic OHS webtier standalone, the vagrant test case for full working Webtier 12.1.2 and 12.2.1 [biemond-orawls-vagrant-ohs](https://github.com/biemond/biemond-orawls-vagrant-ohs)
 - WebLogic 12.1.3 / Puppet 4.2.1 Reference implementation, the vagrant test case for full working WebLogic 12.1.3 cluster example [biemond-orawls-vagrant-12.1.3](https://github.com/biemond/biemond-orawls-vagrant-12.1.3)
 - WebLogic 12.1.3 infra (JRF), the vagrant test case for full working WebLogic 12.1.3 infra cluster example with WebTier (Oracle HTTP Server) [biemond-orawls-vagrant-12.1.3-infra](https://github.com/biemond/biemond-orawls-vagrant-12.1.3-infra)
@@ -56,13 +56,14 @@ If you need support, checkout the [wls_install](https://www.enterprisemodules.co
 
 ## Orawls WebLogic Features
 
-- [Installs WebLogic](#weblogic), version 10g,11g,12c( 12.1.1, 12.1.2, 12.1.3, 12.2.1 + its FMW infrastructure editions )
+- [Installs WebLogic](#weblogic), version 10g,11g,12c( 12.1.1, 12.1.2, 12.1.3, 12.2.1, 12.2.1.1 + its FMW infrastructure editions )
 - [Apply a BSU patch](#bsu) on a Middleware home ( < 12.1.2 )
 - [Apply a OPatch](#opatch) on a Middleware home ( >= 12.1.2 ) or a Oracle product home
 - [Create a WebLogic domain](#domain)
 - [Pack a WebLogic domain](#packdomain)
 - [Copy a WebLogic domain](#copydomain) to a other node with SSH, unpack and enroll to a nodemanager
 - [JSSE](#jsse) Java Secure Socket Extension support
+- [Override the default file location, applicable for running as non-root user](#default_override)
 - [Custom Identity and Trust Store support](#identity)
 - [Linux low on entropy or urandom fix](#urandom)
 - [Startup a nodemanager](#nodemanager)
@@ -92,6 +93,7 @@ This will use WLST to retrieve the current state and to the changes. With WebLog
 - [wls_setting](#wls_setting), set the default wls parameters for the other types and also used by puppet resource
 - [wls_adminserver](#wls_adminserver) control the adminserver or subscribe to changes
 - [wls_managedserver](#wls_managedserver) control the managed server,cluster or subscribe to changes
+- [wls_ohsserver](#wls_ohsserver) control the ohs standalone server or subscribe to changes
 - [wls_domain](#wls_domain)
 - [wls_deployment](#wls_deployment)
 - [wls_domain](#wls_domain)
@@ -143,7 +145,7 @@ This will use WLST to retrieve the current state and to the changes. With WebLog
 - [wls_server_template](#wls_server_template)
 - [wls_dynamic_cluster](#wls_dynamic_cluster)
 
-12.2.1 Multitenancy MT
+12.2.1.1 Multitenancy MT
 - [wls_virtual_target](#wls_virtual_target)
 - [wls_resource_group](#wls_resource_group)
 - [wls_resource_group_template](#wls_resource_group_template)
@@ -176,7 +178,7 @@ For all WebLogic or FMW versions
 - domain 'oim'            -> IDM, OIM (Oracle Identity Manager) + OAM ( Oracle Access Manager)
 - domain 'oud'            -> OUD (Oracle Unified Directory)
 
-12.2.1
+12.2.1.1
 - domain 'adf_restricted' -> only for 12.2.1 (no RCU/DB) JRF + EM + Coherence + JAX-WS Advanced + Soap over JMS
 
 
@@ -206,15 +208,22 @@ Contains WebLogic Facter which displays the following
 default this orawls module uses oracle as weblogic install user
 you can override this by setting the following fact 'override_weblogic_user', like override_weblogic_user=wls or set FACTER_override_weblogic_user=wls
 
-## Override the default file location where orawls saves domain & other settings (Applicable for running as non-root user)
+## <a name="default_override">Override the default file location where orawls saves domain & other settings (Applicable for running as non-root user)
 
 default this orawls module saves the domain & connection related setting in /etc in yaml format
 you can override this by setting the following 2 facts:
-for domain information: override_wls_domains_file=[custom_path]/wls_domains.yaml 
+
+for domain information: override_wls_domains_file=[custom_path]/wls_domains.yaml
 or set FACTER_override_wls_domains_file=[custom_path]/wls_domains.yaml
 
 for settings infortmation: override_wls_setting_file=[custom_path]/wls_setting.yaml
 or set FACTER_override_wls_setting_file=[custom_path]/wls_setting.yaml
+
+for ora inst location: override_orainst_dir=[custom_path]
+or set FACTER_override_orainst_dir=[custom_path]
+
+Set $puppet_os_user on some of the manifests or set this hiera variable puppet_os_user
+
 
 ## Override the default WebLogic domain folder
 
@@ -491,7 +500,7 @@ common.yaml
 __orawls::weblogic__ installs WebLogic 10.3.[0-6], 12.1.1, 12.1.2, 12.1.3, 12.2.1
 
     class{'orawls::weblogic':
-      version              => 1221,                       # 1036|1211|1212|1213|1221
+      version              => 12211,                       # 1036|1211|1212|1213|1221
       filename             => 'fmw_12.2.1.0.0_wls.jar',   # wls1036_generic.jar|wls1211_generic.jar|wls_121200.jar
       jdk_home_dir         => '/usr/java/jdk1.8.0_45',
       oracle_base_home_dir => "/opt/oracle",
@@ -578,7 +587,7 @@ vagrantcentos64.example.com.yaml
 __orawls::weblogic_type__ same as weblogic manifest/class but now as define which supports multiple middleware home on same VM
 
     orawls::weblogic{'1221':
-      version              => 1221,                       # 1036|1211|1212|1213|1221
+      version              => 12211,                       # 1036|1211|1212|1213|1221
       filename             => 'fmw_12.2.1.0.0_wls.jar',   # wls1036_generic.jar|wls1211_generic.jar|wls_121200.jar
       jdk_home_dir         => '/usr/java/jdk1.8.0_45',
       oracle_base_home_dir => "/opt/oracle",
@@ -1248,6 +1257,18 @@ when you just have one WebLogic domain on a server
       'wlsDomain2':
          log_output:              *logoutput
 
+for t3s you can use this
+
+    copy_instances:
+      'wlsDomain':
+         log_output:               true
+         use_t3s:                  true
+         jsse_enabled              true
+         custom_trust              true
+         trust_keystore_file       '/vagrant/truststore.jks'
+         trust_keystore_passphrase 'welcome'
+
+
 
 ### nodemanager
 __orawls::nodemanager__ start the nodemanager of a WebLogic Domain or Middleware Home
@@ -1383,7 +1404,7 @@ here is an overview of all the parameters you can set with its defaults
 
 
 ### control
-__orawls::control__ start or stops the AdminServer,Managed Server or a Cluster of a WebLogic Domain, this will call the wls_managedserver and wls_adminserver types
+__orawls::control__ start or stops the AdminServer,Managed Server, OHS Standalone Server or a Cluster of a WebLogic Domain, this will call the wls_managedserver, wls_adminserver and wls_ohsserver types
 
     orawls::control{'startWLSAdminServer12c':
       domain_name                 => "Wls12c",
@@ -1628,26 +1649,22 @@ the cluster if the managed server is in a cluster.
 
 ### Configure Oracle HTTP Server
 
-You can configure OHS rewrites and locations using __orawls::ohs::config__ resource:
+You can configure OHS locations using __orawls::ohs::forwarder__ resource:
 
-    orawls::ohs::config { 'default':
-      server_name => 'ohs1',
-      domain_path => '/opt/oracle/middleware12c/user_projects/domains/domain_name',
+    orawls::ohs::forwarder { '/console':
+      servers     => ['192.168.1.1:7000'],
       owner       => 'oracle',
-      group       => 'dba',
-      rewrites    => {
-        '^/mail$' => {
-          'to'      => 'http://mail.domain.com',
-          'options' => 'R',
-        },
-      },
-      locations   => {
-        '/application' => ['192.168.1.1:7001'],
-      },
+      group       => 'oracle',
+      domain_path => '/opt/test/wls/domains/domain1',
+      require     => Orawls::Control["start ohs ${domain_name}"],
+      notify      => Wls_ohsserver["reload ohs ${domain_name}"],
     }
 
-OHS will include all __.conf__ files at ${domain_path}/config/fmwconfig/components/OHS/instances/${server_name}/mod_wl_ohs.d folder.
+Notify option is needed to OHS restart and load changes. Require is needed because, without it, notify option may attempt to reload server before it's running.
 
+OHS will include all __.conf__ files at ${domain_path}/config/fmwconfig/components/OHS/${server_name}/mod_wl_ohs.d folder.
+
+This resource has been tested only with OHS 12.1.2 Standalone.
 
 ### fmwlogdir
 __orawls::fmwlogdir__ Change a log folder location of a FMW server
@@ -2037,6 +2054,7 @@ or in hiera
         weblogic_user:      'weblogic'
         weblogic_password:  'weblogic1'
         post_classpath:     '/opt/oracle/middleware12c/oracle_common/modules/internal/features/jrf_wlsFmw_oracle.jrf.wlst.jar'
+        extra_arguments:    '-Daa=1 -Dbb=2'
 
 
     # and for with weblogic infra 12.1.3, use this post_classpath
@@ -2048,6 +2066,7 @@ or in hiera
         weblogic_user:      'weblogic'
         weblogic_password:  'weblogic1'
         post_classpath:     '/opt/oracle/middleware12c/oracle_common/modules/internal/features/jrf_wlsFmw_oracle.jrf.wlst_12.1.3.jar'
+        extra_arguments:    '-Daa=1 -Dbb=2'
 
     wls_setting_instances:
       'default':
@@ -2278,6 +2297,28 @@ subscribe to a wls_domain, wls_identity_asserter or wls_authenticaton_provider e
       subscribe                 => Wls_domain['Wls1036'],
     }
 
+### wls_ohsserver
+
+type for ohs server control like start, running, abort and stop.
+also supports subscribe with refreshonly
+
+
+    # for this type you won't need a wls_setting identifier
+    wls_ohsserver{'OHS Server:':
+      ensure                    => 'running',   #running|start|abort|stop
+      server_name               => hiera('domain_adminserver'),
+      domain_name               => hiera('domain_name'),
+      domain_path               => "/opt/oracle/wlsdomains/domains/Wls1036",
+      os_user                   => hiera('wls_os_user'),
+      weblogic_home_dir         => hiera('wls_weblogic_home_dir'),
+      weblogic_user             => hiera('wls_weblogic_user'),
+      weblogic_password         => hiera('domain_wls_password'),
+      jdk_home_dir              => hiera('wls_jdk_home_dir'),
+      nodemanager_address       => hiera('domain_adminserver_address'),
+      nodemanager_port          => hiera('domain_nodemanager_port'),
+      jsse_enabled              => false,
+      custom_trust              => false,
+    }
 
 ### wls_deployment
 

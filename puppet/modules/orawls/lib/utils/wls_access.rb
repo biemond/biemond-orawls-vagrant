@@ -31,7 +31,7 @@ module Utils
 
       wls_type = 'wlst'
       domains.each do |key, domainValues|
-        Puppet.info "domain found #{key}"
+        Puppet.debug "domain found #{key}"
         wls_type = 'rest' if domainValues['connect_url'].include? "http"
       end
 
@@ -42,7 +42,7 @@ module Utils
           i = 1
           csv_string = ''
           domains.each do |key, domainValues|
-            Puppet.info "domain found #{key}"
+            Puppet.debug "domain found #{key}"
             result = wlst2 content, action, key, domains[key], parameters
             if i > 1
               # with multi domain, remove first line if it is a header
@@ -62,7 +62,7 @@ module Utils
           # if index do all domains
           all_items = []
           domains.each do |key, domainValues|
-            Puppet.info "domain found #{key}"
+            Puppet.debug "domain found #{key}"
             result = rest action, key, domains[key], parameters
             all_items.concat result
           end
@@ -84,7 +84,7 @@ module Utils
         weblogicPassword   = domain_values['weblogic_password']
 
         uri_string = "#{weblogicConnectUrl}#{parameters['rest_url']}"
-        Puppet.info uri_string
+        Puppet.debug uri_string
 
         uri = URI.parse(uri_string)
 
@@ -152,7 +152,7 @@ module Utils
       action = ''
       unless parameters.nil?
         action = parameters['action']
-        Puppet.info "Executing: #{script} with action #{action}"
+        Puppet.debug "Executing: #{script} with action #{action}"
       else
         Puppet.info "Executing: #{script} for a create,modify or destroy"
       end
@@ -170,7 +170,7 @@ module Utils
         # if index do all domains
         i = 1
         domains.each do |key, values|
-          Puppet.info "domain found #{key}"
+          Puppet.debug "domain found #{key}"
           csv_domain_string = execute_wlst(script, tmpFile, parameters, key, values, :return_output => true)
           if i > 1
             # with multi domain, remove first line if it is a header
@@ -312,6 +312,7 @@ module Utils
       weblogicConnectUrl           = domainValues['connect_url']       || 't3://localhost:7001'
       weblogicPassword             = domainValues['weblogic_password']
       postClasspath                = domainValues['post_classpath']
+      extraArguments               = domainValues['extra_arguments']
       custom_trust                 = domainValues['custom_trust']
       trust_keystore_file          = domainValues['trust_keystore_file']
       trust_keystore_passphrase    = domainValues['trust_keystore_passphrase']
@@ -324,16 +325,16 @@ module Utils
       fail('weblogic_password cannot be nil, check the wls_setting resource type') if weblogicPassword.nil?
 
       debugmode = Puppet::Util::Log.level
-          
+
       if Puppet.features.root?
         eval_operatingSystemUser = operatingSystemUser
       end
-      
+
       if debugmode.to_s == 'debug'
         if eval_operatingSystemUser
-          puts 'Prepare to run: ' + tmpFile.path + ',' +  eval_operatingSystemUser + ',' +  domain + ',' +  weblogicHomeDir + ',' +  weblogicUser + ',' +  weblogicPassword + ',' +  weblogicConnectUrL      
+          puts 'Prepare to run: ' + tmpFile.path + ',' + eval_operatingSystemUser + ',' + domain + ',' + weblogicHomeDir + ',' + weblogicUser + ',' + weblogicPassword + ',' + weblogicConnectUrl
         else
-          puts 'Prepare to run: ' + tmpFile.path + ',' +  domain + ',' +  weblogicHomeDir + ',' +  weblogicUser + ',' +  weblogicPassword + ',' +  weblogicConnectUrl
+          puts 'Prepare to run: ' + tmpFile.path + ',' + domain + ',' + weblogicHomeDir + ',' + weblogicUser + ',' + weblogicPassword + ',' + weblogicConnectUrl
         end
         puts 'vvv==================================================================='
         File.open(tmpFile.path).readlines.each do |line|
@@ -342,7 +343,7 @@ module Utils
         puts '^^^===================================================================='
       end
 
-      wls_daemon = WlsDaemon.run(eval_operatingSystemUser, domain, weblogicHomeDir, weblogicUser, weblogicPassword, weblogicConnectUrl, postClasspath, custom_trust, trust_keystore_file, trust_keystore_passphrase, use_default_value_when_empty)
+      wls_daemon = WlsDaemon.run(eval_operatingSystemUser, domain, weblogicHomeDir, weblogicUser, weblogicPassword, weblogicConnectUrl, postClasspath, extraArguments, custom_trust, trust_keystore_file, trust_keystore_passphrase, use_default_value_when_empty)
 
       if debug_module.to_s == 'true'
         if !File.directory?(archive_path)

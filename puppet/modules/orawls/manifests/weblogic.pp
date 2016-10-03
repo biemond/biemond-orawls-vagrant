@@ -1,7 +1,7 @@
 # == Class: orawls::weblogic
 #
 class orawls::weblogic (
-  $version              = 1111,  # 1036|1111|1211|1212|1213|1221
+  $version              = 1111,  # 1036|1111|1211|1212|1213|1221|12211
   $filename             = undef, # wls1036_generic.jar|wls1211_generic.jar|wls_121200.jar|wls_121300.jar|oepe-wls-indigo-installer-11.1.1.8.0.201110211138-10.3.6-linux32.bin
   $oracle_base_home_dir = undef, # /opt/oracle
   $middleware_home_dir  = undef, # /opt/oracle/middleware11gR1
@@ -18,6 +18,8 @@ class orawls::weblogic (
   $java_parameters      = '',    # '-Dspace.detection=false'
   $log_output           = false, # true|false
   $temp_directory       = '/tmp',# /tmp temporay directory for files extractions
+  $validation           = true,  # true|false
+  $force                = false, # true|false
 ) {
 
   orawls::weblogic_type{'base':
@@ -37,7 +39,9 @@ class orawls::weblogic (
     remote_file          => $remote_file,
     java_parameters      => $java_parameters,
     log_output           => $log_output,
-    temp_directory       => $temp_directory
+    temp_directory       => $temp_directory,
+    validation           => $validation,
+    force                => $force,
   }
 
 }

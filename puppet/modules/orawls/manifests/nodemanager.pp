@@ -3,7 +3,7 @@
 # install and configures the nodemanager
 #
 define orawls::nodemanager (
-  $version                               = hiera('wls_version'                   , 1111),  # 1036|1111|1211|1212|1213
+  $version                               = hiera('wls_version'                   , 1111),  # 1036|1111|1211|1212|1213|1221|12211
   $middleware_home_dir                   = hiera('wls_middleware_home_dir'), # /opt/oracle/middleware11gR1
   $weblogic_home_dir                     = hiera('wls_weblogic_home_dir'),
   $nodemanager_port                      = hiera('domain_nodemanager_port'       , 5556),
@@ -18,6 +18,7 @@ define orawls::nodemanager (
   $custom_identity_keystore_passphrase   = undef,
   $custom_identity_alias                 = undef,
   $custom_identity_privatekey_passphrase = undef,
+  $extra_arguments                       = '', # '-Dweblogic.security.SSL.minimumProtocolVersion=TLSv1'
   $wls_domains_dir                       = hiera('wls_domains_dir'               , undef),
   $domain_name                           = hiera('domain_name'                   , undef),
   $jdk_home_dir                          = hiera('wls_jdk_home_dir'), # /usr/java/jdk1.7.0_45
@@ -30,6 +31,7 @@ define orawls::nodemanager (
   $sleep                                 = hiera('wls_nodemanager_sleep'         , 20), # default sleep time
   $properties                            = {},
   $ohs_standalone                        = false,
+  $puppet_os_user                        = hiera('puppet_os_user','root'),
 )
 {
 
@@ -42,7 +44,7 @@ define orawls::nodemanager (
   if ( $version == 1111 or $version == 1036 or $version == 1211 ) {
     $nodeMgrHome = "${weblogic_home_dir}/common/nodemanager"
     $startHome   = "${weblogic_home_dir}/server/bin"
-  } elsif $version == 1212 or $version == 1213 or $version == 1221 {
+  } elsif $version == 1212 or $version == 1213 or $version >= 1221 {
     $nodeMgrHome = "${domains_dir}/${domain_name}/nodemanager"
     $startHome   = "${domains_dir}/${domain_name}/bin"
   } else {
@@ -60,7 +62,7 @@ define orawls::nodemanager (
         exec { "create ${log_dir} directory":
           command => "mkdir -p ${log_dir}",
           unless  => "test -d ${log_dir}",
-          user    => 'root',
+          user    => $puppet_os_user,
           path    => $exec_path,
           group   => $os_group,
           cwd     => $nodeMgrHome,
@@ -82,10 +84,10 @@ define orawls::nodemanager (
 
   case $::kernel {
     'Linux': {
-      if ( $version == 1212 or $version == 1213 or $version == 1221 ){
-        $checkCommand = "/bin/ps -ef | grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
+      if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
+        $checkCommand = "/bin/ps -eo pid,cmd | grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
       } else {
-        $checkCommand = '/bin/ps -ef | grep -v grep | /bin/grep \'weblogic.NodeManager\''
+        $checkCommand = '/bin/ps -eo pid,cmd | grep -v grep | /bin/grep \'weblogic.NodeManager\''
       }
       $nativeLib         = 'linux/x86_64'
       $suCommand         = "su -l ${os_user}"
@@ -95,14 +97,14 @@ define orawls::nodemanager (
     'SunOS': {
       case $::kernelrelease {
         '5.11': {
-          if ( $version == 1212 or $version == 1213 or $version == 1221 ){
+          if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
             $checkCommand = "/bin/ps wwxa | /bin/grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
           } else {
             $checkCommand = '/bin/ps wwxa | /bin/grep -v grep | /bin/grep \'weblogic.NodeManager\''
           }
         }
         default: {
-          if ( $version == 1212 or $version == 1213 or $version == 1221 ){
+          if ( $version == 1212 or $version == 1213 or $version >= 1221 ){
             $checkCommand = "/usr/ucb/ps wwxa | /bin/grep -v grep | /bin/grep 'weblogic.NodeManager' | /bin/grep ${domain_name}"
           } else {
             $checkCommand = '/usr/ucb/ps wwxa | /bin/grep -v grep | /bin/grep \'weblogic.NodeManager\''
@@ -123,13 +125,27 @@ define orawls::nodemanager (
     logoutput => $log_output,
   }
 
+  # do it once but don't replace it because of encrypted trust passwords
   if $custom_identity == true {
     $replaceNodemanagerProperties = false
   } else {
     $replaceNodemanagerProperties = true
   }
 
+  if ( $version == 1111 or $version == 1036 or $version == 1211 ){
+    $nodemanager_property_version = '10.3'
+  } elsif $version == 1212 {
+    $nodemanager_property_version = '12.1.2'
+  } elsif $version == 1213 {
+    $nodemanager_property_version = '12.1.3'
+  } elsif $version == 1221 {
+    $nodemanager_property_version = '12.2.1'
+  } elsif $version == 12211 {
+    $nodemanager_property_version = '12.2.1.1.0'
+  }
+
   $property_defaults = {
+    'properties_version'                 => $nodemanager_property_version,
     'log_limit'                          => 0,
     'domains_dir_remote_sharing_enabled' => false,
     'authentication_enabled'             => true,
@@ -154,7 +170,8 @@ define orawls::nodemanager (
 
   # nodemanager is part of the domain creation
   if ( $version == 1111 or $version == 1036 or $version == 1211 ){
-    file { "nodemanager.properties ux ${title}":
+    $propertiesFileTitle = "nodemanager.properties ux ${title}"
+    file { $propertiesFileTitle:
       ensure  => present,
       path    => "${nodeMgrHome}/nodemanager.properties",
       replace => $replaceNodemanagerProperties,
@@ -165,11 +182,19 @@ define orawls::nodemanager (
       before  => Exec["startNodemanager ${title}"],
     }
   } else {
-    file { "nodemanager.properties ux ${version} ${title}":
+    if $version >= 1221 {
+      $new_version = 1221
+    } else {
+      $new_version = $version
+    }
+
+    # do not replace when it contains encrypted custom trust field like CustomIdentityKeyStorePassPhrase
+    $propertiesFileTitle = "nodemanager.properties ux ${version} ${title}"
+    file { $propertiesFileTitle:
       ensure  => present,
       path    => "${nodeMgrHome}/nodemanager.properties",
-      replace => true,
-      content => template("orawls/nodemgr/nodemanager.properties_${version}.erb"),
+      replace => $replaceNodemanagerProperties,
+      content => template("orawls/nodemgr/nodemanager.properties_${new_version}.erb"),
       owner   => $os_user,
       group   => $os_group,
       mode    => '0775',
@@ -184,13 +209,16 @@ define orawls::nodemanager (
   }
 
   if $jsse_enabled == true {
-    $env = "JAVA_OPTIONS=-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true ${trust_env}"
+    $env = "JAVA_OPTIONS=-Dweblogic.ssl.JSSEEnabled=true -Dweblogic.security.SSL.enableJSSE=true ${trust_env} ${extra_arguments}"
   } else {
-    $env = "JAVA_OPTIONS=-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false ${trust_env}"
+    $env = "JAVA_OPTIONS=-Dweblogic.ssl.JSSEEnabled=false -Dweblogic.security.SSL.enableJSSE=false ${trust_env} ${extra_arguments}"
   }
 
+  $startCommand      = "nohup ${startHome}/startNodeManager.sh &"
+  $restartCommand    = "kill $(${checkCommand} | awk '{print \$1}'); sleep 1; ${startCommand}"
+
   exec { "startNodemanager ${title}":
-    command     => "nohup ${startHome}/startNodeManager.sh &",
+    command     => $startCommand,
     environment => [ $env, "JAVA_HOME=${jdk_home_dir}", 'JAVA_VENDOR=Oracle' ],
     unless      => $checkCommand,
     path        => $exec_path,
@@ -199,13 +227,25 @@ define orawls::nodemanager (
     cwd         => $nodeMgrHome,
   }
 
+  exec {"restart NodeManager ${title}":
+    command     => $restartCommand,
+    environment => [ $env, "JAVA_HOME=${jdk_home_dir}", 'JAVA_VENDOR=Oracle' ],
+    onlyif      => $checkCommand,
+    path        => $exec_path,
+    user        => $os_user,
+    group       => $os_group,
+    cwd         => $nodeMgrHome,
+    refreshonly => true,
+    subscribe   => File[$propertiesFileTitle],
+  }
+
   # using fiddyspence/sleep module
   sleep { "wake up ${title}":
     bedtime       => $sleep,
     wakeupfor     => $netstat_statement,
     dozetime      => 2,
     failontimeout => true,
-    subscribe     => Exec["startNodemanager ${title}"],
+    subscribe     => [Exec["startNodemanager ${title}"], Exec["restart NodeManager ${title}"]],
     refreshonly   => true,
   }
 }

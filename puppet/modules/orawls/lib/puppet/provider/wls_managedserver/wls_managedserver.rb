@@ -7,23 +7,31 @@ Puppet::Type.type(:wls_managedserver).provide(:wls_managedserver) do
   def managedserver_control(action)
     Puppet.debug "managedserver action: #{action}"
 
-    target                    = resource[:target]
-    name                      = resource[:server_name]
-    user                      = resource[:os_user]
-    weblogic_home_dir         = resource[:weblogic_home_dir]
-    weblogic_user             = resource[:weblogic_user]
-    weblogic_password         = resource[:weblogic_password]
-    adminserver_address       = resource[:adminserver_address]
-    adminserver_port          = resource[:adminserver_port]
+    target                      = resource[:target]
+    name                        = resource[:server_name]
+    user                        = resource[:os_user]
+    weblogic_home_dir           = resource[:weblogic_home_dir]
+    weblogic_user               = resource[:weblogic_user]
+    weblogic_password           = resource[:weblogic_password]
+    adminserver_address         = resource[:adminserver_address]
+    adminserver_port            = resource[:adminserver_port]
+    adminserver_secure_listener = resource[:adminserver_secure_listener]
 
     if action == :start
       wls_action = "start(\"#{name}\",\"#{target}\")"
     else
-      wls_action = "shutdown(\"#{name}\",\"#{target}\",\"force=true\")"
+      wls_action = "shutdown(\"#{name}\",\"#{target}\",force=\"true\")"
     end
 
+    protocol = case adminserver_secure_listener
+               when :true
+                 't3s'
+               else
+                 't3'
+               end
+
     command = "#{weblogic_home_dir}/common/bin/wlst.sh -skipWLSModuleScanning <<-EOF
-connect(\"#{weblogic_user}\",\"#{weblogic_password}\",\"t3://#{adminserver_address}:#{adminserver_port}\")
+connect(\"#{weblogic_user}\",\"#{weblogic_password}\",\"#{protocol}://#{adminserver_address}:#{adminserver_port}\")
 try:
     #{wls_action}
 except:
@@ -42,20 +50,26 @@ EOF"
     kernel = Facter.value(:kernel)
     su_shell = kernel == 'Linux' ? '-s /bin/bash' : ''
 
-    output = `su #{su_shell} - #{user} -c '#{command}'`
+    if Puppet.features.root?
+        output = `su #{su_shell} - #{user} -c '#{command}'`
+    else
+        output = `#{command}`
+    end
+    
     Puppet.debug "managedserver result: #{output}"
   end
 
   def managedserver_status
-    domain_name         = resource[:domain_name]
-    name                = resource[:server_name]
-    target              = resource[:target]
-    user                = resource[:os_user]
-    weblogic_home_dir   = resource[:weblogic_home_dir]
-    weblogic_user       = resource[:weblogic_user]
-    weblogic_password   = resource[:weblogic_password]
-    adminserver_address = resource[:adminserver_address]
-    adminserver_port    = resource[:adminserver_port]
+    domain_name                 = resource[:domain_name]
+    name                        = resource[:server_name]
+    target                      = resource[:target]
+    user                        = resource[:os_user]
+    weblogic_home_dir           = resource[:weblogic_home_dir]
+    weblogic_user               = resource[:weblogic_user]
+    weblogic_password           = resource[:weblogic_password]
+    adminserver_address         = resource[:adminserver_address]
+    adminserver_port            = resource[:adminserver_port]
+    adminserver_secure_listener = resource[:adminserver_secure_listener]
 
     kernel = Facter.value(:kernel)
 
@@ -76,15 +90,26 @@ EOF"
     #   end
     # end
 
+    protocol = case adminserver_secure_listener
+               when :true
+                 't3s'
+               else
+                 't3'
+               end
+
     command = "#{weblogic_home_dir}/common/bin/wlst.sh -skipWLSModuleScanning <<-EOF
-connect(\"#{weblogic_user}\",\"#{weblogic_password}\",\"t3://#{adminserver_address}:#{adminserver_port}\")
+connect(\"#{weblogic_user}\",\"#{weblogic_password}\",\"#{protocol}://#{adminserver_address}:#{adminserver_port}\")
 state(\"#{name}\",\"#{target}\")
 exit()
 EOF"
     # kernel = Facter.value(:kernel)
     su_shell = kernel == 'Linux' ? '-s /bin/bash' : ''
 
-    output = `su #{su_shell} - #{user} -c '#{command}'`
+    if Puppet.features.root?
+        output = `su #{su_shell} - #{user} -c '#{command}'`
+    else
+        output = `#{command}`
+    end
     Puppet.debug output
     output.each_line do |li|
       unless li.nil?
