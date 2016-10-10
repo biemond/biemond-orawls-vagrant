@@ -1,4 +1,5 @@
-<% @version = @version.to_i # in some situations the version comes through as a string. This fixes that. Not quite sure what causes this. -%>
+<% @version = @version.to_i -%>
+<%# In some situations the version comes through as a string. The above to_i fixes that. Not quite sure what causes this. -%>
 #!/bin/sh
 #
 # nodemgr Oracle Weblogic NodeManager service
